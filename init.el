@@ -193,10 +193,10 @@
   :ensure t
   :init
   (progn
+    (setq recentf-save-file (expand-file-name "recentf" savefile-dir))
     (setq recentf-auto-cleanup 'never)
     (recentf-mode 1))
-  :config (setq recentf-save-file (expand-file-name "recentf" savefile-dir)
-                recentf-max-saved-items 100
+  :config (setq recentf-max-saved-items 100
                 recentf-max-menu-items 15))
 
 ;; Parentheses are important
