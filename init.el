@@ -35,11 +35,6 @@
 ;;
 ;; Packages.
 
-;; It's nice to have a mode to edit cask files.
-(use-package cask-mode
-  :ensure t
-  :diminish "Cask-mode")
-
 ;; All good IDEs have some interactivity
 (use-package company
   :ensure t
