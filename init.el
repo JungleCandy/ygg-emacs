@@ -35,6 +35,14 @@
 ;;
 ;; Packages.
 
+;; Show selections from the kill-ring
+(use-package browse-kill-ring
+  :ensure t
+  :defer t
+  :config
+  (progn
+    (browse-kill-ring-default-keybindings)))
+
 ;; All good IDEs have some interactivity
 (use-package company
   :ensure t
