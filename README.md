@@ -26,7 +26,7 @@ doesn't work so well.
 
 Clone the repo and make the output be the `.emacs.d` directory.
 
-    git clone https://github.com/JungleCandy/Ygg-Emacs.git .emacs.d
+    git clone https://github.com/JungleCandy/ygg-emacs.git .emacs.d
 
 #### Run emacs
 
