@@ -38,6 +38,7 @@
 ;; All good IDEs have some interactivity
 (use-package company
   :ensure t
+  :init (add-hook 'after-init-hook #'global-company-mode)
   :commands company-mode
   :config
   ;; Enable company-mode globally.
