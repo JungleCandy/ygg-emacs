@@ -35,6 +35,22 @@
 ;;
 ;; Packages.
 
+(use-package ace-window
+  :bind (("C-x o" . ace-window)
+         ("C-x C-o" . ace-swap-window))
+  :config
+  (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
+
+;; The package formerly known as Ace-Jump Mode
+(use-package avy
+  :ensure t
+  :defer t
+  :bind (("C-;" . avy-goto-word-1)
+         ("C-:" . avy-goto-char))
+  :config
+  (with-eval-after-load "isearch"
+    (define-key isearch-mode (kbd "C-;") 'avy-isearch)))
+
 ;; Show selections from the kill-ring
 (use-package browse-kill-ring
   :ensure t
@@ -171,6 +187,20 @@
   :config
   (ido-ubiquitous-mode))
 
+;; Move like a ninja
+(use-package key-chord
+  :ensure t
+  :init
+  (progn
+    (key-chord-mode 1)
+    (key-chord-define-global "jj" 'avy-goto-word-1)
+    (key-chord-define-global "jl" 'avy-goto-line)
+    (key-chord-define-global "jk" 'avy-goto-char)
+    (key-chord-define-global "JJ" 'crux-switch-to-previous-buffer)
+    (key-chord-define-global "uu" 'undo-tree-visualize)
+    (key-chord-define-global "xx" 'smex)
+    (key-chord-define-global "yy" 'browse-kill-ring)))
+
 ;; Use C-x g to open a magit status window for the current directory.
 (use-package magit
   :ensure t
@@ -251,6 +281,15 @@
          ("M-X" . smex-major-mode-commands)
          ;; this is the old M-x
          ("C-c C-c M-x" . execute-extended-command)))
+
+(use-package undo-tree
+  :ensure t
+  :diminish undo-tree-mode
+  :config
+  (progn
+    (global-undo-tree-mode)
+    (setq undo-tree-visualizer-timestamps t)
+    (setq undo-tree-visualizer-diff t)))
 
 
 (use-package uniquify
