@@ -24,6 +24,16 @@
 ;; We don't need a startup message.
 (setq inhibit-startup-message t)
 
+;; Turn off the annoying beep on errors
+(setq visible-bell t)
+
+;; A suitably wide fill-column
+(set-default 'fill-column 100)
+
+;; Show column and line number in the modeline
+(setq line-number-mode t)
+(setq column-number-mode t)
+
 ;; There is something nice about this theme. https://draculatheme.com.
 (use-package dracula-theme
   :ensure t
