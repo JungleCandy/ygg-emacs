@@ -1,0 +1,12 @@
+# Compiled
+*.elc
+
+# Backup
+*~
+/bak/
+
+# Local
+/auto-save-list/
+/elpa
+/savefile
+
