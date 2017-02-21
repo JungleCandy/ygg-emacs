@@ -41,7 +41,7 @@
   :bind (("C-x o" . ace-window)
          ("C-x C-o" . ace-swap-window))
   :config
-  (setq aw-keys '(?a ?o ?e ?fu ?i ?d ?h ?t ?n))) ;; Optimise for Dvorak
+  (setq aw-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n))) ;; Optimise for Dvorak
 
 ;; The package formerly known as Ace-Jump Mode
 (use-package avy
@@ -242,6 +242,24 @@
                 recentf-max-menu-items 15))
 
 
+;; A more visible mode-line
+(use-package smart-mode-line
+  :ensure t
+  :init (setq sml/no-confirm-load-theme t
+              sml/theme 'respectful)
+  :config (sml/setup))
+
+  (use-package smart-mode-line
+    :ensure t
+    :init
+    (setq sml/theme 'respectful)
+    ;; emacs keeps prompting me to run the smart-mode-line-theme.  This is a word around that I found on github
+    (setq sml/no-confirm-load-theme t)
+    (setq sml/mode-width 0)
+    ;; this makes sure that the mode line doesn't go off the screen
+    (setq sml/name-width 40)
+    (sml/setup))
+
 ;; Parentheses are important
 (use-package smartparens
   :ensure t
@@ -288,18 +306,6 @@
          ("M-X" . smex-major-mode-commands)
          ;; this is the old M-x
          ("C-c C-c M-x" . execute-extended-command)))
-
-(use-package savehist
-  :ensure t
-  :init
-  (progn
-    (setq savehist-file (expand-file-name "savehist" savefile-dir))
-    (savehist-mode +1))
-  :config
-  (progn
-    (setq savehist-autosave-interval 60
-          '(search-ring regexp-search-ring)
-          savehist-additional-variables)))
 
 ;; Visualise history in a tree. Useful for the current session, not saved, because I don't need it
 ;; persisted across multiple machines.

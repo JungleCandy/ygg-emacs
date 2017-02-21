@@ -23,5 +23,17 @@
   :config
   (setq save-place-file (expand-file-name ".places" savefile-dir)))
 
+;; Save history
+(use-package savehist
+  :config
+  (setq savehist-additional-variables
+        ;; search entries
+        '(search-ring regexp-search-ring)
+        ;; save every minute
+        savehist-autosave-interval 60
+        ;; keep the home clean
+        savehist-file (expand-file-name "savehist" savefile-dir))
+  (savehist-mode +1))
+
 (provide 'ygg-locations)
 ;;; ygg-locations.el ends here
