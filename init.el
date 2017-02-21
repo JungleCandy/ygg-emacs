@@ -36,6 +36,8 @@
 (require 'use-package)
 (setq use-package-verbose t)
 
+(use-package f :ensure t)
+
 ; Reduces the frequency of garbage collection by making it happen on
 ;; each 50MB of allocated data (the default is on every 0.76MB).
 (setq gc-cons-threshold 50000000)
@@ -245,7 +247,7 @@
   ("M-n" . crux-smart-open-line-above)                            ;; Insert an empty line above the current line and indent it properly
   ("M-p" . crux-smart-open-line)                                  ;; Insert empty line and indent it properly
   ("C-c n" . crux-cleanup-buffer-or-region)                       ;; Fix indentation and strip whitespace
-  ("s-r" . crux-recentf-ido-find-file)                                ;; Open recently visited file
+  ("s-r" . crux-recentf-ido-find-file)                            ;; Open recently visited file
   ("C-c e" . crux-eval-and-replace)                               ;; Evale a bit of elisp and replace it with it's result
   ("C-x p t" . crux-transpose-windows)                            ;; Transpose the buffers between two windows
   ("C-c D" . crux-delete-file-and-buffer)                         ;; Delete current file and buffer
@@ -468,6 +470,18 @@
   :config (which-key-mode +1)
   :diminish which-key-mode)
 
+(use-package yasnippet
+  :init
+  (progn
+    (add-hook 'after-save-hook
+              (lambda ()
+                (when (eql major-mode 'snippet-mode)
+                  (yas-reload-all))))
+    (setq yas-snippet-dirs (list (f-expand "snippets" dotfiles-dir)))
+    (setq yas-indent-line 'auto)
+    (yas-global-mode 1))
+  :mode ("\\.yasnippet" . snippet-mode)
+  :config (yas-reload-all))
 
 ;; Use the better version of zap-to-char
 (use-package zop-to-char
