@@ -38,7 +38,7 @@
 
 (use-package f :ensure t)
 
-; Reduces the frequency of garbage collection by making it happen on
+                                        ; Reduces the frequency of garbage collection by making it happen on
 ;; each 50MB of allocated data (the default is on every 0.76MB).
 (setq gc-cons-threshold 50000000)
 
@@ -47,10 +47,10 @@
 
 ;; Turn off modes that look ugly.
 (mapc
-  (lambda (mode)
-    (when (fboundp mode)
-      (funcall mode -1)))
-  '(menu-bar-mode tool-bar-mode scroll-bar-mode horizontal-scroll-bar-mode))
+ (lambda (mode)
+   (when (fboundp mode)
+     (funcall mode -1)))
+ '(menu-bar-mode tool-bar-mode scroll-bar-mode horizontal-scroll-bar-mode))
 
 ;; We don't need a startup message.
 (setq inhibit-startup-message t)
@@ -299,8 +299,7 @@
     (use-package helm-config)
     (helm-mode 1))
   :bind
-  (
-   ("M-y" . helm-show-kill-ring)
+  (("M-y" . helm-show-kill-ring)
    ("C-x C-m" . helm-M-x)))
 
 ;; Move like a ninja
