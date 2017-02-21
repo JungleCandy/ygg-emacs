@@ -329,7 +329,9 @@
 ;; Show available keybindings after starting to type.
 (use-package which-key
   :ensure t
-  :config (which-key-mode +1))
+  :config (which-key-mode +1)
+  :diminish which-key-mode)
+
 
 ;; Use the better version of zap-to-char
 (use-package zop-to-char
