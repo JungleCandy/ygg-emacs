@@ -282,14 +282,6 @@
   ("C-=" . er/expand-region)
   ("C-M-=" . er/contract-region))
 
-;; Improved fuzzy matching.
-(use-package flx-ido
-  :ensure t
-  :config
-  (flx-ido-mode 1)
-  (setq ido-enable-flex-matching t
-        ido-use-faces nil))
-
 ;; Use M-x gist-buffer or M-x gist-region to create a gist
 ;; directly from the current buffer or selection.
 (use-package gist
@@ -307,21 +299,13 @@
   (global-git-gutter-mode t)
   :diminish git-gutter-mode)
 
-;; ido mode to make minibuffer selection tolerable
-
-(ido-mode t)
-(setq ido-enable-prefix nil
-      ido-enable-flex-matching t
-      ido-create-new-buffer 'always
-      ido-use-filename-at-point 'guess
-      ido-use-url-at-point t
-      ido-max-prospects 10
-      ido-use-virtual-buffers t)
-
-(use-package ido-ubiquitous
+;; helm for better navigation
+(use-package helm
   :ensure t
   :config
-  (ido-ubiquitous-mode))
+  (progn
+    (use-package helm-config)
+    (helm-mode 1)))
 
 ;; Move like a ninja
 (use-package key-chord
@@ -480,8 +464,7 @@
     (setq yas-snippet-dirs (list (f-expand "snippets" dotfiles-dir)))
     (setq yas-indent-line 'auto)
     (yas-global-mode 1))
-  :mode ("\\.yasnippet" . snippet-mode)
-  :config (yas-reload-all))
+  :mode ("\\.yasnippet" . snippet-mode))
 
 ;; Use the better version of zap-to-char
 (use-package zop-to-char
