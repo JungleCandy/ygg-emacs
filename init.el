@@ -35,11 +35,13 @@
 ;;
 ;; Packages.
 
+;; Easily switch between windows
 (use-package ace-window
+  :ensure t
   :bind (("C-x o" . ace-window)
          ("C-x C-o" . ace-swap-window))
   :config
-  (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
+  (setq aw-keys '(?a ?o ?e ?fu ?i ?d ?h ?t ?n))) ;; Optimise for Dvorak
 
 ;; The package formerly known as Ace-Jump Mode
 (use-package avy
