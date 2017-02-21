@@ -1,15 +1,11 @@
 ;;; -*- no-byte-compile: t -*-
 ;;; -*- lexical-binding: t -*-
-;;; init.el --- The initial customization file
+;;; init.el --- My personal configuration file.
+
+(require 'package)
 
 ;; Turn off defadvice warnings during startup
 (setq ad-redefinition-action 'accept)
-
-;; Added by Package.el.  This must come before configurations of
-;; installed packages.  Don't delete this line.  If you don't want it,
-;; just comment it out by adding a semicolon to the start of the line.
-;; You may delete these explanatory comments.
-(package-initialize)
 
 ;; Get the current directory by looking for the directory that this file is in.
 (setq dotfiles-dir (file-name-directory
@@ -21,15 +17,153 @@
 (unless (file-exists-p savefile-dir)
   (make-directory savefile-dir))
 
-;; Add the ygg folder to load list
-(add-to-list 'load-path (concat dotfiles-dir "ygg"))
+;; Keep downloaded packages organised.
+(setq package-user-dir (expand-file-name "elpa" dotfiles-dir))
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
 
-;; Load the external files
-(require 'ygg-package)
-(require 'ygg-setup)
-(require 'ygg-macos) ;; I don't use anything else at the moment.
-(require 'ygg-locations)
-(require 'ygg-defuns)
+;; To get the package manager going, we invoke its initialise function.
+(package-initialize)
+
+;; Update package metadata if required
+(unless package-archive-contents
+  (package-refresh-contents))
+
+;; The use-package module has made using packages so much better
+(unless (package-installed-p 'use-package)
+  (package-install 'use-package))
+
+(require 'use-package)
+(setq use-package-verbose t)
+
+; Reduces the frequency of garbage collection by making it happen on
+;; each 50MB of allocated data (the default is on every 0.76MB).
+(setq gc-cons-threshold 50000000)
+
+;; Warn when opening files bigger than 100MB.
+(setq large-file-warning-threshold 100000000)
+
+;; Turn off modes that look ugly.
+(mapc
+  (lambda (mode)
+    (when (fboundp mode)
+      (funcall mode -1)))
+  '(menu-bar-mode tool-bar-mode scroll-bar-mode horizontal-scroll-bar-mode))
+
+;; We don't need a startup message.
+(setq inhibit-startup-message t)
+
+;; disable the annoying bell ring
+(setq ring-bell-function 'ignore)
+
+;; A suitably wide fill-column
+(set-default 'fill-column 100)
+
+;; Show column and line number in the modeline
+(setq line-number-mode t)
+(setq column-number-mode t)
+
+;; more useful frame title, that show either a file or a
+;; buffer name (if the buffer isn't visiting a file)
+(setq frame-title-format
+      '((:eval (if (buffer-file-name)
+                   (abbreviate-file-name (buffer-file-name))
+                 "%b"))))
+
+;; There is something nice about this theme. https://draculatheme.com.
+(use-package dracula-theme
+  :ensure t
+  :config
+  (load-theme 'dracula t)
+  ;; Regardless of the theme, I'm particularly fond of my gold cursor.
+  (setq-default cursor-type 'bar)
+  (add-to-list 'default-frame-alist '(cursor-color . "gold1")))
+
+
+;; Make sure we always use UTF-8.
+(setq locale-coding-system 'utf-8)
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+(set-selection-coding-system 'utf-8)
+(prefer-coding-system 'utf-8)
+
+;; Ask for y/n confirmation instead of yes/no
+(fset 'yes-or-no-p 'y-or-n-p)
+
+;; Automatically save buffers before launching M-x compile and friends,
+;; instead of asking you if you want to save.
+(setq compilation-ask-about-save nil)
+
+;; Make the selection work like most people expect.
+(delete-selection-mode t)
+(transient-mark-mode t)
+
+;; Automatically update unmodified buffers whose files have changed.
+(global-auto-revert-mode t)
+
+;; We aren't using monospace typewriters anymore
+(setq sentence-end-double-space nil)
+
+;; Since ethan-wspace takes care of this for us, we don't need it
+(setq mode-require-final-newline nil)
+(setq require-final-newline nil)
+
+;; Always load the newest version of a file, prevents stale compiled elisp code
+(setq load-prefer-newer t)
+
+;; Tab indentation is a curse, a historical pestilence.
+;; Turn it off and let's never talk about this default again.
+(set-default 'indent-tabs-mode nil)
+
+;; Set default indentation for various languages. Maybe set up others as their mode is set.
+(setq-default tab-width 4) ;; Objective-C was my first professional programming language.
+
+;; Define where to keep the autoload declarations.
+(setq autoload-file (expand-file-name "loaddefs.el" savefile-dir))
+
+;; Define where to keep user-settings, and load them.
+(setq custom-file (expand-file-name "custom.el" savefile-dir))
+(load custom-file 'noerror)
+
+;; store all backup and autosave files in the tmp dir
+(setq backup-directory-alist
+      `((".*" . ,temporary-file-directory)))
+(setq auto-save-file-name-transforms
+      `((".*" ,temporary-file-directory t)))
+
+(defun goto-line-with-feedback ()
+  "Show line numbers temporarily, while prompting for the line number input."
+  (interactive)
+  (unwind-protect
+      (progn
+        (linum-mode 1)
+        (call-interactively 'goto-line))
+    (linum-mode -1)))
+
+(defun json-format ()
+  "Reformats the JSON in the region for humans."
+  (interactive)
+  (save-excursion
+    (shell-command-on-region (mark) (point) "python -m json.tool" (buffer-name) t)))
+
+;; Save point position between sessions.
+(use-package saveplace
+  :ensure t
+  :init (setq save-place-file (expand-file-name ".places" savefile-dir))
+  :config
+  (setq-default save-place t))
+
+;; Save history
+(use-package savehist
+  :config
+  (setq savehist-additional-variables
+        ;; search entries
+        '(search-ring regexp-search-ring)
+        ;; save every minute
+        savehist-autosave-interval 60
+        ;; keep the home clean
+        savehist-file (expand-file-name "savehist" savefile-dir))
+  (savehist-mode +1))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -48,10 +182,7 @@
   :ensure t
   :defer t
   :bind (("C-;" . avy-goto-word-1)
-         ("C-:" . avy-goto-char))
-  :config
-  (with-eval-after-load "isearch"
-    (define-key isearch-mode (kbd "C-;") 'avy-isearch)))
+         ("C-:" . avy-goto-char)))
 
 ;; Show selections from the kill-ring
 (use-package browse-kill-ring
@@ -175,6 +306,7 @@
   :diminish git-gutter-mode)
 
 ;; ido mode to make minibuffer selection tolerable
+
 (ido-mode t)
 (setq ido-enable-prefix nil
       ido-enable-flex-matching t
@@ -202,6 +334,23 @@
     (key-chord-define-global "uu" 'undo-tree-visualize)
     (key-chord-define-global "xx" 'smex)
     (key-chord-define-global "yy" 'browse-kill-ring)))
+
+(defadvice magit-status (around magit-fullscreen activate)
+  "Activate full screen when using Magit."
+  (window-configuration-to-register :magit-fullscreen)
+  ad-do-it
+  (delete-other-windows))
+
+(defadvice magit-quit-window (around magit-restore-screen activate)
+  "Restore previously hidden windows."
+  ad-do-it
+  (jump-to-register :magit-fullscreen))
+
+(defun magit-quit-session ()
+  "Restore the previous window configuration and kill the magit buffer."
+  (interactive)
+  (kill-buffer)
+  (jump-to-register :magit-fullscreen))
 
 ;; Use C-x g to open a magit status window for the current directory.
 (use-package magit
@@ -241,25 +390,6 @@
   :config (setq recentf-max-saved-items 100
                 recentf-max-menu-items 15))
 
-
-;; A more visible mode-line
-(use-package smart-mode-line
-  :ensure t
-  :init (setq sml/no-confirm-load-theme t
-              sml/theme 'respectful)
-  :config (sml/setup))
-
-  (use-package smart-mode-line
-    :ensure t
-    :init
-    (setq sml/theme 'respectful)
-    ;; emacs keeps prompting me to run the smart-mode-line-theme.  This is a word around that I found on github
-    (setq sml/no-confirm-load-theme t)
-    (setq sml/mode-width 0)
-    ;; this makes sure that the mode line doesn't go off the screen
-    (setq sml/name-width 40)
-    (sml/setup))
-
 ;; Parentheses are important
 (use-package smartparens
   :ensure t
@@ -293,6 +423,12 @@
    ("M-S" . sp-split-sexp)
    ("M-J" . sp-join-sexp)
    ("C-M-t" . sp-transpose-sexp)))
+
+(defun ygg-wrap-with (s)
+  "Create a wrapper function for smartparens using S."
+  `(lambda (&optional arg)
+     (interactive "P")
+     (sp-wrap-with-pair ,s)))
 
 ;; Help for modeline acions
 (use-package smex
