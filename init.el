@@ -186,14 +186,6 @@
   :bind (("C-;" . avy-goto-word-1)
          ("C-:" . avy-goto-char)))
 
-;; Show selections from the kill-ring
-(use-package browse-kill-ring
-  :ensure t
-  :defer t
-  :config
-  (progn
-    (browse-kill-ring-default-keybindings)))
-
 ;; All good IDEs have some interactivity
 (use-package company
   :ensure t
@@ -305,7 +297,11 @@
   :config
   (progn
     (use-package helm-config)
-    (helm-mode 1)))
+    (helm-mode 1))
+  :bind
+  (
+   ("M-y" . helm-show-kill-ring)
+   ("C-x C-m" . helm-M-x)))
 
 ;; Move like a ninja
 (use-package key-chord
@@ -318,7 +314,7 @@
     (key-chord-define-global "jk" 'avy-goto-char)
     (key-chord-define-global "JJ" 'crux-switch-to-previous-buffer)
     (key-chord-define-global "uu" 'undo-tree-visualize)
-    (key-chord-define-global "xx" 'smex)
+    (key-chord-define-global "xx" 'helm-M-x)
     (key-chord-define-global "yy" 'browse-kill-ring)))
 
 (defadvice magit-status (around magit-fullscreen activate)
@@ -415,19 +411,6 @@
   `(lambda (&optional arg)
      (interactive "P")
      (sp-wrap-with-pair ,s)))
-
-;; Help for modeline acions
-(use-package smex
-  :ensure t
-  :config
-  (progn
-    (setq smex-save-file (expand-file-name "smex-items" savefile-dir))
-    (smex-initialize))
-  :bind (("M-x" . smex)
-         ("C-x C-m" . smex)
-         ("M-X" . smex-major-mode-commands)
-         ;; this is the old M-x
-         ("C-c C-c M-x" . execute-extended-command)))
 
 ;; Visualise history in a tree. Useful for the current session, not saved, because I don't need it
 ;; persisted across multiple machines.
