@@ -282,6 +282,9 @@
          ;; this is the old M-x
          ("C-c C-c M-x" . execute-extended-command)))
 
+
+;; Visualise history in a tree. Useful for the current session, not saved, because I don't need it
+;; persisted across multiple machines.
 (use-package undo-tree
   :ensure t
   :diminish undo-tree-mode
@@ -292,6 +295,7 @@
     (setq undo-tree-visualizer-diff t)))
 
 
+;; Make buffer titles unique by adding more information, not just another number.
 (use-package uniquify
   :config (setq uniquify-buffer-name-style 'forward
                 uniquify-separator "/"
