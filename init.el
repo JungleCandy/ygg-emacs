@@ -289,6 +289,17 @@
          ;; this is the old M-x
          ("C-c C-c M-x" . execute-extended-command)))
 
+(use-package savehist
+  :ensure t
+  :init
+  (progn
+    (setq savehist-file (expand-file-name "savehist" savefile-dir))
+    (savehist-mode +1))
+  :config
+  (progn
+    (setq savehist-autosave-interval 60
+          '(search-ring regexp-search-ring)
+          savehist-additional-variables)))
 
 ;; Visualise history in a tree. Useful for the current session, not saved, because I don't need it
 ;; persisted across multiple machines.
