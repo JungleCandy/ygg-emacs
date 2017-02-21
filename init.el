@@ -209,6 +209,7 @@
          :map magit-status-mode-map
          ("q" . magit-quit-session)))
 
+;; Just set mode hooks and add a couple of keybindings to the mode map.
 (use-package markdown-mode
   :ensure t
   :config
@@ -238,6 +239,7 @@
   :config (setq recentf-max-saved-items 100
                 recentf-max-menu-items 15))
 
+
 ;; Parentheses are important
 (use-package smartparens
   :ensure t
@@ -248,8 +250,11 @@
     (show-smartparens-global-mode t))
   :config
   (progn
-    (add-hook 'prog-mode-hook (lambda () (smartparens-strict-mode t)))
-    (sp-local-pair 'emacs-lisp-mode "`" nil :when '(sp-in-string-p)))
+    (add-hook 'prog-mode-hook (lambda () (smartparens-strict-mode t))) ;; If I don't do this, it doesn't turn on properly.
+    (sp-local-pair 'emacs-lisp-mode "`" nil :when '(sp-in-string-p))
+    (setq sp-highlight-pair-overlay nil)
+    (setq sp-highlight-wrap-overlay nil)
+    (setq sp-highlight-wrap-tag-overlay nil))
   :bind
   (("C-M-k" . sp-kill-sexp-with-a-twist-of-lime)
    ("C-M-f" . sp-forward-sexp)
