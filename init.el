@@ -34,7 +34,9 @@
   (package-install 'use-package))
 
 (require 'use-package)
-(setq use-package-verbose t)
+
+;; For more verbose startup, uncomment the line below
+;; (setq use-package-verbose t)
 
 (use-package f :ensure t)
 
