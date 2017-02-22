@@ -439,6 +439,7 @@
   :diminish which-key-mode)
 
 (use-package yasnippet
+  :ensure t
   :init
   (progn
     (add-hook 'after-save-hook
