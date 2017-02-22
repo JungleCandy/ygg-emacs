@@ -169,10 +169,6 @@
         savehist-file (expand-file-name "savehist" savefile-dir))
   (savehist-mode +1))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-;; Packages.
-
 ;; Easily switch between windows
 (use-package ace-window
   :ensure t
@@ -236,6 +232,7 @@
 ;; A lot of useful functions from Prelude
 (use-package crux
   :ensure t
+  :commands crux-switch-to-previous-buffer
   :bind
   ("C-c o" . crux-open-with)                                      ;; Open the currently visited file with an external program
   ("M-n" . crux-smart-open-line-above)                            ;; Insert an empty line above the current line and indent it properly
@@ -457,6 +454,14 @@
   :bind
   (("M-z" . zop-up-to-char)
    ("M-Z" . zop-to-char)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; Major Mode support
+
+;; Use Ruby syntax for Cartfiles
+(add-to-list 'auto-mode-alist '("Cartfile\\'" . ruby-mode))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
