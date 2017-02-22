@@ -299,7 +299,8 @@
   :bind
   (("M-y" . helm-show-kill-ring)
    ("C-x C-m" . helm-M-x)
-   ("s-r" . helm-recentf)))
+   ("s-r" . helm-recentf)
+   ("C-x C-b" . helm-buffers-list)))
 
 ;; Move like a ninja
 (use-package key-chord
@@ -472,9 +473,6 @@
 
 ;; use hippie-expand instead of dabbrev
 (global-set-key (kbd "M-/") 'hippie-expand)
-
-;; replace buffer-menu with ibuffer
-(global-set-key (kbd "C-x C-b") 'ibuffer)
 
 ;;;; Remaps goto-line so that line numbers are turned on only when needed.
 (global-set-key [remap goto-line] 'goto-line-with-feedback)
