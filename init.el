@@ -462,6 +462,9 @@
 ;; Use Ruby syntax for Cartfiles
 (add-to-list 'auto-mode-alist '("Cartfile\\'" . ruby-mode))
 
+;; Use Ruby syntax for Podfiles - You never know, I might actually need to edit them
+(add-to-list 'auto-mode-alist '("Podfile\\'" . ruby-mode))
+(add-to-list 'auto-mode-alist '("\\.podspec\\'" . ruby-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
