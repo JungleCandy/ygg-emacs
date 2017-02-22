@@ -38,7 +38,7 @@
 
 (use-package f :ensure t)
 
-                                        ; Reduces the frequency of garbage collection by making it happen on
+;; Reduces the frequency of garbage collection by making it happen on
 ;; each 50MB of allocated data (the default is on every 0.76MB).
 (setq gc-cons-threshold 50000000)
 
@@ -239,7 +239,6 @@
   ("M-n" . crux-smart-open-line-above)                            ;; Insert an empty line above the current line and indent it properly
   ("M-p" . crux-smart-open-line)                                  ;; Insert empty line and indent it properly
   ("C-c n" . crux-cleanup-buffer-or-region)                       ;; Fix indentation and strip whitespace
-  ("s-r" . crux-recentf-ido-find-file)                            ;; Open recently visited file
   ("C-c e" . crux-eval-and-replace)                               ;; Evale a bit of elisp and replace it with it's result
   ("C-x p t" . crux-transpose-windows)                            ;; Transpose the buffers between two windows
   ("C-c D" . crux-delete-file-and-buffer)                         ;; Delete current file and buffer
@@ -300,7 +299,8 @@
     (helm-mode 1))
   :bind
   (("M-y" . helm-show-kill-ring)
-   ("C-x C-m" . helm-M-x)))
+   ("C-x C-m" . helm-M-x)
+   ("s-r" . helm-recentf)))
 
 ;; Move like a ninja
 (use-package key-chord
