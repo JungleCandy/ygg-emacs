@@ -302,6 +302,14 @@
    ("s-r" . helm-recentf)
    ("C-x C-b" . helm-buffers-list)))
 
+;; We have to deal with JSON sometimes
+(use-package json-mode
+  :ensure t
+  :commands json-mode
+  :config
+  (bind-keys :map json-mode-map
+             ("C-c <tab>" . json-mode-beautify)))
+
 ;; Move like a ninja
 (use-package key-chord
   :ensure t
@@ -429,6 +437,37 @@
                 uniquify-separator "/"
                 uniquify-after-kill-buffer-p t     ;; Rename after killing uniquified
                 uniquify-ignore-buffers-re "^\\*")) ;; Don't futz with special buffers
+
+;; web-mode is a special mode for HTML which cops with embedded JS/CSS,
+;; JSX, various templating systems, ect.
+;; find out more at http://web-mode.org
+
+(use-package web-mode
+  :ensure t
+  :mode (;; Want to use web-mode for HTML, not default html-mode.
+         ("\\.html?\\'" . web-mode)
+         ;; Add some extensions as per web-mode docs
+         ("\\.phtml\\'" . web-mode)
+         ("\\.tpl\\.php\\'" . web-mode)
+         ("\\.[agj]sp\\'" . web-mode)
+         ("\\.erb\\'" . web-mode)
+         ("\\.mustache\\'" . web-mode)
+         ("\\.djhtml\\'" . web-mode))
+  :config
+  ;; Highlight element under the cursor.
+  (setq-default web-mode-enable-current-element-highlight t)
+  ;; Key for renaming tags
+  (bind-keys :map web-mode-map
+             ("C-c C-r" . 'mc/mark-sgml-tag-pair)))
+
+;; Colourise colour names in certain modes.
+(use-package rainbow-mode
+  :ensure t
+  :confug
+  (dolist (mode '(css-mode less-css-mode html-mode web-mode))
+    (add-hook (intern (concat (symbol-name mode) "-hook"))
+              (lambda () (rainbow-mode))))
+  :diminish rainbow-mode)
 
 ;; Show available keybindings after starting to type.
 (use-package which-key
