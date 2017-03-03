@@ -436,6 +436,9 @@
   :config (which-key-mode +1)
   :diminish which-key-mode)
 
+(use-package yaml-mode
+  :ensure t)
+
 (use-package yasnippet
   :ensure t
   :init
