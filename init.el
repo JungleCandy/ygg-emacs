@@ -463,7 +463,7 @@
 ;; Colourise colour names in certain modes.
 (use-package rainbow-mode
   :ensure t
-  :confug
+  :config
   (dolist (mode '(css-mode less-css-mode html-mode web-mode))
     (add-hook (intern (concat (symbol-name mode) "-hook"))
               (lambda () (rainbow-mode))))
