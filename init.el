@@ -74,11 +74,18 @@
                    (abbreviate-file-name (buffer-file-name))
                  "%b"))))
 
+;; Helper function to load the theme in the correct way
+(defun setup-dracula-theme (frame)
+  "Load the theme from a hook and then remove the hook"
+  (progn
+    (load-theme 'dracula t)
+    (remove-hook  'after-make-frame-functions 'setup-dracula-theme)))
+
 ;; There is something nice about this theme. https://draculatheme.com.
 (use-package dracula-theme
   :ensure t
   :config
-  (load-theme 'dracula t)
+  (add-hook 'after-make-frame-functions 'setup-dracula-theme t)
   ;; Regardless of the theme, I'm particularly fond of my gold cursor.
   (setq-default cursor-type 'bar)
   (add-to-list 'default-frame-alist '(cursor-color . "gold1")))
