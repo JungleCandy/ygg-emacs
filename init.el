@@ -467,6 +467,14 @@
   (bind-keys :map web-mode-map
              ("C-c C-r" . 'mc/mark-sgml-tag-pair)))
 
+(defun my-web-mode-hook ()
+  "Hooks for web-mode"
+  (setq web-mode-markup-indent-offset 2
+        web-mode-css-indent-offset 2
+        web-mode-code-indent-offset 2))
+
+(add-hook 'web-mode-hook 'my-web-mode-hook)
+
 ;; Colourise colour names in certain modes.
 (use-package rainbow-mode
   :ensure t
