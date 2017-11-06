@@ -494,6 +494,10 @@
   :ensure t
   :mode ("\\.yaml$ . yaml-mode"))
 
+(use-package toml-mode
+  :ensure t
+  :mode ("\\.toml$ . toml-mode"))
+
 (use-package yasnippet
   :ensure t
   :init
