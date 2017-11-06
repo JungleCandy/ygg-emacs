@@ -491,7 +491,8 @@
   :diminish which-key-mode)
 
 (use-package yaml-mode
-  :ensure t)
+  :ensure t
+  :mode ("\\.yaml$ . yaml-mode"))
 
 (use-package yasnippet
   :ensure t
