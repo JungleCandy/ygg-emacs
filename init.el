@@ -17,6 +17,14 @@
 (unless (file-exists-p savefile-dir)
   (make-directory savefile-dir))
 
+;; User lisp files. Create if needed.
+(defvar ygg-lisp (expand-file-name "lisp" dotfiles-dir)
+  "This directory stores the user lisp files.")
+(unless (file-exists-p ygg-lisp)
+  (make-directory ygg-lisp))
+;; Add the user-lisp directory to the load path.
+(add-to-list 'load-path ygg-lisp)
+
 ;; Keep downloaded packages organised.
 (setq package-user-dir (expand-file-name "elpa" dotfiles-dir))
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
