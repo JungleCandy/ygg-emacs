@@ -453,10 +453,55 @@
                 uniquify-after-kill-buffer-p t     ;; Rename after killing uniquified
                 uniquify-ignore-buffers-re "^\\*")) ;; Don't futz with special buffers
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; Golang support
+
+;; https://johnsogg.github.io/emacs-golang For basics of why and how.
+
+;; Let's get the PATH and GOPATH from the shell
+(use-package exec-path-from-shell
+  :if (memq window-system '(mac ns))
+  :ensure t
+  :config
+  (exex-path-from-shell-initialize)
+  (exec-path-from-shell-copy-env "GOPATH"))
+
+(use-package go-mode
+  :ensure t
+  :config
+  (add-hook 'before-save-hook 'gofmt-before-save)   ; gofmt before every save
+  (setq gofmt-command "goimports")                  ; gofmt use invokes goimports
+  (if (not (string-match "go" compile-command))     ; set compile command default
+      (set (make-local-variable 'compile-command)
+           "go build -v && go test -v && go vet"))
+  (use-package go-guru
+    :config (go-guru-hl-identifier-mode))                      ; Highlight identifiers
+  (auto-complete-mode 1)
+  :bind (:map go-mode-map
+              ("M-." . godef-jump)                  ; Go to definition
+              ("M-*" . pop-tag-mark)                ; Return from whence you came
+              ("M-p" . compile)                     ; Invoke the compiler
+              ("M-P" . recompile)                   ; Redo most recent compile cmd
+              ("M-]" . next-error)                  ; Go to next error (or msg)
+              ("M-[" . previous-error)              ; Go to previous error (or msg)
+              )
+  :mode ("\\.go\\'" . go-mode))
+
+(use-package auto-complete
+  :ensure t)
+
+(use-package go-autocomplete
+  :ensure t)
+
+(use-package flymake-go
+  :ensure t)
+
+;; Run configuration functions
+
 ;; web-mode is a special mode for HTML which cops with embedded JS/CSS,
 ;; JSX, various templating systems, ect.
 ;; find out more at http://web-mode.org
-
 (use-package web-mode
   :ensure t
   :mode (;; Want to use web-mode for HTML, not default html-mode.
