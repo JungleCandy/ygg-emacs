@@ -87,16 +87,20 @@
   "Load the theme from a hook and then remove the hook"
   (progn
     (load-theme 'dracula t)
-    (set-cursor-color "gold1")
-    (setq-default cursor-type 'bar)
     (remove-hook  'after-make-frame-functions 'setup-dracula-theme)))
+
+;; I just want to have a cold cursor
+(defun setup-gold-cursor (frame)
+  (progn
+    (set-cursor-color "gold1")))
 
 ;; There is something nice about this theme. https://draculatheme.com.
 (use-package dracula-theme
   :ensure t
   :config
-  (add-hook 'after-make-frame-functions 'setup-dracula-theme t))
-
+  (add-hook 'after-make-frame-functions 'setup-dracula-theme t)
+  (add-hook 'after-make-frame-functions 'setup-gold-cursor t)
+  (setq-default cursor-type 'bar))
 
 ;; Make sure we always use UTF-8.
 (setq locale-coding-system 'utf-8)
