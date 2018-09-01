@@ -574,6 +574,20 @@
   (("M-z" . zop-up-to-char)
    ("M-Z" . zop-to-char)))
 
+;; SBCL and SLIME
+(load (expand-file-name "~/.quicklisp/slime-helper.el"))
+(setq inferior-lisp-program "sbcl")
+
+(use-package slime
+  :ensure t)
+
+(use-package hippie-expand-slime
+  :ensure t
+  :init
+  (progn
+    (add-hook 'slime-mode-hook 'set-up-slime-hippie-expand)
+    (add-hook 'slime-repl-mode-hook 'set-up-slime-hippie-expand)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; Major Mode support
