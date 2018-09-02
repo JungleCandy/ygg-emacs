@@ -479,6 +479,7 @@
       (set (make-local-variable 'compile-command)
            "go build -v && go test -v && go vet"))
   (use-package go-guru
+    :ensure t
     :config (go-guru-hl-identifier-mode))                      ; Highlight identifiers
   (auto-complete-mode 1)
   :bind (:map go-mode-map
@@ -574,21 +575,21 @@
   (("M-z" . zop-up-to-char)
    ("M-Z" . zop-to-char)))
 
-;; SBCL and SLIME
-;; Since it's not a standard part of my install, see if Quicklisp has been installed before configuring
-(when (file-exists-p "~/.quicklisp/slime-helper.el")
-  (load (expand-file-name "~/.quicklisp/slime-helper.el"))
-  (setq inferior-lisp-program "sbcl") 
+;; SBCL and Slime
+;; Set up only if quicklisp has been installed
+(setq-local slime-helper (expand-file-name "~/.quicklisp/slime-helper.el"))
+(when (file-exists-p slime-helper)
+  (load slime-helper)
+  (setq inferior-lisp-program "sbcl")
 
-  (use-package slime
-    :ensure t) 
+  (use-package slime :ensure t)
 
   (use-package hippie-expand-slime
     :ensure t
     :init
     (progn
       (add-hook 'slime-mode-hook 'set-up-slime-hippie-expand)
-      (add-hook 'slime-repl-mode-hook 'set-up-slime-hippie-expand)))
+      (add-hook 'slime-repl-mode-hook 'set-up-slime-hippie-expand))))
 
 ;; Org-mode
 (use-package org
