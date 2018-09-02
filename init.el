@@ -588,6 +588,27 @@
     (add-hook 'slime-mode-hook 'set-up-slime-hippie-expand)
     (add-hook 'slime-repl-mode-hook 'set-up-slime-hippie-expand)))
 
+;; Org-mode
+(use-package org
+  :ensure t
+  :config
+  ;; Stop org-mode from highjacking shift-cursor keys.
+  (add-hook
+   'org-mode-hook
+   (progn
+     (visual-line-mode 1)))
+  ;; Fancy bullet rendering.
+  (use-package org-bullets
+    :ensure t
+    :config
+    (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+  ;; Insert links from clipboard.
+  (use-package org-cliplink
+    :ensure t
+    :config
+    (with-eval-after-load "org"
+      (define-key org-mode-map (kbd "C-c M-l") 'org-cliplink))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; Major Mode support
