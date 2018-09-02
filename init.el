@@ -575,28 +575,27 @@
    ("M-Z" . zop-to-char)))
 
 ;; SBCL and SLIME
-(load (expand-file-name "~/.quicklisp/slime-helper.el"))
-(setq inferior-lisp-program "sbcl")
+;; Since it's not a standard part of my install, see if Quicklisp has been installed before configuring
+(when (file-exists-p "~/.quicklisp/slime-helper.el")
+  (load (expand-file-name "~/.quicklisp/slime-helper.el"))
+  (setq inferior-lisp-program "sbcl") 
 
-(use-package slime
-  :ensure t)
+  (use-package slime
+    :ensure t) 
 
-(use-package hippie-expand-slime
-  :ensure t
-  :init
-  (progn
-    (add-hook 'slime-mode-hook 'set-up-slime-hippie-expand)
-    (add-hook 'slime-repl-mode-hook 'set-up-slime-hippie-expand)))
+  (use-package hippie-expand-slime
+    :ensure t
+    :init
+    (progn
+      (add-hook 'slime-mode-hook 'set-up-slime-hippie-expand)
+      (add-hook 'slime-repl-mode-hook 'set-up-slime-hippie-expand)))
 
 ;; Org-mode
 (use-package org
   :ensure t
   :config
   ;; Stop org-mode from highjacking shift-cursor keys.
-  (add-hook
-   'org-mode-hook
-   (progn
-     (visual-line-mode 1)))
+  (add-hook 'org-mode-hook (lambda () (visual-line-mode 1)))
   ;; Fancy bullet rendering.
   (use-package org-bullets
     :ensure t
