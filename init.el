@@ -613,8 +613,15 @@
 
 (use-package tex
   :ensure auctex
+  :config
+  (setq-default TeX-master nil)
+  (setq TeX-auto-save t
+        TeX-parse-self t
+        TeX-PDF-mode t)
+  (add-hook 'LaTeX-mode-hook 'visual-line-mode)
+  (add-hook 'LaTeX-mode-hook 'flyspell-mode)
+  (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
   :ensure company-auctex)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; Major Mode support
