@@ -202,6 +202,16 @@
   :bind (("C-;" . avy-goto-word-1)
          ("C-:" . avy-goto-char)))
 
+;; Setup flyspell with hunspell
+(use-package flyspell
+  :hook ((text-mode . flyspell-mode)
+         (prog-mode . flyspell-prog-mode))
+  config: (when (executable-find "hunspell")
+            (setq ispell-program-name (executable-find "hunspell"))
+            (setq ispell-really-hunspell t)
+            (setenv "DICTIONARY" "english"))
+  (setq ispell-dictionary "english"))
+
 ;; All good IDEs have some interactivity
 (use-package company
   :ensure t

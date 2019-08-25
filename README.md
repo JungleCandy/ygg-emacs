@@ -26,6 +26,20 @@ Install Emacs. For the macOS, this can be done via a homebrew cask
 
     brew cask install emacs
     
+#### Install spell checking support
+
+    brew install hunspell
+    
+in `~/Library/Spelling/` install the required dictionaries
+
+`get http://cgit.freedesktop.org/libreoffice/dictionaries/plain/en/en_GB.aff`
+`get http://cgit.freedesktop.org/libreoffice/dictionaries/plain/en/en_GB.dic`
+
+Make sure that the files are correctly named
+
+`ln -s en_GB.dic english.dic`
+`ln -s en_GB.aff english.aff`
+    
 This seems to be the recommended way to install emacs. For formulae that build .app targets linkapps
 doesn't work so well.
 
