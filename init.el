@@ -206,7 +206,7 @@
 (use-package flyspell
   :hook ((text-mode . flyspell-mode)
          (prog-mode . flyspell-prog-mode))
-  config: (when (executable-find "hunspell")
+  :config (when (executable-find "hunspell")
             (setq ispell-program-name (executable-find "hunspell"))
             (setq ispell-really-hunspell t)
             (setenv "DICTIONARY" "english"))
