@@ -37,9 +37,8 @@ in `~/Library/Spelling/` install the required dictionaries
 
 Make sure that the files are correctly named
 
-`ln -s en_GB.dic english.dic`
-`ln -s en_GB.aff english.aff`
-    
+Running `(getenv "LANG")` on my setup shows that the installed language is "en_GB" so there is no need to create symlinks for the dictionary names to match as some web documentation recommends.
+
 This seems to be the recommended way to install emacs. For formulae that build .app targets linkapps
 doesn't work so well.
 
