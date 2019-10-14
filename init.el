@@ -209,7 +209,8 @@
   :config (when (executable-find "hunspell")
             (setq ispell-program-name (executable-find "hunspell"))
             (setq ispell-really-hunspell t)
-            (setenv "DICTIONARY" "en_GB"))
+            (setenv "DICTIONARY" "en_GB")
+            (setq ispell-hunspell-dictionary-alist '(("en_GB" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "en_GB") nil utf-8))))
   (setq ispell-dictionary "en_GB"))
 
 ;; All good IDEs have some interactivity
