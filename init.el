@@ -469,6 +469,16 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
+;; Haskell support
+(use-package haskell-mode
+  :ensure t
+  :config
+  (add-hook 'haskell-mode-hook 'haskell-auto-insert-module-template)
+  (eval-after-load "haskell-mode" '(define-key haskell-mode-map (kbd "C-c C-c") 'haskell-compile))
+  (eval-after-load "haskell-cabal" '(define-key haskell-cabal-mode-map (kbd "C-c C-c") 'haskell-compile)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
 ;; Golang support
 
 ;; https://johnsogg.github.io/emacs-golang For basics of why and how.
@@ -633,6 +643,7 @@
   (add-hook 'LaTeX-mode-hook 'flyspell-mode)
   (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
   :ensure company-auctex)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; Major Mode support
@@ -739,3 +750,4 @@
 (require 'server)
 (unless (server-running-p)
   (server-start))
+(put 'upcase-region 'disabled nil)
