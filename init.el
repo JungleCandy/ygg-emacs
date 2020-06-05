@@ -82,25 +82,25 @@
                    (abbreviate-file-name (buffer-file-name))
                  "%b"))))
 
-;; Helper function to load the theme in the correct way
-(defun setup-dracula-theme (frame)
-  "Load the theme from a hook and then remove the hook"
+;; Use Zenburn as a theme
+;; Helper functions to load the theme in the correct way
+(defun setup-zenburn-theme (frame)
+  "Load the theme from a hook then remove the hook"
   (progn
-    (load-theme 'dracula t)
-    (remove-hook  'after-make-frame-functions 'setup-dracula-theme)))
+    (load-theme 'zenburn t)
+    (remove-hook 'after-make-frame-functions 'setup-zenburn-theme)))
+
+(use-package zenburn-theme
+  :ensure t
+  :config
+  (add-hook 'after-make-frame-functions 'setup-zenburn-theme t)
+  (add-hook 'after-make-frame-functions 'setup-gold-cursor t)
+  (setq-default cursor-type 'bar))
 
 ;; I just want to have a cold cursor
 (defun setup-gold-cursor (frame)
   (progn
     (set-cursor-color "gold1")))
-
-;; There is something nice about this theme. https://draculatheme.com.
-(use-package dracula-theme
-  :ensure t
-  :config
-  (add-hook 'after-make-frame-functions 'setup-dracula-theme t)
-  (add-hook 'after-make-frame-functions 'setup-gold-cursor t)
-  (setq-default cursor-type 'bar))
 
 ;; Make sure we always use UTF-8.
 (setq locale-coding-system 'utf-8)
