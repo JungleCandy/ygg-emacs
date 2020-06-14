@@ -78,24 +78,24 @@ If you were previously tracking `master` follow these steps to transition
 
 1. Go to the master branch
 
-    git checkout master
+    `git checkout master`
     
 2. Rename `master` to `main` locally
 
-    git branch -m master main
+    `git branch -m master main`
     
 3. Make sure you have all the latest commits from the upstream
 
-    git fetch
+    `git fetch`
     
 4. Remove the tracking link to master
 
-    git branch --unset-upstream
+    `git branch --unset-upstream`
     
 5. Add track the new default branch
 
-    git branch -u origin/main
+    `git branch -u origin/main`
     
 6. Update the default branch to be origin/main
 
-    git symbolic-ref refs/remotes/origin/head refs/remotes/origin/main
+    `git symbolic-ref refs/remotes/origin/head refs/remotes/origin/main`
