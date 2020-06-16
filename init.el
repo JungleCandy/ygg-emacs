@@ -4,6 +4,10 @@
 
 (require 'package)
 
+;; Personal information
+(setq user-full-name "Abizer Nasir"
+      user-mail-address "abizern@mac.com")
+
 ;; Turn off defadvice warnings during startup
 (setq ad-redefinition-action 'accept)
 
