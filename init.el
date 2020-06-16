@@ -539,6 +539,20 @@
 (use-package flymake-go
   :ensure t)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; Swift support
+
+(use-package lsp-sourcekit
+  :ensure t
+  :after lsp-mode
+  :config
+  (setq lsp-sourcekit-executable "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp"))
+
+(use-package swift-mode
+  :ensure t
+  :hook (swift-mode . (lambda() (lsp))))
+
 ;; Run configuration functions
 
 ;; web-mode is a special mode for HTML which cops with embedded JS/CSS,

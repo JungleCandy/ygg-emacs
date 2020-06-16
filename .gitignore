@@ -10,4 +10,5 @@
 /savefile
 /network-security.data
 /transient
+.lsp-session-*
 
