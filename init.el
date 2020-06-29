@@ -6,7 +6,8 @@
 
 ;; Personal information
 (setq user-full-name "Abizer Nasir"
-      user-mail-address "abizern@mac.com")
+      user-mail-address "abizern@mac.com"
+      user-domain "abizern.org")
 
 ;; Turn off defadvice warnings during startup
 (setq ad-redefinition-action 'accept)
