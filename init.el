@@ -9,6 +9,9 @@
       user-mail-address "abizern@mac.com"
       user-domain "abizern.org")
 
+;; Move files to trash
+(setq delete-by-moving-to-trash t)
+
 ;; Turn off defadvice warnings during startup
 (setq ad-redefinition-action 'accept)
 
@@ -654,6 +657,10 @@
   :config
   ;; Stop org-mode from highjacking shift-cursor keys.
   (add-hook 'org-mode-hook (lambda () (visual-line-mode 1)))
+  (setq org-directory "~/Documents/Org")
+  (setq org-metadir (concat org-directory "_orgmata/"))
+  (setq org-archive-location (concat org-metadir "archive.org::date-tree"))
+  (setq org-default-notes-file (concat org-directory "BATF.org"))
   ;; Fancy bullet rendering.
   (use-package org-bullets
     :ensure t
