@@ -559,7 +559,10 @@
 
 (use-package swift-mode
   :ensure t
-  :hook (swift-mode . (lambda() (lsp))))
+  :hook (swift-mode . (lambda() (lsp)))
+  :config
+  (setq swift-mode:parenthesized-expression-offset 4)
+  (setq swift-mode:multiline-statement-offset 2))
 
 ;; Run configuration functions
 
