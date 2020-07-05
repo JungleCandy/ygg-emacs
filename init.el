@@ -660,6 +660,9 @@
   :config
   ;; Stop org-mode from highjacking shift-cursor keys.
   (add-hook 'org-mode-hook (lambda () (visual-line-mode 1)))
+  (bind-keys :map org-mode-map
+             ("M-j" . org-metaup)
+             ("M-k" . org-metadown))
   (setq org-directory "~/Documents/Org")
   (setq org-metadir (concat org-directory "_orgmata/"))
   (setq org-archive-location (concat org-metadir "archive.org::date-tree"))
