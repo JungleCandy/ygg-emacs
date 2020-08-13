@@ -517,7 +517,7 @@
   :if (memq window-system '(mac ns))
   :ensure t
   :config
-  (exex-path-from-shell-initialize)
+  (exec-path-from-shell-initialize)
   (exec-path-from-shell-copy-env "GOPATH"))
 
 (use-package go-mode
