@@ -567,7 +567,7 @@
 
 ;; Run configuration functions
 
-;; web-mode is a special mode for HTML which copes with embedded JS/CSS,
+;; web-mode is a special mode for HTML which cops with embedded JS/CSS,
 ;; JSX, various templating systems, ect.
 ;; find out more at http://web-mode.org
 (use-package web-mode
@@ -683,42 +683,6 @@
     (with-eval-after-load "org"
       (define-key org-mode-map (kbd "C-c M-l") 'org-cliplink))))
 
-;; Org-Roam
-(use-package deft
-  :ensure t
-  :after org
-  :bind
-  ("<f7>" . deft)
-  :init
-  (setq deft-file-naming-rules '((noslash . "-")
-                                 (nospace . "-")
-                                 (case-fn . downcase)))
-  :custom
-  (deft-recursive t)
-  (deft-use-filename-as-title nil)
-  (deft-use-filter-string-for-filename t)
-  (deft-extensions '("org" "md" "txt"))
-  (deft-default-extension "org")
-  (deft-directory (expand-file-name "~/Documents/Roam")))
-
-(use-package org-roam
-  :ensure t
-  :after deft org
-  :config
-  (add-hook 'org-roam-mode-hook (lambda () (org-bullets-mode 1)))
-  (setq org-roam-dailies-directory "dailies")
-  (setq org-roam-dailies-capture-templates
-        '(("d" "daily" entry #'org-roam-capture--get-point
-           "* %?\n")))
-  :custom
-  (org-roam-directory (expand-file-name "~/Documents/Roam"))
-  :bind (:map org-roam-mode-map
-              (("C-c n l" . org-roam)
-               ("C-c n f" . org-roam-find-file)
-               ("C-C n g" . org-roam-graph-show))
-              :map org-mode-map
-              (("C-c n i" . org-roam-insert))
-              (("C-c n I" . org-roam-insert-immediate))))
 ;; Latex
 
 (use-package tex
