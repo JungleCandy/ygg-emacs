@@ -520,6 +520,31 @@
   (("M-z" . zop-up-to-char)
    ("M-Z" . zop-to-char)))
 
+;; Org-mode
+(use-package org
+  :ensure t
+  :config
+  ;; Stop org-mode from highjacking shift-cursor keys.
+  (add-hook 'org-mode-hook (lambda () (visual-line-mode 1)))
+  (bind-keys :map org-mode-map
+             ("M-j" . org-metaup)
+             ("M-k" . org-metadown))
+  (setq org-directory "~/Documents/Org")
+  (setq org-metadir (concat org-directory "_orgmata/"))
+  (setq org-archive-location (concat org-metadir "archive.org::date-tree"))
+  (setq org-default-notes-file (concat org-directory "BATF.org"))
+  ;; Fancy bullet rendering.
+  (use-package org-bullets
+    :ensure t
+    :config
+    (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+  ;; Insert links from clipboard.
+  (use-package org-cliplink
+    :ensure t
+    :config
+    (with-eval-after-load "org"
+      (define-key org-mode-map (kbd "C-c M-l") 'org-cliplink))))
+
 ;; Latex
 
 (use-package tex
