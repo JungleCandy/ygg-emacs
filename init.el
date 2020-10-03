@@ -632,6 +632,13 @@
     (yas-global-mode 1))
   :mode ("\\.yasnippet" . snippet-mode))
 
+(use-package helm-c-yasnippet
+  :ensure t
+  :init
+  (setq helm-yas-space-match-any-greedy t)
+  (global-set-key (kbd "C-c y") 'helm-yas-complete)
+  (yas-global-mode 1))
+
 ;; Use the better version of zap-to-char
 (use-package zop-to-char
   :ensure t
