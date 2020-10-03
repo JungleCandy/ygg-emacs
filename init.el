@@ -681,8 +681,30 @@
     :ensure t
     :config
     (with-eval-after-load "org"
-      (define-key org-mode-map (kbd "C-c M-l") 'org-cliplink))))
-
+      (define-key org-mode-map (kbd "C-c M-l") 'org-cliplink)))
+  (require 'ox-latex)
+  (unless (boundp 'org-latex-classes)
+    (setq org-latex-classes nil))
+  ;; Override standard article classes
+  (add-to-list 'org-latex-classes
+               '("article"
+                 "\\documentclass{article}\n\\usepackage[hidelinks]{hyperref}"
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+  ;; Use Koma article class
+  ;; Select this by adding #+LaTeX_CLASS: koma-article to the org file preamble
+  (add-to-list 'org-latex-classes
+               '("koma-article"
+                 "\\documentclass{scrartcl}\n\\usepackage{fullpage}\n\\usepackage[hidelinks]{hyperref}"
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
+ 
 ;; Latex
 
 (use-package tex
