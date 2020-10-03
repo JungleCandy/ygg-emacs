@@ -1,0 +1,12 @@
+# -*- mode: snippet require-final-newline: nil -*-
+# name: Header comment for GCJ source files
+# key: gcj
+# contributor: Abizer Nasir abizern@junglecandy.com
+# --
+-- ${1:problem statement URL}
+-- Input and output with standard redirection operators
+
+-- Unless otherwise indicated, all modules used are either bundled with
+-- the Haskell Platform (http://hackage.haskell.org/platform/) or available
+-- as a separate download from Hackage (http://hackage.haskell.org/).
+$0

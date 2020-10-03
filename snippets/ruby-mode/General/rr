@@ -1,0 +1,7 @@
+#-*- mode: snippet require-final-newline: nil -*-
+# name: require_relative
+# key: rr
+# group: Personal
+# contributor: Abizer Nasir abizern@junglecandy.com
+# --
+require_relative '${1:require}'

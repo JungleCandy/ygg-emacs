@@ -1,0 +1,7 @@
+#-*- mode: snippet require-final-newline: nil -*-
+# name: erb render
+# key: %
+# group: Templates
+# contributor: Abizer Nasir abizern@junglecandy.com
+# --
+% $0 %

@@ -1,0 +1,17 @@
+#-*- mode: snippet require-final-newline: nil -*-
+# name: html5 template
+# key: html5
+# group: meta
+# contributor: Abizer Nasir abizern@junglecandy.com
+# --
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>${1:page-title}</title>
+</head>
+
+<body>
+  ${2:content}$0
+</body>
+</html>
