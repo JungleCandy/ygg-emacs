@@ -651,14 +651,13 @@
   (use-package slime
     :ensure t
     :init
-    (slime-setup '(slime-fancy)))
+    (slime-setup '(slime-fancy slime-company)))
 
-  (use-package hippie-expand-slime
+  (use-package slime-company
     :ensure t
-    :init
-    (progn
-      (add-hook 'slime-mode-hook 'set-up-slime-hippie-expand)
-      (add-hook 'slime-repl-mode-hook 'set-up-slime-hippie-expand))))
+    :after (slime company)
+    :config (setq slime-company-completion 'fuzzy
+                  slime-company-after-completion 'slime-company-just-one-space)))
 
 ;; Org-mode
 (use-package org
