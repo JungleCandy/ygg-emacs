@@ -249,11 +249,6 @@
     :config
     (setq company-quickhelp-delay 1)
     (company-quickhelp-mode 1))
-  ;; Add a completion source for emoji.
-  (use-package company-emoji
-    :ensure t
-    :config
-    (company-emoji-init))
   ;; Use C-\ to activate the Company autocompleter.
   ;; We invoke company-try-hard to gather completion candidates from multiple
   ;; sources if the active source isn't being very forthcoming.
