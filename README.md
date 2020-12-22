@@ -22,9 +22,12 @@ in one file so that. I only have one place to look for customizations.
 
 #### Install Emacs
 
-Install Emacs. For the macOS, this can be done via a homebrew cask
+Install [Emacs Plus](https://github.com/d12frosted/homebrew-emacs-plus). For MacOS this can be installed through
 
-    brew cask install emacs
+    brew tap d12frosted/emacs-plus
+    brew install emacs-plus
+    
+This isn't using any of the available options for the moment.q
     
 #### Install spell checking support
 
