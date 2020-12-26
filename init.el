@@ -656,8 +656,7 @@
   (use-package slime-company
     :ensure t
     :after (slime company)
-    :config (setq slime-company-completion 'fuzzy
-                  slime-company-after-completion 'slime-company-just-one-space)))
+    :config (setq slime-company-completion 'fuzzy)))
 
 ;; Org-mode
 (use-package org
