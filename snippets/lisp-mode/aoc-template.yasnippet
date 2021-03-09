@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# contributor: Abizer Nasir
+# name: AoCTemplate
+# key: aoc-t
+# --
+;;;; ${2:year}
+;;;; ${3:title}
+
+
+(load (merge-pathnames "../utilities.lisp" *load-truename*))
+(defparameter +input+ (load-file-lines "day${1:01}.txt"))
+
