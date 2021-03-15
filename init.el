@@ -663,7 +663,9 @@
   :ensure t
   :config
   ;; Stop org-mode from highjacking shift-cursor keys.
-  (add-hook 'org-mode-hook (lambda () (visual-line-mode 1)))
+  (add-hook 'org-mode-hook (lambda ()
+                             (visual-line-mode 1)
+                             (define-key org-mode-map (kbd "C-c t") 'yas-next-field)))
   (bind-keys :map org-mode-map
              ("M-j" . org-metaup)
              ("M-k" . org-metadown))
@@ -676,6 +678,13 @@
     :ensure t
     :config
     (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+  ;; Flashcards
+  (use-package org-drill
+    :ensure t
+    :config (progn
+              (add-to-list 'org-modules 'org-drill)
+              (setq org-drill-add-random-noise-to-intervals-p t)
+              (setq org-drill-learn-fraction 0.25)))
   ;; Insert links from clipboard.
   (use-package org-cliplink
     :ensure t
