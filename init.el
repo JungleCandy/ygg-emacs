@@ -280,7 +280,7 @@
   ("M-j" . crux-top-join-lines)                                   ;; Join lines
   ("s-k" . crux-kill-whole-line)                                  ;; Kill whole line
   ("C-<backspace>" . crux-kill-line-backwards)                    ;; Kill line backwards
-  ("C-c i" . crux-ispell-word-then-abbrev)                        ;; Fix word using ispell and ten save to abbrev.
+  ("C-c i" . crux-ispell-word-then-abbrev)                        ;; Fix word using ispell and then save to abbrev.
   )
 
 ;; Strict whitespace with ethan-wspace: highlight bad habits,
@@ -741,6 +741,22 @@
 ;; Use Ruby syntax for Podfiles - You never know, I might actually need to edit them
 (add-to-list 'auto-mode-alist '("Podfile\\'" . ruby-mode))
 (add-to-list 'auto-mode-alist '("\\.podspec\\'" . ruby-mode))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; Projects with Projectile
+;;
+;; https://docs.projectile.mx/projectile/index.html
+;;
+
+(use-package projectile
+  :ensure t
+  :init
+  (projectile-mode +1)
+  :bind (:map projectile-mode-map
+              ("s-p" . projectile-command-map)
+              ("C-c p" . projectile-command-map)))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
