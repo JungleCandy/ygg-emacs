@@ -757,6 +757,10 @@
               ("s-p" . projectile-command-map)
               ("C-c p" . projectile-command-map)))
 
+(use-package helm-projectile
+  :ensure t
+  :config (helm-projectile-on))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
