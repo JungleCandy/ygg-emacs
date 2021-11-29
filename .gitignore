@@ -11,4 +11,6 @@
 /network-security.data
 /transient
 .lsp-session-*
-
+.org-id-locations
+persist/
+projectile-bookmarks.eld

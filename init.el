@@ -641,22 +641,35 @@
   (("M-z" . zop-up-to-char)
    ("M-Z" . zop-to-char)))
 
-;; SBCL and Slime
-;; Set up only if quicklisp has been installed
-(setq-local slime-helper (expand-file-name "~/.quicklisp/slime-helper.el"))
-(when (file-exists-p slime-helper)
-  (load slime-helper)
+;; SBCL and Slime and SL
+
+(defun setup-slime()
+  ;; Set up only if quicklisp has been installed
+  (setq-local slime-helper (expand-file-name "~/.quicklisp/slime-helper.el"))
+  (when (file-exists-p slime-helper)
+
+    (load slime-helper)
+    (setq inferior-lisp-program "/usr/local/bin/sbcl")
+
+    (use-package slime
+      :ensure t
+      :init
+      (slime-setup '(slime-fancy slime-company)))
+
+    (use-package slime-company
+      :ensure t
+      :after (slime company)
+      :config (setq slime-company-completion 'fuzzy))))
+
+(defun setup-sly()
   (setq inferior-lisp-program "/usr/local/bin/sbcl")
-
-  (use-package slime
+  (use-package sly
     :ensure t
-    :init
-    (slime-setup '(slime-fancy slime-company)))
+    :config
+    (with-eval-after-load 'sly
+      `(define-key sly-prefix-map (kbd "M-h") 'sly-documentation-lookup))))
 
-  (use-package slime-company
-    :ensure t
-    :after (slime company)
-    :config (setq slime-company-completion 'fuzzy)))
+(setup-sly)
 
 ;; Org-mode
 (use-package org
