@@ -826,6 +826,32 @@
                   (interactive)
                   (ignore-errors (backward-char 5))))
 
+;; Add some Xcode bindings
+(defun move-line-up ()
+  "Move the current line up"
+  (interactive)
+  (transpose-lines 1)
+  (forward-line -2)
+  (indent-according-to-mode))
+
+(defun move-line-down ()
+  "Move the current line down"
+  (interactive)
+  (forward-line 1)
+  (transpose-lines 1)
+  (forward-line -1)
+  (indent-according-to-mode))
+
+(global-set-key (kbd "M-s-]")
+                (lambda ()
+                  (interactive)
+                  (move-line-up)))
+
+(global-set-key (kbd "M-s-[")
+                (lambda ()
+                  (interactive)
+                  (move-line-down)))
+
 
 ;; If I'm running emacs, then I want it to be a server
 (require 'server)
