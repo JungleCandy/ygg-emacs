@@ -858,3 +858,11 @@
 (unless (server-running-p)
   (server-start))
 (put 'upcase-region 'disabled nil)
+
+
+;; Trying to fix an error with not being able to update packages
+;; https://emacs.stackexchange.com/questions/68288/error-retrieving-https-elpa-gnu-org-packages-archive-contents
+
+(when (and (equal emacs-version "27.2")
+           (eql system-type 'darwin))
+  (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3"))
