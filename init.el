@@ -12,6 +12,9 @@
 ;; Move files to trash
 (setq delete-by-moving-to-trash t)
 
+;; Save files before compiling
+(setq compilation-ask-about-save nil)
+
 ;; Turn off defadvice warnings during startup
 (setq ad-redefinition-action 'accept)
 
