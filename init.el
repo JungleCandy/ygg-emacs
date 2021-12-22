@@ -224,6 +224,12 @@
             (setq ispell-hunspell-dictionary-alist '(("en_GB" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "en_GB") nil utf-8))))
   (setq ispell-dictionary "en_GB"))
 
+;; Automatically save files
+(use-package super-save
+  :ensure t
+  :config
+  (super-save-mode +1))
+
 ;; All good IDEs have some interactivity
 (use-package company
   :ensure t
