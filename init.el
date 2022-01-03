@@ -713,15 +713,15 @@
                 ("DONE"  ("WAITING") ("CANCELLED") ("HOLD")))))
   (setq org-capture-templates
         (quote (("t" "todo" entry(file "~/Documents/Org/refile.org")
-                 "* TODO %?\n%U\n%a\n")
+                 "* TODO %?\n%U\n%a\n" :clock-in t :clock-resume t)
                 ("r" "respond" entry (file "~/Documents/Org/refile.org")
-                 "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n")
+                 "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
                 ("n" "note" entry (file "~/Documents/Org/refile.org")
-                 "* %? :NOTE:\n%U\n%a\n")
+                 "* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
                 ("m" "Meeting" entry (file "~/Documents/Org/refile.org")
-                 "* MEETING with %? :MEETING:\n%U")
+                 "* MEETING with %? :MEETING:\n%U" :clock-in t :clock-resume t)
                 ("p" "Phone call" entry (file "~/Documents/Org/refile.org")
-                 "* PHONE %? :PHONE:\n%U"))))
+                 "* PHONE %? :PHONE:\n%U" :clock-in t :clock-resume t))))
   
   
   ;; Fancy bullet rendering.
