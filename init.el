@@ -696,7 +696,34 @@
   (setq org-directory "~/Documents/Org")
   (setq org-metadir (concat org-directory "_orgmata/"))
   (setq org-archive-location (concat org-metadir "archive.org::date-tree"))
-  (setq org-default-notes-file (concat org-directory "BATF.org"))
+  (setq org-default-notes-file (concat org-directory "refile.org"))
+  (setq org-agenda-files (quote ("~/Documents/Org/")))cccccccc
+  (setq org-todo-keywords
+        (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
+                (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "CALL" "MEETING"))))
+  (setq org-use-fast-todo-selection t) ;; done with C-c C-t KEY
+  (setq org-treat-S-cursor-todo-selection-as-state-change nil) ;; Change state with S-left / right. Skip timestamp processing. Handy when just clearing up.
+  (setq org-todo-state-tags-triggers
+        (quote (("CANCELLED" ("CANCELLED . t"))
+                ("WAITING" ("WAITING . t"))
+                ("HOLD" ("WAITING") ("HOLD . t"))
+                (done ("WAITING") ("CANCELLED") ("HOLD"))
+                ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
+                ("NEXT"  ("WAITING") ("CANCELLED") ("HOLD"))
+                ("DONE"  ("WAITING") ("CANCELLED") ("HOLD")))))
+  (setq org-capture-templates
+        (quote (("t" "todo" entry(file "~/Documents/Org/refile.org")
+                 "* TODO %?\n%U\n%a\n")
+                ("r" "respond" entry (file "~/Documents/Org/refile.org")
+                 "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n")
+                ("n" "note" entry (file "~/Documents/Org/refile.org")
+                 "* %? :NOTE:\n%U\n%a\n")
+                ("m" "Meeting" entry (file "~/Documents/Org/refile.org")
+                 "* MEETING with %? :MEETING:\n%U")
+                ("p" "Phone call" entry (file "~/Documents/Org/refile.org")
+                 "* PHONE %? :PHONE:\n%U"))))
+  
+  
   ;; Fancy bullet rendering.
   (use-package org-bullets
     :ensure t
