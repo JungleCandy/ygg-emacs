@@ -686,7 +686,7 @@
 (use-package org
   :ensure t
   :config
-  ;; Stop org-mode from highjacking shift-cursor keys.
+  ;; Stop org-mode from hijacking shift-cursor keys.
   (add-hook 'org-mode-hook (lambda ()
                              (visual-line-mode 1)
                              (define-key org-mode-map (kbd "C-c t") 'yas-next-field)))
@@ -737,6 +737,7 @@
                  ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
                  ("\\paragraph{%s}" . "\\paragraph*{%s}")
                  ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
+
 
 ;; Latex
 
@@ -862,6 +863,11 @@
                 (lambda ()
                   (interactive)
                   (move-line-down)))
+
+;; Org-mode global keys
+(global-set-key (kbd "C-c l") #'org-store-link)
+(global-set-key (kbd "C-c a") #'org-agenda)
+(global-set-key (kbd "C-c c") #'org-capture)
 
 
 ;; If I'm running emacs, then I want it to be a server
