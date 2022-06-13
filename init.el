@@ -705,6 +705,7 @@
         (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
                 (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "CALL" "MEETING"))))
   (setq org-use-fast-todo-selection t) ;; done with C-c C-t KEY
+  (setq org-log-done 'time)
   (setq org-treat-S-cursor-todo-selection-as-state-change nil) ;; Change state with S-left / right. Skip timestamp processing. Handy when just clearing up.
   (setq org-todo-state-tags-triggers
         (quote (("CANCELLED" ("CANCELLED . t"))
