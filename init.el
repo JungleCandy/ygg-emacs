@@ -769,6 +769,12 @@
                  ("\\paragraph{%s}" . "\\paragraph*{%s}")
                  ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
 
+;; ox-hugo
+(use-package ox-hugo
+  :ensure t
+  :pin melpa
+  :after ox)
+
 ;; Latex
 
 (use-package tex
