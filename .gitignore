@@ -15,3 +15,5 @@
 persist/
 projectile-bookmarks.eld
 projects
+/.mc-lists.el
+.DS_Store
