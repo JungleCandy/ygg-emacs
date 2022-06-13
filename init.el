@@ -357,7 +357,6 @@
     (key-chord-define-global "jl" 'avy-goto-line)
     (key-chord-define-global "jk" 'avy-goto-char)
     (key-chord-define-global "JJ" 'crux-switch-to-previous-buffer)
-    (key-chord-define-global "uu" 'undo-tree-visualize)
     (key-chord-define-global "xx" 'helm-M-x)
     (key-chord-define-global "yy" 'browse-kill-ring)))
 
@@ -460,18 +459,12 @@
      (interactive "P")
      (sp-wrap-with-pair ,s)))
 
-;; Visualise history in a tree. Useful for the current session, not saved, because I don't need it
-;; persisted across multiple machines.
-(use-package undo-tree
-  :ensure t
-  :diminish undo-tree-mode
+;; Use the simpler undo-fu package instead of undoo tree
+(use-package undo-fu
   :config
-  (progn
-    (global-undo-tree-mode)
-    (setq undo-tree-visualizer-timestamps t)
-    (setq undo-tree-visualizer-diff t)
-    (setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo")))))
-
+  (global-unset-key (kbd "C-z"))
+  (global-set-key (kbd "C-z") 'undo-fu-only-undo)
+  (global-set-key (kbd "C-S-z") 'undo-fu-only-redo))
 
 ;; Make buffer titles unique by adding more information, not just another number.
 (use-package uniquify
