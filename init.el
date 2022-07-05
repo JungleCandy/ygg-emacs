@@ -461,6 +461,7 @@
 
 ;; Use the simpler undo-fu package instead of undoo tree
 (use-package undo-fu
+  :ensure t
   :config
   (global-unset-key (kbd "C-z"))
   (global-set-key (kbd "C-z") 'undo-fu-only-undo)

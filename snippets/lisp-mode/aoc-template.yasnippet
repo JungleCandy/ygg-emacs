@@ -3,10 +3,20 @@
 # name: AoCTemplate
 # key: aoc-t
 # --
-;;;; ${2:year}
-;;;; ${3:title}
+(defpackage :aoc-${1:year}-${2:two-digit-day}
+  (:use :cl)
+  (:documentation ""))
 
+(in-package :aoc-$1-$2)
 
-(load (merge-pathnames "../utilities.lisp" *load-truename*))
-(defparameter +input+ (load-file-lines "day${1:01}.txt"))
+(defparameter *raw-input* (uiop:read-file-lines "inputs/day$2.txt"))
 
+(defparameter *input* ())
+
+(defparameter *example* '($0))
+
+(defun part1 (&optional (input *input*))
+)
+
+(defun part2 (&optional (input *input*))
+)
