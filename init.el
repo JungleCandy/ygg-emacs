@@ -744,6 +744,7 @@
   (unless (boundp 'org-latex-classes)
     (setq org-latex-classes nil))
   ;; Override standard article classes
+  ;; Select this by adding #+LaTeX_CLASS: article to the org file preamble
   (add-to-list 'org-latex-classes
                '("article"
                  "\\documentclass{article}\n\\usepackage[hidelinks]{hyperref}"
@@ -762,6 +763,16 @@
                  ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
                  ("\\paragraph{%s}" . "\\paragraph*{%s}")
                  ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
+  ;; Use Koma article class with numbers
+  ;; Select this by adding #+LaTeX_CLASS: koma-article-numbered to the org file preamble
+  (add-to-list 'org-latex-classes
+               '("koma-article-numbered"
+                 "\\documentclass{scrartcl}\n\\usepackage{fullpage}\n\\usepackage[hidelinks]{hyperref}"
+                 ("\\section{%s}" . "\\section{%s}")
+                 ("\\subsection{%s}" . "\\subsection{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph{%s}")
+                 ("\\subparagraph{%s}" . "\\subparagraph{%s}")))
 
 ;; ox-hugo
 (use-package ox-hugo
