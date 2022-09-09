@@ -5,11 +5,13 @@
 # --
 (defpackage :aoc-${1:year}-${2:two-digit-day}
   (:use :cl)
+  (:export #:part1
+           #:part2)
   (:documentation ""))
 
 (in-package :aoc-$1-$2)
 
-(defparameter *raw-input* (uiop:read-file-lines "inputs/day$2.txt"))
+(defparameter *raw-input* (uiop:read-file-lines (merge-pathnames "inputs/day$2.txt" *load-truename*)))
 
 (defparameter *input* ())
 
