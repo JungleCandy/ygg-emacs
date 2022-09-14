@@ -93,20 +93,36 @@
                    (abbreviate-file-name (buffer-file-name))
                  "%b"))))
 
-;; Use Zenburn as a theme
-;; Helper functions to load the theme in the correct way
-(defun setup-zenburn-theme (frame)
-  "Load the theme from a hook then remove the hook"
-  (progn
-    (load-theme 'zenburn t)
-    (remove-hook 'after-make-frame-functions 'setup-zenburn-theme)))
+;; Themes
 
-(use-package zenburn-theme
+;; Use Tron-legacy theme
+(defun setup-tron-theme (frame)
+  "Load the Theme from a hook and then remove the hook"
+  (progn
+    (load-theme 'tron-legacy t)
+    (remove-hook 'after-make-frame-functions 'setup-tron-theme)))
+
+(use-package tron-legacy-theme
   :ensure t
   :config
-  (add-hook 'after-make-frame-functions 'setup-zenburn-theme t)
+  (add-hook 'after-make-frame-functions 'setup-tron-theme t)
   (add-hook 'after-make-frame-functions 'setup-gold-cursor t)
   (setq-default cursor-type 'bar))
+
+;; Use Zenburn as a theme
+;; Helper functions to load the theme in the correct way
+;; (defun setup-zenburn-theme (frame)
+;;   "Load the theme from a hook then remove the hook"
+;;   (progn
+;;     (load-theme 'zenburn t)
+;;     (remove-hook 'after-make-frame-functions 'setup-zenburn-theme)))
+
+;; (use-package zenburn-theme
+;;   :ensure t
+;;   :config
+;;   (add-hook 'after-make-frame-functions 'setup-zenburn-theme t)
+;;   (add-hook 'after-make-frame-functions 'setup-gold-cursor t)
+;;   (setq-default cursor-type 'bar))
 
 ;; I just want to have a cold cursor
 (defun setup-gold-cursor (frame)
