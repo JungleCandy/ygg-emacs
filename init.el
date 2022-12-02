@@ -451,8 +451,7 @@
     (setq sp-highlight-wrap-overlay nil)
     (setq sp-highlight-wrap-tag-overlay nil))
   :bind
-  (("C-M-k" . sp-kill-sexp-with-a-twist-of-lime)
-   ("C-M-f" . sp-forward-sexp)
+  (("C-M-f" . sp-forward-sexp)
    ("C-M-b" . sp-backward-sexp)
    ("C-M-n" . sp-up-sexp)
    ("C-M-d" . sp-down-sexp)
