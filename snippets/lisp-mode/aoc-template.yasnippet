@@ -3,22 +3,20 @@
 # name: AoCTemplate
 # key: aoc-t
 # --
-(defpackage :aoc-${1:year}-${2:two-digit-day}
+(defpackage :aoc/${1:full-year}/day${2:two-digit-day}
   (:use :cl)
+  (:import-from :aoc/utils)
   (:export #:part1
            #:part2)
   (:documentation ""))
 
-(in-package :aoc-$1-$2)
+(in-package :aoc/$1/day$2)
 
-(defparameter *raw-input-$1-$2* (uiop:read-file-lines (merge-pathnames "input.txt")))
+(defun parsed-input ()
+  (input-file-string $1 $2))
+  
+(defun part1 ()
+  )
 
-(defparameter *input-$1-$2* ())
-
-(defparameter *example-$1-$2* '($0))
-
-(defun part1 (&optional (input *input-$1-$2*))
-)
-
-(defun part2 (&optional (input *input-$1-$2*))
-)
+(defun part2 ()
+  )
