@@ -347,7 +347,6 @@
   :ensure t
   :config
   (progn
-    (use-package helm-config)
     (helm-mode 1))
   :bind
   (("M-y" . helm-show-kill-ring)
