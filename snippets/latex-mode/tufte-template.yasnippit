@@ -1,0 +1,31 @@
+# -*- mode: snippet -*-
+# -*- require-final-newline: nil -*-
+# name: tufte-template
+# key: tuftet
+# contributor: Abizer Nasir abizern@mac.com
+# --
+\documentclass[a4paper]{tufte-handout}
+\usepackage[utf8]{inputenc}
+%\usepackage{cite}
+
+
+\title{$0}
+\author{}
+\date{}
+
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+
+\end{abstract}
+
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
+
