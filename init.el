@@ -7,7 +7,7 @@
 ;; Personal information
 (setq user-full-name "Abizer Nasir"
       user-mail-address "abizern@mac.com"
-      user-domain "abizern.org")
+      user-domain "abizern.dev")
 
 ;; Move files to trash
 (setq delete-by-moving-to-trash t)
