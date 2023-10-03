@@ -93,6 +93,9 @@
                    (abbreviate-file-name (buffer-file-name))
                  "%b"))))
 
+;; Tab-bar-mode
+(tab-bar-mode 1)
+
 ;; Themes
 
 ;; Use Tron-legacy theme
