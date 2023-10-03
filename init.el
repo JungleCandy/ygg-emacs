@@ -95,6 +95,9 @@
 
 ;; Tab-bar-mode
 (tab-bar-mode 1)
+(setq tab-bar-show 1)
+(setq tab-bar-new-tab-choice "*scratch*")
+
 
 ;; Themes
 
