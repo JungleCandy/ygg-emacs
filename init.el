@@ -736,6 +736,7 @@
   (setq org-archive-location (concat org-metadir "archive.org::date-tree"))
   (setq org-default-notes-file (concat org-directory "refile.org"))
   (setq org-agenda-files (quote ("~/Documents/Org/")))
+  (setq org-adapt-indentation t)
   (setq org-todo-keywords
         (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
                 (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "CALL" "MEETING"))))
