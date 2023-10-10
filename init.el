@@ -300,7 +300,7 @@
   ("C-c o" . crux-open-with)                                      ;; Open the currently visited file with an external program
   ("M-n" . crux-smart-open-line-above)                            ;; Insert an empty line above the current line and indent it properly
   ("M-p" . crux-smart-open-line)                                  ;; Insert empty line and indent it properly
-  ("C-c n" . crux-cleanup-buffer-or-region)                       ;; Fix indentation and strip whitespace
+  ("C-c n c" . crux-cleanup-buffer-or-region)                       ;; Fix indentation and strip whitespace
   ("C-c e" . crux-eval-and-replace)                               ;; Evale a bit of elisp and replace it with it's result
   ("C-x p t" . crux-transpose-windows)                            ;; Transpose the buffers between two windows
   ("C-c D" . crux-delete-file-and-buffer)                         ;; Delete current file and buffer
@@ -742,7 +742,8 @@
                 (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "CALL" "MEETING"))))
   (setq org-use-fast-todo-selection t) ;; done with C-c C-t KEY
   (setq org-log-done 'time)
-  (setq org-treat-S-cursor-todo-selection-as-state-change nil) ;; Change state with S-left / right. Skip timestamp processing. Handy when just clearing up.
+  ;; Change state with S-left / right. Skip timestamp processing. Handy when just clearing up.
+  (setq org-treat-S-cursor-todo-selection-as-state-change nil) 
   (setq org-todo-state-tags-triggers
         (quote (("CANCELLED" ("CANCELLED . t"))
                 ("WAITING" ("WAITING . t"))
@@ -821,6 +822,25 @@
   :ensure t
   :pin melpa
   :after ox)
+
+;; org-roam
+
+(use-package org-roam
+  :ensure t
+  :after org
+  :init
+  (setq org-roam-v2-act t)
+  (setq org-roam-database-connector 'sqlite-builtin)
+  :custom
+  (org-roam-directory "~/Documents/OrgRoam")
+  (org-roam-completion-everywhere t)
+  :bind (("C-c n l" . org-roam-buffer-toggle)
+         ("C-c n f" . org-roam-node-find)
+         ("C-c n i" . org-roam-node-insert)
+         :map org-mode-map
+         ("C-M-i" . completion-at-point))
+  :config
+  (org-roam-setup))
 
 ;; Latex
 
