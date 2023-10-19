@@ -737,31 +737,11 @@
   (setq org-default-notes-file (concat org-directory "refile.org"))
   (setq org-agenda-files (quote ("~/Documents/Org/")))
   (setq org-startup-indented t)
-  (setq org-todo-keywords
-        (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
-                (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "CALL" "MEETING"))))
+  (setq org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
+                            (sequence "DRAFT(r)" "|" "PUBLISH(p)")))
   (setq org-use-fast-todo-selection t) ;; done with C-c C-t KEY
   (setq org-log-done 'time)
   (setq org-treat-S-cursor-todo-selection-as-state-change nil) ;; Change state with S-left / right. Skip timestamp processing. Handy when just clearing up.
-  (setq org-todo-state-tags-triggers
-        (quote (("CANCELLED" ("CANCELLED . t"))
-                ("WAITING" ("WAITING . t"))
-                ("HOLD" ("WAITING") ("HOLD . t"))
-                (done ("WAITING") ("CANCELLED") ("HOLD"))
-                ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
-                ("NEXT"  ("WAITING") ("CANCELLED") ("HOLD"))
-                ("DONE"  ("WAITING") ("CANCELLED") ("HOLD")))))
-  (setq org-capture-templates
-        (quote (("t" "todo" entry(file "~/Documents/Org/refile.org")
-                 "* TODO %?\n%U\n%a\n" :clock-in t :clock-resume t)
-                ("r" "respond" entry (file "~/Documents/Org/refile.org")
-                 "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
-                ("n" "note" entry (file "~/Documents/Org/refile.org")
-                 "* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
-                ("m" "Meeting" entry (file "~/Documents/Org/refile.org")
-                 "* MEETING with %? :MEETING:\n%U" :clock-in t :clock-resume t)
-                ("p" "Phone call" entry (file "~/Documents/Org/refile.org")
-                 "* PHONE %? :PHONE:\n%U" :clock-in t :clock-resume t))))
   
   
   ;; Fancy bullet rendering.
@@ -786,35 +766,29 @@
   (unless (boundp 'org-latex-classes)
     (setq org-latex-classes nil))
   ;; Override standard article classes
-  ;; Select this by adding #+LaTeX_CLASS: article to the org file preamble
+  ;; Select this by adding #+LaTeX_CLASS: <class-name> to the org file preamble
   (add-to-list 'org-latex-classes
                '("article"
-                 "\\documentclass{article}\n\\usepackage[hidelinks]{hyperref}"
+                 "\\documentclass[a4paper]{scrartcl}
+\\usepackage[utf8]{inputenc}
+\\usepackage{amsmath}
+\\usepackage{amssymb}
+\\usepackage{fullpage}"
                  ("\\section{%s}" . "\\section*{%s}")
                  ("\\subsection{%s}" . "\\subsection*{%s}")
                  ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
                  ("\\paragraph{%s}" . "\\paragraph*{%s}")
                  ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
-  ;; Use Koma article class
-  ;; Select this by adding #+LaTeX_CLASS: koma-article to the org file preamble
   (add-to-list 'org-latex-classes
-               '("koma-article"
-                 "\\documentclass{scrartcl}\n\\usepackage{fullpage}\n\\usepackage[hidelinks]{hyperref}"
+               '("tufte-handout"
+                 "\\documentclass[a4paper]{tufte-handout}
+\\usepackage[utf8]{inputenc}
+\\usepackage{amsmath}
+\\usepackage{amssymb}"
                  ("\\section{%s}" . "\\section*{%s}")
                  ("\\subsection{%s}" . "\\subsection*{%s}")
-                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
                  ("\\paragraph{%s}" . "\\paragraph*{%s}")
                  ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
-  ;; Use Koma article class with numbers
-  ;; Select this by adding #+LaTeX_CLASS: koma-article-numbered to the org file preamble
-  (add-to-list 'org-latex-classes
-               '("koma-article-numbered"
-                 "\\documentclass{scrartcl}\n\\usepackage{fullpage}\n\\usepackage[hidelinks]{hyperref}"
-                 ("\\section{%s}" . "\\section{%s}")
-                 ("\\subsection{%s}" . "\\subsection{%s}")
-                 ("\\subsubsection{%s}" . "\\subsubsection{%s}")
-                 ("\\paragraph{%s}" . "\\paragraph{%s}")
-                 ("\\subparagraph{%s}" . "\\subparagraph{%s}")))
 
 ;; ox-hugo
 (use-package ox-hugo
