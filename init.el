@@ -503,6 +503,19 @@
   (require 'haskell-interactive-mode)
   (require 'haskell-process)
   :config
+  (use-package lsp-mode
+    :ensure t)
+  (use-package lsp-ui
+    :ensure t)
+  (use-package lsp-haskell
+    :ensure t
+    :hook
+    (haskell-mode . lsp)
+    (haskell-literate-mode . lsp))
+  (use-package flymake-hlint
+    :ensure t
+    :config
+    (add-hook 'haskell-mode-hook 'flymake-hlint-load))
   (add-hook 'haskell-mode-hook 'haskell-auto-insert-module-template)
   (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
   (eval-after-load "haskell-mode" '(define-key haskell-mode-map (kbd "C-c C-c") 'haskell-compile))
@@ -520,11 +533,6 @@
    '(haskell-process-suggest-remove-import-lines t)
    '(haskell-process-auto-import-loaded-modules t)
    '(haskell-process-log t)))
-
-(use-package flymake-hlint
-  :ensure t
-  :config
-  (add-hook 'haskell-mode-hook 'flymake-hlint-load))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
