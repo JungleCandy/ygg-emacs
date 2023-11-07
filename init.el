@@ -521,6 +521,11 @@
    '(haskell-process-auto-import-loaded-modules t)
    '(haskell-process-log t)))
 
+(use-package flymake-hlint
+  :ensure t
+  :config
+  (add-hook 'haskell-mode-hook 'flymake-hlint-load))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; Golang support
