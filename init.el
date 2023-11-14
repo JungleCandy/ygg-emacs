@@ -191,9 +191,9 @@
   (interactive)
   (unwind-protect
       (progn
-        (linum-mode 1)
+        (display-line-numbers-mode 1)
         (call-interactively 'goto-line))
-    (linum-mode -1)))
+    (display-line-numbers-mode -1)))
 
 (defun json-format ()
   "Reformats the JSON in the region for humans."
