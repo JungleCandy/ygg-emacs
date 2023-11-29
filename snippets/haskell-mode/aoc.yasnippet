@@ -1,0 +1,22 @@
+# -*- mode: snippet require-final-newline: nil -*-
+# name: Advent of Code template
+# key: aoctt
+# binding: C-a C-t
+# expand-env: ((yas-indent-line 'fixed))
+# contributor: Abizer Nasir abizern@mac.com
+# --
+-- $0
+-- usage: runghc Day${1:day-number}.hs < ../input/day$1.txt
+--
+-- description:
+
+module Day$1 where
+
+solve1 :: String -> Int
+solve1 s = undefined
+
+solve2 :: String -> Int
+solve2 s = undefined
+
+solve :: String -> String
+solve s = mconcat ["part1", "\n", "part2", "\n"]
