@@ -844,6 +844,33 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
+;; Convenience Functions
+
+;; Insert Date
+;; Usage
+;; - `C-c C-d` -> 13/04/2024
+;; - `C-u C-c C-d` -> 2024-04-13
+;; - `C-u C-u C-d C-d` -> Tuesday, April 13, 2024
+
+(defun ygg-insert-date (prefix)
+  "Insert the current date. With prefix-argument use ISO format. With two
+prefix arguments, write out the day and month name"
+  (interactive "P")
+  (let ((format (cond
+                 ((not prefix) "%d/%m/%Y")
+                 ((equal prefix '(4)) "%F")
+                 ((equal prefix '(16)) "%A, %B %d, %Y")))
+        (system-time-locale "en_GB"))
+    (insert (format-time-string format))))
+
+(defun ygg-insert-iso-date-time ()
+    "Insert the current date in ISO format for UTC"
+    (interactive)
+    (insert (format-time-string "%F%T%z" nil "UTC")))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
 ;; Key Bindings
 
 
@@ -923,6 +950,11 @@
 (global-set-key (kbd "C-c l") #'org-store-link)
 (global-set-key (kbd "C-c a") #'org-agenda)
 (global-set-key (kbd "C-c c") #'org-capture)
+
+;; ygg date functions
+(global-set-key (kbd "C-c C-d") 'ygg-insert-date)
+(global-set-key (kbd "C-c C-t") 'ygg-insert-iso-date-time)
+
 
 
 ;; If I'm running emacs, then I want it to be a server
