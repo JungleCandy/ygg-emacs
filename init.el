@@ -337,10 +337,6 @@
 (use-package gist
   :ensure t)
 
-;; Use Emacs as the git-commit editor
-(use-package git-commit
-  :ensure t)
-
 ;; Mark uncommitted changes in the fringe.
 (use-package git-gutter-fringe
   :ensure t
@@ -493,52 +489,6 @@
                 uniquify-separator "/"
                 uniquify-after-kill-buffer-p t     ;; Rename after killing uniquified
                 uniquify-ignore-buffers-re "^\\*")) ;; Don't futz with special buffers
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-;; Haskell support
-(use-package haskell-mode
-  :ensure t
-  :init
-  (require 'haskell-interactive-mode)
-  (require 'haskell-process)
-  :config
-  (use-package lsp-mode
-    :ensure t)
-  (use-package lsp-ui
-    :ensure t)
-  (use-package lsp-haskell
-    :ensure t
-    :hook
-    (haskell-mode . lsp)
-    (haskell-literate-mode . lsp))
-  (use-package flymake-hlint
-    :ensure t
-    :config
-    (add-hook 'haskell-mode-hook 'flymake-hlint-load))
-  (use-package ormolu
-    :ensure t
-    :hook (haskell-mode . ormolu-format-on-save-mode)
-    :bind
-    (:map haskell-mode-map
-          ("C-c r" . ormolu-format-buffer)))  
-  (add-hook 'haskell-mode-hook 'haskell-auto-insert-module-template)
-  (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
-  (eval-after-load "haskell-mode" '(define-key haskell-mode-map (kbd "C-c C-c") 'haskell-compile))
-  (eval-after-load "haskell-cabal" '(define-key haskell-cabal-mode-map (kbd "C-c C-c") 'haskell-compile))
-  (define-key haskell-mode-map (kbd "C-c C-l") 'haskell-process-load-file)
-  (define-key haskell-mode-map (kbd "C-`") 'haskell-interactive-bring)
-  (define-key haskell-mode-map (kbd "C-c C-t") 'haskell-process-do-type)
-  (define-key haskell-mode-map (kbd "C-c C-i") 'haskell-process-do-info)
-  (define-key haskell-mode-map (kbd "C-c C-k") 'haskell-interactive-mode-clear)
-  (define-key haskell-mode-map (kbd "C-c c") 'haskell-process-cabal)
-  (define-key haskell-cabal-mode-map (kbd "C-`") 'haskell-interactive-bring)
-  (define-key haskell-cabal-mode-map (kbd "C-c C-k") 'haskell-interactive-mode-clear)
-  (define-key haskell-cabal-mode-map (kbd "C-c c") 'haskell-process-cabal)
-  (custom-set-variables
-   '(haskell-process-suggest-remove-import-lines t)
-   '(haskell-process-auto-import-loaded-modules t)
-   '(haskell-process-log t)))
 
 ;; Run configuration functions
 
