@@ -581,7 +581,7 @@
   (when (file-exists-p slime-helper)
 
     (load slime-helper)
-    (setq inferior-lisp-program "/usr/local/bin/sbcl")
+    (setq inferior-lisp-program "/usr/bin/sbcl")
 
     (use-package slime
       :ensure t
