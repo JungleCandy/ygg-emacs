@@ -60,8 +60,8 @@
 (use-package f :ensure t)
 
 ;; Reduces the frequency of garbage collection by making it happen on
-;; each 50MB of allocated data (the default is on every 0.76MB).
-(setq gc-cons-threshold 50000000)
+;; each 25MB of allocated data (the default is on every 0.76MB).
+(setq gc-cons-threshold 25000000)
 
 ;; Warn when opening files bigger than 100MB.
 (setq large-file-warning-threshold 100000000)
@@ -540,68 +540,6 @@
    '(haskell-process-auto-import-loaded-modules t)
    '(haskell-process-log t)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-;; Golang support
-
-;; https://johnsogg.github.io/emacs-golang For basics of why and how.
-
-;; Let's get the PATH and GOPATH from the shell
-(use-package exec-path-from-shell
-  :if (memq window-system '(mac ns))
-  :ensure t
-  :config
-  (exec-path-from-shell-initialize)
-  (exec-path-from-shell-copy-env "GOPATH"))
-
-(use-package go-mode
-  :ensure t
-  :config
-  (add-hook 'before-save-hook 'gofmt-before-save)   ; gofmt before every save
-  (setq gofmt-command "goimports")                  ; gofmt use invokes goimports
-  (if (not (string-match "go" compile-command))     ; set compile command default
-      (set (make-local-variable 'compile-command)
-           "go build -v && go test -v && go vet"))
-  (use-package go-guru
-    :ensure t
-    :config (go-guru-hl-identifier-mode))                      ; Highlight identifiers
-  (auto-complete-mode 1)
-  :bind (:map go-mode-map
-              ("M-." . godef-jump)                  ; Go to definition
-              ("M-*" . pop-tag-mark)                ; Return from whence you came
-              ("M-p" . compile)                     ; Invoke the compiler
-              ("M-P" . recompile)                   ; Redo most recent compile cmd
-              ("M-]" . next-error)                  ; Go to next error (or msg)
-              ("M-[" . previous-error)              ; Go to previous error (or msg)
-              )
-  :mode ("\\.go\\'" . go-mode))
-
-(use-package auto-complete
-  :ensure t)
-
-(use-package go-autocomplete
-  :ensure t)
-
-(use-package flymake-go
-  :ensure t)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-;; Swift support
-
-(use-package lsp-sourcekit
-  :ensure t
-  :after lsp-mode
-  :config
-  (setq lsp-sourcekit-executable "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp"))
-
-(use-package swift-mode
-  :ensure t
-  :hook (swift-mode . (lambda() (lsp)))
-  :config
-  (setq swift-mode:parenthesized-expression-offset 4)
-  (setq swift-mode:multiline-statement-offset 2))
-
 ;; Run configuration functions
 
 ;; web-mode is a special mode for HTML which cops with embedded JS/CSS,
@@ -818,9 +756,6 @@
 ;; Use Ruby for Fastlane files
 (add-to-list 'auto-mode-alist '("Fastfile\\'" . ruby-mode))
 
-;; Use Ruby syntax for Podfiles - You never know, I might actually need to edit them
-(add-to-list 'auto-mode-alist '("Podfile\\'" . ruby-mode))
-(add-to-list 'auto-mode-alist '("\\.podspec\\'" . ruby-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;

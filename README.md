@@ -1,6 +1,6 @@
 # Ygg-Emacs
 
-Personal Emacs configuration
+Personal Emacs configuration for the machine called Wintermute, which is a MacBook Air running Linux Mint.
 
 ## Why
 
