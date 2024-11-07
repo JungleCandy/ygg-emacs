@@ -38,8 +38,16 @@
 
 ;; Keep downloaded packages organised.
 (setq package-user-dir (expand-file-name "elpa" dotfiles-dir))
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
+
+(setq package-archives '(("melpa" . "https://melpa.org/packages/")
+                         ("stable" . "https://stable.melpa.org/packages/")
+                         ("gnu" . "https://elpa.gnu.org/packages/")
+                         ("org" . "http://orgmode.org/elpa/")))
+(customize-set-variable 'package-archive-priorities '(("gnu"    . 99)
+                                                      ("nongnu" . 80)
+                                                      ("org" . 75)
+                                                      ("stable" . 70)
+                                                      ("melpa"  . 0)))
 
 ;; To get the package manager going, we invoke its initialise function.
 (package-initialize)
@@ -335,10 +343,6 @@
 ;; Use M-x gist-buffer or M-x gist-region to create a gist
 ;; directly from the current buffer or selection.
 (use-package gist
-  :ensure t)
-
-;; Use Emacs as the git-commit editor
-(use-package git-commit
   :ensure t)
 
 ;; Mark uncommitted changes in the fringe.
