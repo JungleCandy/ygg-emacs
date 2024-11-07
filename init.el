@@ -688,12 +688,12 @@
 ;; Common-Lisp support
 
 (defun setup-slime()
-  ;; Set up only if quicklisp has been installed
+  ;; Set up only if the quicklisp helper has been installed
   (setq-local slime-helper (expand-file-name "~/.quicklisp/slime-helper.el"))
   (when (file-exists-p slime-helper)
 
     (load slime-helper)
-    (setq inferior-lisp-program "/usr/local/bin/sbcl")
+    (setq inferior-lisp-program "/opt/homebrew/bin/sbcl")
 
     (use-package slime
       :ensure t
@@ -706,7 +706,7 @@
       :config (setq slime-company-completion 'fuzzy))))
 
 (defun setup-sly()
-  (setq inferior-lisp-program "/usr/local/bin/sbcl")
+  (setq inferior-lisp-program "/opt/homebrew/bin/sbcl")
   (use-package sly
     :ensure t
     :config
