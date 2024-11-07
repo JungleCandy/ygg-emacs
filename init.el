@@ -337,6 +337,10 @@
 (use-package gist
   :ensure t)
 
+;; Use Emacs as the git-commit editor
+(use-package git-commit
+  :ensure t)
+
 ;; Mark uncommitted changes in the fringe.
 (use-package git-gutter-fringe
   :ensure t
