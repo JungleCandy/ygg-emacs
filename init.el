@@ -43,11 +43,11 @@
                          ("stable" . "https://stable.melpa.org/packages/")
                          ("gnu" . "https://elpa.gnu.org/packages/")
                          ("org" . "http://orgmode.org/elpa/")))
-(customize-set-variable 'package-archive-priorities '(("gnu"    . 99)
-                                                      ("nongnu" . 80)
-                                                      ("org" . 75)
-                                                      ("stable" . 70)
-                                                      ("melpa"  . 0)))
+(customize-set-variable 'package-archive-priorities '(("gnu"    . 63)
+                                                      ("nongnu" . 10)
+                                                      ("org" . 99)
+                                                      ("stable" . 80)
+                                                      ("melpa"  . 90)))
 
 ;; To get the package manager going, we invoke its initialise function.
 (package-initialize)
@@ -179,7 +179,7 @@
 (set-default 'indent-tabs-mode nil)
 
 ;; Set default indentation for various languages. Maybe set up others as their mode is set.
-(setq-default tab-width 4) ;; Objective-C was my first professional programming language.
+(setq-default tab-width 2) ;; Objective-C was my first professional programming language.
 
 ;; Define where to keep the autoload declarations.
 (setq autoload-file (expand-file-name "loaddefs.el" savefile-dir))
@@ -267,7 +267,7 @@
   :commands company-mode
   :config
   ;; Enable company-mode globally.
-  (global-company-mode)
+  (global-company-mode +1)
   ;; Except when you're in term-mode.
   (setq company-global-modes '(not term-mode))
   ;; Give Company a decent default configuration.
@@ -338,11 +338,6 @@
 ;; Keep hitting C-= to expand it to the next logical unit.
 ;; Protip: this goes really well with multiple cursors.
 (use-package expand-region
-  :ensure t)
-
-;; Use M-x gist-buffer or M-x gist-region to create a gist
-;; directly from the current buffer or selection.
-(use-package gist
   :ensure t)
 
 ;; Mark uncommitted changes in the fringe.
@@ -498,51 +493,51 @@
                 uniquify-after-kill-buffer-p t     ;; Rename after killing uniquified
                 uniquify-ignore-buffers-re "^\\*")) ;; Don't futz with special buffers
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; General programming mode support
+;;
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; Haskell support
-(use-package haskell-mode
-  :ensure t
-  :init
-  (require 'haskell-interactive-mode)
-  (require 'haskell-process)
-  :config
-  (use-package lsp-mode
-    :ensure t)
-  (use-package lsp-ui
-    :ensure t)
-  (use-package lsp-haskell
-    :ensure t
-    :hook
-    (haskell-mode . lsp)
-    (haskell-literate-mode . lsp))
-  (use-package flymake-hlint
-    :ensure t
-    :config
-    (add-hook 'haskell-mode-hook 'flymake-hlint-load))
-  (use-package ormolu
-    :ensure t
-    :hook (haskell-mode . ormolu-format-on-save-mode)
-    :bind
-    (:map haskell-mode-map
-          ("C-c r" . ormolu-format-buffer)))  
-  (add-hook 'haskell-mode-hook 'haskell-auto-insert-module-template)
-  (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
-  (eval-after-load "haskell-mode" '(define-key haskell-mode-map (kbd "C-c C-c") 'haskell-compile))
-  (eval-after-load "haskell-cabal" '(define-key haskell-cabal-mode-map (kbd "C-c C-c") 'haskell-compile))
-  (define-key haskell-mode-map (kbd "C-c C-l") 'haskell-process-load-file)
-  (define-key haskell-mode-map (kbd "C-`") 'haskell-interactive-bring)
-  (define-key haskell-mode-map (kbd "C-c C-t") 'haskell-process-do-type)
-  (define-key haskell-mode-map (kbd "C-c C-i") 'haskell-process-do-info)
-  (define-key haskell-mode-map (kbd "C-c C-k") 'haskell-interactive-mode-clear)
-  (define-key haskell-mode-map (kbd "C-c c") 'haskell-process-cabal)
-  (define-key haskell-cabal-mode-map (kbd "C-`") 'haskell-interactive-bring)
-  (define-key haskell-cabal-mode-map (kbd "C-c C-k") 'haskell-interactive-mode-clear)
-  (define-key haskell-cabal-mode-map (kbd "C-c c") 'haskell-process-cabal)
-  (custom-set-variables
-   '(haskell-process-suggest-remove-import-lines t)
-   '(haskell-process-auto-import-loaded-modules t)
-   '(haskell-process-log t)))
+;; (use-package haskell-mode
+;;   :ensure t
+;;   :init
+;;   (require 'haskell-interactive-mode)
+;;   (require 'haskell-process)
+;;   :config
+;;   (use-package lsp-haskell
+;;     :ensure t)
+;;   (use-package flymake-hlint
+;;     :ensure t
+;;     :config
+;;     (add-hook 'haskell-mode-hook 'flymake-hlint-load))
+;;   (use-package ormolu
+;;     :ensure t
+;;     :hook (haskell-mode . ormolu-format-on-save-mode)
+;;     :bind
+;;     (:map haskell-mode-map
+;;           ("C-c r" . ormolu-format-buffer)))  
+;;   (add-hook 'haskell-mode-hook 'haskell-auto-insert-module-template)
+;;   (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
+;;   (eval-after-load "haskell-mode" '(define-key haskell-mode-map (kbd "C-c C-c") 'haskell-compile))
+;;   (eval-after-load "haskell-cabal" '(define-key haskell-cabal-mode-map (kbd "C-c C-c") 'haskell-compile))
+;;   (define-key haskell-mode-map (kbd "C-c C-l") 'haskell-process-load-file)
+;;   (define-key haskell-mode-map (kbd "C-`") 'haskell-interactive-bring)
+;;   (define-key haskell-mode-map (kbd "C-c C-t") 'haskell-process-do-type)
+;;   (define-key haskell-mode-map (kbd "C-c C-i") 'haskell-process-do-info)
+;;   (define-key haskell-mode-map (kbd "C-c C-k") 'haskell-interactive-mode-clear)
+;;   (define-key haskell-mode-map (kbd "C-c c") 'haskell-process-cabal)
+;;   (define-key haskell-cabal-mode-map (kbd "C-`") 'haskell-interactive-bring)
+;;   (define-key haskell-cabal-mode-map (kbd "C-c C-k") 'haskell-interactive-mode-clear)
+;;   (define-key haskell-cabal-mode-map (kbd "C-c c") 'haskell-process-cabal)
+;;   (custom-set-variables
+;;    '(haskell-process-suggest-remove-import-lines t)
+;;    '(haskell-process-auto-import-loaded-
+;;     modules t)
+   ;; '(haskell-process-log t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -551,60 +546,87 @@
 ;; https://johnsogg.github.io/emacs-golang For basics of why and how.
 
 ;; Let's get the PATH and GOPATH from the shell
-(use-package exec-path-from-shell
-  :if (memq window-system '(mac ns))
-  :ensure t
-  :config
-  (exec-path-from-shell-initialize)
-  (exec-path-from-shell-copy-env "GOPATH"))
+;; (use-package exec-path-from-shell
+;;   :if (memq window-system '(mac ns))
+;;   :ensure t
+;;   :config
+;;   (exec-path-from-shell-initialize)
+;;   (exec-path-from-shell-copy-env "GOPATH"))
 
-(use-package go-mode
-  :ensure t
-  :config
-  (add-hook 'before-save-hook 'gofmt-before-save)   ; gofmt before every save
-  (setq gofmt-command "goimports")                  ; gofmt use invokes goimports
-  (if (not (string-match "go" compile-command))     ; set compile command default
-      (set (make-local-variable 'compile-command)
-           "go build -v && go test -v && go vet"))
-  (use-package go-guru
-    :ensure t
-    :config (go-guru-hl-identifier-mode))                      ; Highlight identifiers
-  (auto-complete-mode 1)
-  :bind (:map go-mode-map
-              ("M-." . godef-jump)                  ; Go to definition
-              ("M-*" . pop-tag-mark)                ; Return from whence you came
-              ("M-p" . compile)                     ; Invoke the compiler
-              ("M-P" . recompile)                   ; Redo most recent compile cmd
-              ("M-]" . next-error)                  ; Go to next error (or msg)
-              ("M-[" . previous-error)              ; Go to previous error (or msg)
-              )
-  :mode ("\\.go\\'" . go-mode))
+;; (use-package go-mode
+;;   :ensure t
+;;   :config
+;;   (add-hook 'before-save-hook 'gofmt-before-save)   ; gofmt before every save
+;;   (setq gofmt-command "goimports")                  ; gofmt use invokes goimports
+;;   (if (not (string-match "go" compile-command))     ; set compile command default
+;;       (set (make-local-variable 'compile-command)
+;;            "go build -v && go test -v && go vet"))
+;;   (use-package go-guru
+;;     :ensure t
+;;     :config (go-guru-hl-identifier-mode))                      ; Highlight identifiers
+;;   (auto-complete-mode 1)
+;;   :bind (:map go-mode-map
+;;               ("M-." . godef-jump)                  ; Go to definition
+;;               ("M-*" . pop-tag-mark)                ; Return from whence you came
+;;               ("M-p" . compile)                     ; Invoke the compiler
+;;               ("M-P" . recompile)                   ; Redo most recent compile cmd
+;;               ("M-]" . next-error)                  ; Go to next error (or msg)
+;;               ("M-[" . previous-error)              ; Go to previous error (or msg)
+;;               )
+;;   :mode ("\\.go\\'" . go-mode))
 
-(use-package auto-complete
-  :ensure t)
+;; (use-package auto-complete
+;;   :ensure t)
 
-(use-package go-autocomplete
-  :ensure t)
+;; (use-package go-autocomplete
+;;   :ensure t)
 
-(use-package flymake-go
-  :ensure t)
+;; (use-package flymake-go
+;;   :ensure t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; Swift support
+;; With assistance of https://www.swift.org/documentation/articles/zero-to-swift-emacs.html
 
+;;; Locate sourcekit-lsp
+(defun find-sourcekit-lsp ()
+  (or (executable-find "sourcekit-lsp")
+      (and (eq system-type 'darwin)
+           (string-trim (shell-command-to-string "xcrun -f sourcekit-lsp")))
+      "/usr/local/swift/usr/bin/sourcekit-lsp"))
+
+;; .editorconfig file support
+(use-package editorconfig
+  :ensure t
+  :config (editorconfig-mode +1))
+
+;; Swift editing support
+(use-package swift-mode
+  :ensure t
+  :mode "\\.swift\\'"
+  :interpreter "swift"
+  :hook (swift-mode . (lambda ()
+                        (lsp)
+                        (setq tab-width 2)
+                        (setq swift-mode:basic-offset 2))))
+
+;; Used to interface with swift-lsp.
+(use-package lsp-mode
+  :ensure t
+  :commands lsp
+  :hook ((swift-mode . lsp)))
+
+;; lsp-mode's UI modules
+(use-package lsp-ui
+  :ensure t)
+
+;; sourcekit-lsp support
 (use-package lsp-sourcekit
   :ensure t
   :after lsp-mode
-  :config
-  (setq lsp-sourcekit-executable "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp"))
-
-(use-package swift-mode
-  :ensure t
-  :hook (swift-mode . (lambda() (lsp)))
-  :config
-  (setq swift-mode:parenthesized-expression-offset 4)
-  (setq swift-mode:multiline-statement-offset 2))
+  :custom
+  (lsp-sourcekit-executable (find-sourcekit-lsp) "Find sourcekit-lsp"))
 
 ;; Run configuration functions
 
@@ -729,7 +751,8 @@
   ;; Stop org-mode from hijacking shift-cursor keys.
   (add-hook 'org-mode-hook (lambda ()
                              (visual-line-mode 1)
-                             (define-key org-mode-map (kbd "C-c t") 'yas-next-field)))
+                             (define-key org-mode-map (kbd "C-c t") 'yas-next-field))
+            (setq org-src-tab-acts-natively t))
   (bind-keys :map org-mode-map
              ("M-j" . org-metaup)
              ("M-k" . org-metadown))
