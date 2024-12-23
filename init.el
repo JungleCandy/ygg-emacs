@@ -38,8 +38,16 @@
 
 ;; Keep downloaded packages organised.
 (setq package-user-dir (expand-file-name "elpa" dotfiles-dir))
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
+
+(setq package-archives '(("melpa" . "https://melpa.org/packages/")
+                         ("stable" . "https://stable.melpa.org/packages/")
+                         ("gnu" . "https://elpa.gnu.org/packages/")
+                         ("org" . "http://orgmode.org/elpa/")))
+(customize-set-variable 'package-archive-priorities '(("gnu"    . 63)
+                                                      ("nongnu" . 10)
+                                                      ("org" . 99)
+                                                      ("stable" . 80)
+                                                      ("melpa"  . 90)))
 
 ;; To get the package manager going, we invoke its initialise function.
 (package-initialize)
@@ -490,7 +498,15 @@
                 uniquify-after-kill-buffer-p t     ;; Rename after killing uniquified
                 uniquify-ignore-buffers-re "^\\*")) ;; Don't futz with special buffers
 
-;; Run configuration functions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; General programming mode support
+;;
+
+;; .editorconfig file support
+(use-package editorconfig
+    :ensure t
+    :config (editorconfig-mode +1))
+
 
 ;; web-mode is a special mode for HTML which cops with embedded JS/CSS,
 ;; JSX, various templating systems, ect.
@@ -594,7 +610,7 @@
       :config (setq slime-company-completion 'fuzzy))))
 
 (defun setup-sly()
-  (setq inferior-lisp-program "/usr/local/bin/sbcl")
+  (setq inferior-lisp-program "/usr/bin/sbcl")
   (use-package sly
     :ensure t
     :config
