@@ -110,16 +110,22 @@
 ;; Themes
 
 ;; Use Tron-legacy theme
-(defun setup-tron-theme (frame)
-  "Load the Theme from a hook and then remove the hook"
-  (progn
-    (load-theme 'tron-legacy t)
-    (remove-hook 'after-make-frame-functions 'setup-tron-theme)))
+;; (defun setup-tron-theme (frame)
+;;   "Load the Theme from a hook and then remove the hook"
+;;   (progn
+;;     (load-theme 'tron-legacy t)
+;;     (remove-hook 'after-make-frame-functions 'setup-tron-theme)))
 
-(use-package tron-legacy-theme
-  :ensure t
-  :config
-  (add-hook 'after-make-frame-functions 'setup-tron-theme t)
+;; (use-package tron-legacy-theme
+;;   :ensure t
+;;   :config
+;;   (add-hook 'after-make-frame-functions 'setup-tron-theme t)
+;;   (add-hook 'after-make-frame-functions 'setup-gold-cursor t)
+;;   (setq-default cursor-type 'bar))
+
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
+(progn
+  (load-theme 'dracula-pro-pro :no-confirm)
   (add-hook 'after-make-frame-functions 'setup-gold-cursor t)
   (setq-default cursor-type 'bar))
 
