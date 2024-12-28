@@ -584,6 +584,22 @@
 ;; (use-package flymake-go
 ;;   :ensure t)
 
+;; .editorconfig file support
+(use-package editorconfig
+  :ensure t
+  :config (editorconfig-mode +1))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; C Support
+;;
+
+(use-package eglot
+  :ensure t
+  :config
+  (add-to-list 'eglot-server-programs '((C++-mode c-mode) "clangd"))
+  (add-hook 'c-mode-hook 'eglot-ensure)
+  (add-hook 'c++-mode 'eglot-ensure))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; Swift support
@@ -595,11 +611,6 @@
       (and (eq system-type 'darwin)
            (string-trim (shell-command-to-string "xcrun -f sourcekit-lsp")))
       "/usr/local/swift/usr/bin/sourcekit-lsp"))
-
-;; .editorconfig file support
-(use-package editorconfig
-  :ensure t
-  :config (editorconfig-mode +1))
 
 ;; Swift editing support
 (use-package swift-mode
