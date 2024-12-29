@@ -20,7 +20,7 @@
 
 ;; Get the current directory by looking for the directory that this file is in.
 (setq dotfiles-dir (file-name-directory
-                    (or (buffer-file-name) (file-chase-links load-file-name))))
+                    (or (buffer-file-name) (file-chase-links load-file-name)))) 
 
 ;; Directory for support files. Create if needed.
 (defvar savefile-dir (expand-file-name "savefile" dotfiles-dir)
@@ -123,11 +123,11 @@
 ;;   (add-hook 'after-make-frame-functions 'setup-gold-cursor t)
 ;;   (setq-default cursor-type 'bar))
 
+(setq-default cursor-type 'bar)
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
 (progn
   (load-theme 'dracula-pro-pro :no-confirm)
-  (add-hook 'after-make-frame-functions 'setup-gold-cursor t)
-  (setq-default cursor-type 'bar))
+  (add-hook 'after-make-frame-functions 'setup-gold-cursor t))
 
 ;; Use Zenburn as a theme
 ;; Helper functions to load the theme in the correct way
@@ -513,6 +513,35 @@
     :ensure t
     :config (editorconfig-mode +1))
 
+(use-package eglot
+  :ensure t
+  :config
+  (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
+  (add-hook 'c-mode-hook 'eglot-ensure)
+  (add-hook 'c++-mode-hook 'eglot-ensure))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Swift-mode
+;;
+
+(use-package swift-mode
+  :ensure t
+  :mode "\\.swift\\'"
+  :interpreter "swift")
+
+(use-package lsp-mode
+  :ensure t
+  :commands lsp
+  :hook ((swift-mode . lsp)))
+
+(use-package lsp-ui
+  :ensure t)
+
+(use-package lsp-sourcekit
+  :ensure t
+  :after lsp-mode
+  :custom
+  (lsp-sourcekit-executable "/home/abizern/swift-6.0.3/usr/bin/sourcekit-lsp"))
 
 ;; web-mode is a special mode for HTML which cops with embedded JS/CSS,
 ;; JSX, various templating systems, ect.
