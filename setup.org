@@ -359,7 +359,7 @@ See more at https://github.com/glasserc/ethan-wspace
 Select successively larger logical units. Works really well with multiple-cursors
 | C-=   | Select and expand by logical units   |
 | M-C-= | Contract the region be logical units |
-#+begin_src emacs-lips
+#+begin_src emacs-lisp
   (use-package expand-region
     :ensure t)
   (global-set-key (kbd "C-=") 'er/expand-region)
