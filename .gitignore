@@ -5,15 +5,16 @@
 *~
 
 # Local
-/auto-save-list/
-/elpa
-/savefile
-/network-security.data
-/transient
+.DS_Store
 .lsp-session-*
 .org-id-locations
+/.mc-lists.el
+/auto-save-list/
+/elpa
+/network-security.data
+/savefile
+/transient
 persist/
 projectile-bookmarks.eld
 projects
-/.mc-lists.el
-.DS_Store
+setup.el
