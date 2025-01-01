@@ -195,26 +195,17 @@ If I'm running Emacs, I want it to be a server
 *** Configuration
 
 **** Themes
+Use the Dracula Pro theme
 #+begin_src emacs-lisp
   (defun setup-gold-cursor (frame)
     "A gold bar cursor"
     (progn
-      (set-cursor-color "gold1")))
+      (set-cursor-color "gold1")
+      (setq-default cursor-type 'bar)))
 
-  ;; Use Tron-legacy theme
-  (defun setup-tron-theme (frame)
-    "Load the Theme from a hook and then remove the hook"
-    (progn
-      (load-theme 'tron-legacy t)
-      (remove-hook 'after-make-frame-functions 'setup-tron-theme)))
-
-
-  (use-package tron-legacy-theme
-    :ensure t
-    :config
-    (add-hook 'after-make-frame-functions 'setup-tron-theme t)
-    (add-hook 'after-make-frame-functions 'setup-gold-cursor t)
-    (setq-default cursor-type 'bar))
+  (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
+  (add-hook 'after-make-frame-functions 'setup-gold-cursor t)
+  (load-theme 'dracula-pro-pro :no-confirm)
 #+end_src
 
 **** f
