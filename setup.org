@@ -22,8 +22,7 @@ If I'm running Emacs, I want it to be a server
 #+begin_src emacs-lisp
   (require 'server)
   (unless (server-running-p)
-      (server-start))
-    (put 'upcase-region 'disabled nil)
+    (server-start))
 #+end_src
 
 ** Built-in Configuration
