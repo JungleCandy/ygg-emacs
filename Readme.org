@@ -19,17 +19,23 @@ Most of the configurations are in this .org file, which is loaded in init.el
 ** Installation
 *** Install Emacs
 I use [[https://github.com/d12frosted/homebrew-emacs-plus][Emacs Plus]]. On macOS this can be installed through:
+
 =brew tap d12frosted/emacs-plus=
+
 =brew install emacs-plus=
 *** Install Spell checking support
 =brew install hunspell=
+
 in =~/Library/Spelling/= download and install the required dictionaries with
+
 =get http://cgit.freedesktop.org/libreoffice/dictionaries/plain/en/en_GB.aff=
+
 =get http://cgit.freedesktop.org/libreoffice/dictionaries/plain/en/en_GB.dic=
 
-Running =(getenv "LAng")= on my system shows that the installed language is =en_GB= so there is no need to create symlinks to the directory as some web guides have suggested.
+Running =(getenv "LANG")= on my system shows that the installed language is =en_GB= so there is no need to create symlinks to the directory as some web guides have suggested.
 *** Clone the repo
 Clone this repo to =.emacs.d=
+
 =git clone https://github.com/JungleCandy/ygg-emacs.git .emacs.d=
 
 ** Licence
@@ -42,6 +48,7 @@ Doing this in Org-Mode As a better way to be organised. And while I am looking a
 - abbrev and family
 - Projectile
 - Org Mode
+  
 * Configuration
 
 ** Built-Ins
