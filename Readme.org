@@ -372,6 +372,32 @@ Drag some things in from Prelude that look like they could be useful
     ("C-c i" . crux-ispell-word-then-abbrev))                       ;; Fix word using ispell and then save to abbrev.  
 #+end_src
 
+**** eshell
+#+begin_src emacs-lisp
+  (use-package eshell
+    :ensure t)
+#+end_src
+
+**** eshell-git-prompt
+#+begin_src emacs-lisp
+  (use-package eshell-git-prompt
+    :after shell
+    :ensure t)
+#+end_src
+
+**** eshell-syntax-highlighting
+#+begin_src emacs-lisp
+  (use-package eshell-syntax-highlighting
+    :ensure t
+    :config
+    (eshell-syntax-highlighting-global-mode +1)
+    :init
+    (defface eshell-syntax-highlighting-invalid-face
+      '((t :inherit diff-error))
+      "Face used for invalid Eshell commands."
+      :group 'eshell-syntax-highlighting))
+#+end_src
+
 **** ethan-wspace
 See more at https://github.com/glasserc/ethan-wspace
 | C-c c | to clean up a file |
