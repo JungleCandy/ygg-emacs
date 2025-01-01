@@ -39,6 +39,6 @@
 ;; This loads the org-file as the settings file.
 (require 'org)
 (org-babel-load-file
- (expand-file-name "setup.org"
+ (expand-file-name "Readme.org"
                    user-emacs-directory))
 

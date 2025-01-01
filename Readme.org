@@ -1,23 +1,59 @@
-#+TITLE: Emacs Settings
+#+TITLE: Ygg-Emacs
+My personal Emacs configuration
 
-* Notes
+* Prelude
+
+This is not a starter kit, but maybe someone will find it useful, just as I have found others' configuration files useful, in particular, and not exclusively:
+
+- [[https://github.com/bbatsov/prelude][Prelude]]
+- [[https://github.com/rejeep/emacs][rajeep/emacs]]
+- [[https://github.com/magnars/.emacs.d][Magnars/.emacs.d]]
+- [[https://github.com/bodil/ohai-emacs][ohai-emacs]]
+- [[https://github.com/technomancy/better-defaults][technomancy/better-defaults]]
+- [[http://pages.sachachua.com/.emacs.d/Sacha.html][Sacha Chua's .emacs.d]]
+- [[https://github.com/bbatsov/emacs.d][Bozhidar Batsov's .emacs.d]]
+- [[https://github.com/gopar/.emacs.d][gapar/.emacs.d]]
+
+Most of the configurations are in this .org file, which is loaded in init.el
+
+** Installation
+*** Install Emacs
+I use [[https://github.com/d12frosted/homebrew-emacs-plus][Emacs Plus]]. On macOS this can be installed through:
+=brew tap d12frosted/emacs-plus=
+=brew install emacs-plus=
+*** Install Spell checking support
+=brew install hunspell=
+in =~/Library/Spelling/= download and install the required dictionaries with
+=get http://cgit.freedesktop.org/libreoffice/dictionaries/plain/en/en_GB.aff=
+=get http://cgit.freedesktop.org/libreoffice/dictionaries/plain/en/en_GB.dic=
+
+Running =(getenv "LAng")= on my system shows that the installed language is =en_GB= so there is no need to create symlinks to the directory as some web guides have suggested.
+*** Clone the repo
+Clone this repo to =.emacs.d=
+=git clone https://github.com/JungleCandy/ygg-emacs.git .emacs.d=
+
+** Licence
+GPL v3, obviously
+
+** Notes
 Doing this in Org-Mode As a better way to be organised. And while I am looking at it I can try and figure out what I know and what I need to know about
 - Flyspell 
 - Company
 - abbrev and family
 - Projectile
 - Org Mode
+* Configuration
 
-* Built-Ins
+** Built-Ins
 
-** Personal Information
+*** Personal Information
 #+begin_src emacs-lisp
   (setq user-full-name "Abizer Nasir"
         user-mail-address "abizern@mac.com"
         user-domain "abizern.dev")  
 #+end_src
 
-** Server
+*** Server
 If I'm running Emacs, I want it to be a server
 #+begin_src emacs-lisp
   (require 'server)
@@ -25,7 +61,7 @@ If I'm running Emacs, I want it to be a server
     (server-start))
 #+end_src
 
-** Built-in Configuration
+*** Built-in Configuration
 #+begin_src emacs-lisp
   ;; We don't need a startup message.
   (setq inhibit-startup-message t)
@@ -103,7 +139,7 @@ If I'm running Emacs, I want it to be a server
   (global-set-key (kbd "C-x \\") 'align-regexp)
 #+end_src
 
-** Custom storage directories
+*** Custom storage directories
 #+begin_src emacs-lisp
   ;; Directory for support files. Create if needed.
   (defvar savefile-dir (expand-file-name "savefile" user-emacs-directory)
@@ -134,7 +170,7 @@ If I'm running Emacs, I want it to be a server
 
 #+end_src
 
-* Packages
+** Packages
 #+begin_src emacs-lisp
   ;; Update package metadata if required
   (unless package-archive-contents
@@ -149,9 +185,9 @@ If I'm running Emacs, I want it to be a server
   ;; (setq use-package-verbose t)  
 #+end_src
 
-** Configuration
+*** Configuration
 
-*** Themes
+**** Themes
 #+begin_src emacs-lisp
   (defun setup-gold-cursor (frame)
     "A gold bar cursor"
@@ -174,14 +210,14 @@ If I'm running Emacs, I want it to be a server
     (setq-default cursor-type 'bar))
 #+end_src
 
-*** f
+**** f
 Better handling of splitting and joining file names and paths
 #+begin_src emacs-lisp
   (use-package f
     :ensure t)
 #+end_src
 
-*** super-save
+**** super-save
 Automatically save files
 #+begin_src emacs-lisp
   (use-package super-save
@@ -190,7 +226,7 @@ Automatically save files
     (super-save-mode +1))  
 #+end_src
 
-*** saveplace
+**** saveplace
 Save point position between sessions.
 #+begin_src emacs-lisp
   (use-package saveplace
@@ -201,7 +237,7 @@ Save point position between sessions.
     (setq-default save-place t))
 #+end_src
 
-*** savehist
+**** savehist
 Save history.
 #+begin_src emacs-lisp
   (use-package savehist
@@ -216,7 +252,7 @@ Save history.
     (savehist-mode +1))  
 #+end_src
 
-*** ace-window
+**** ace-window
 Easily move between windows, optimised for Dvorak layout.
 | C-x o   | Put up indicators to make moving between windows easier |
 | C-x C-o | Swap windows                                            |
@@ -229,7 +265,7 @@ Easily move between windows, optimised for Dvorak layout.
     (setq aw-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n)))  
 #+end_src
 
-*** avy
+**** avy
 Quick navigation by word or character
 | C-; | avy-goto-word-1 |
 | C-: | avy-goto-char   |
@@ -241,7 +277,7 @@ Quick navigation by word or character
            ("C-:" . avy-goto-char)))
 #+end_src
 
-*** flyspell
+**** flyspell
 Spell checking, which I don't know much about.
 #+begin_src emacs-lisp
   (use-package flyspell
@@ -255,7 +291,7 @@ Spell checking, which I don't know much about.
     (setq ispell-dictionary "en_GB"))  
 #+end_src
 
-*** company
+**** company
 All good IDEs have some interactivity
 #+begin_src emacs-lisp
   (use-package company
@@ -300,7 +336,7 @@ All good IDEs have some interactivity
     :diminish company-mode)  
 #+end_src
 
-*** crux
+**** crux
 Drag some things in from Prelude that look like they could be useful
 | C-c q         | Open the currently visited file with an external program           |
 | M-n           | Insert an empty line above the current line and indent it properly |
@@ -338,7 +374,7 @@ Drag some things in from Prelude that look like they could be useful
     ("C-c i" . crux-ispell-word-then-abbrev))                       ;; Fix word using ispell and then save to abbrev.  
 #+end_src
 
-*** ethan-wspace
+**** ethan-wspace
 See more at https://github.com/glasserc/ethan-wspace
 | C-c c | to clean up a file |
 #+begin_src emacs-lisp
@@ -354,7 +390,7 @@ See more at https://github.com/glasserc/ethan-wspace
     ethan-wspace-mode)  
 #+end_src
 
-*** expand-region
+**** expand-region
 Select successively larger logical units. Works really well with multiple-cursors
 | C-=   | Select and expand by logical units   |
 | M-C-= | Contract the region be logical units |
@@ -365,7 +401,7 @@ Select successively larger logical units. Works really well with multiple-cursor
   (global-set-key (kbd "M-C-=") 'er/contract-region)
 #+end_src
 
-*** git-gutter-fringe
+**** git-gutter-fringe
 Mark uncommitted changes in the fringe
 #+begin_src emacs-lisp
   (use-package git-gutter-fringe
@@ -375,7 +411,7 @@ Mark uncommitted changes in the fringe
     :diminish git-gutter-mode)  
 #+end_src
 
-*** helm
+**** helm
 Better navigation
 | M-y     | First call open the kill-ring, next call moves to next lineq |
 | C-x C-m | helm-M-x                                                     |
@@ -394,7 +430,7 @@ Better navigation
      ("C-x C-b" . helm-buffers-list)))  
 #+end_src
 
-*** key-chord
+**** key-chord
 Move like a ninja, if I could ever remember the chords
 | jj | avy-goto-word-1                |
 | jl | avy-goto-line                  |
@@ -416,7 +452,7 @@ Move like a ninja, if I could ever remember the chords
       (key-chord-define-global "yy" 'browse-kill-ring)))  
 #+end_src
 
-*** magit
+**** magit
 Maybe outdated, but I've become used to this over the years
 #+begin_src emacs-lisp
   (defadvice magit-status (around magit-fullscreen activate)
@@ -445,7 +481,7 @@ Maybe outdated, but I've become used to this over the years
            ("q" . magit-quit-session)))
 #+end_src
 
-*** markdown-mode
+**** markdown-mode
 Mostly the mode hooks and a couple of keybindings
 | M-n | Add line below |
 | M-p | Add line above |
@@ -460,7 +496,7 @@ Mostly the mode hooks and a couple of keybindings
            ("\\.md$" . markdown-mode)))
 #+end_src
 
-*** multiple-cursors
+**** multiple-cursors
 Why edit one line when you can work on many
 | C->         | mc/mark-next-like-this      |
 | C-<         | mc/mark-previous-like-this  |
@@ -482,7 +518,7 @@ Why edit one line when you can work on many
     (setq mc/list-file (expand-file-name ".mc-lists.el" savefile-dir)))  
 #+end_src
 
-*** org-mode
+**** org-mode
 This is where the magic happens!
 #+begin_src emacs-lisp
   (use-package org
@@ -566,7 +602,7 @@ This is where the magic happens!
   (global-set-key (kbd "C-c c") #'org-capture)
     #+end_src
 
-*** Projectile
+**** Projectile
 Something I need to look into so I can use it better.
 https://docs.projectile.mx/projectile/index.html
 #+begin_src emacs-lisp
@@ -583,7 +619,7 @@ https://docs.projectile.mx/projectile/index.html
     :config (helm-projectile-on))
 
 #+end_src
-*** recentf
+**** recentf
 Recent File handling
 #+begin_src emacs-lisp
   (use-package recentf
@@ -597,7 +633,7 @@ Recent File handling
                   recentf-max-menu-items 15))  
 #+end_src
 
-*** rainbow-mode
+**** rainbow-mode
 Colourise names of colours in certain modes
 #+begin_src emacs-lisp
   (use-package rainbow-mode
@@ -609,7 +645,7 @@ Colourise names of colours in certain modes
     :diminish rainbow-mode)  
 #+end_src
 
-*** smartparens
+**** smartparens
 Brackets are really, really important
 | C-M-f | Move forward across one balanced expression                                   |
 | C-M-b | Move backward across one balanced expression                                  |
@@ -661,7 +697,7 @@ Brackets are really, really important
      ("C-M-t" . sp-transpose-sexp)))  
 #+end_src
 
-*** tex
+**** tex
 #+begin_src emacs-lisp
   (use-package tex
     :ensure auctex
@@ -676,14 +712,14 @@ Brackets are really, really important
     :ensure company-auctex)
 #+end_src
 
-*** toml-mode
+**** toml-mode
 #+begin_src emacs-lisp
   (use-package toml-mode
     :ensure t
     :mode ("\\.toml$ . toml-mode")) 
 #+end_src
 
-*** undo-fu
+**** undo-fu
 A little simpler than undo tree
 | C-z   | Undo |
 | C-S-z | Redo |
@@ -696,7 +732,7 @@ A little simpler than undo tree
     (global-set-key (kbd "C-S-z") 'undo-fu-only-redo))  
 #+end_src
 
-*** uniquify
+**** uniquify
 Make buffer titles unique by adding more information, not just another number
 #+begin_src emacs-lisp
   (use-package uniquify
@@ -706,7 +742,7 @@ Make buffer titles unique by adding more information, not just another number
                   uniquify-ignore-buffers-re "^\\*"))  
 #+end_src
 
-*** which-key
+**** which-key
 Show available keybindings after starting to type.
 #+begin_src emacs-lisp
   (use-package which-key
@@ -717,14 +753,14 @@ Show available keybindings after starting to type.
     which-key-mode)
 #+end_src
 
-*** yaml-mode
+**** yaml-mode
 #+begin_src emacs-lisp
   (use-package yaml-mode
     :ensure t
     :mode ("\\.yaml$ . yaml-mode"))
 #+end_src
 
-*** yasnippet
+**** yasnippet
 #+begin_src emacs-lisp
   (use-package yasnippet
     :ensure t
@@ -747,7 +783,7 @@ Show available keybindings after starting to type.
     (yas-global-mode 1))  
 #+end_src
 
-*** zop-to-char
+**** zop-to-char
 A better version of zap-to-char.
 #+begin_src emacs-lisp
   (use-package zop-to-char
@@ -756,9 +792,9 @@ A better version of zap-to-char.
     (("M-z" . zop-up-to-char)
      ("M-Z" . zop-to-char)))  
 #+end_src
-** Programming Modes
-*** Configuration
-**** Default spacing
+*** Programming Modes
+**** Configuration
+***** Default spacing
 #+begin_src emacs-lisp
   (setq-default c-basic-offset 2
                 c-default-style "linux"
@@ -766,14 +802,14 @@ A better version of zap-to-char.
                 fill-column 140
                 tab-width 2)
 #+end_src
-**** editorconfig
+***** editorconfig
 Be more explicit about layout
 #+begin_src emacs-lisp
   (use-package editorconfig
     :ensure t
     :config (editorconfig-mode +1))
 #+end_src
-**** LSP support
+***** LSP support
 #+begin_src emacs-lisp
   (use-package eglot
     :ensure t
@@ -792,7 +828,7 @@ Be more explicit about layout
   (use-package lsp-ui
     :ensure t)
 #+end_src
-*** Common-lisp
+**** Common-lisp
 #+begin_src emacs-lisp
   (defun setup-slime()
     ;; Set up only if the quicklisp helper has been installed
@@ -822,7 +858,7 @@ Be more explicit about layout
 
   (setup-sly) 
 #+end_src
-*** Go Mode
+**** Go Mode
 Turned off, but I should keep the configuration.
 # #+begin_src emacs-lisp
 #   ;; https://johnsogg.github.io/emacs-golang For basics of why and how. 
@@ -866,7 +902,7 @@ Turned off, but I should keep the configuration.
 #   (use-package flymake-go
 #     :ensure t)
 # #+end_src
-*** Haskell
+**** Haskell
 Turned off, but I should keep the configuration.
 # #+begin_src emacs-lisp
 # (use-package haskell-mode
@@ -906,7 +942,7 @@ Turned off, but I should keep the configuration.
 #       modules t)
 #   '(haskell-process-log t)))  
 # #+end_src
-*** json-mode
+**** json-mode
 | C-c <tab> | Beautify | 
 #+begin_src emacs-lisp
   (use-package json-mode
@@ -916,7 +952,7 @@ Turned off, but I should keep the configuration.
     (bind-keys :map json-mode-map
                ("C-c <tab>" . json-mode-beautify)))  
 #+end_src
-*** Ruby
+**** Ruby
 Mostly Major mode support.
 #+begin_src emacs-lisp
   ;; Use Ruby syntax for Cartfiles
@@ -929,7 +965,7 @@ Mostly Major mode support.
   (add-to-list 'auto-mode-alist '("Podfile\\'" . ruby-mode))
   (add-to-list 'auto-mode-alist '("\\.podspec\\'" . ruby-mode))  
 #+end_src
-*** Swift
+**** Swift
 #+begin_src emacs-lisp
   ;; Locate sourcekit-lsp
   (defun find-sourcekit-lsp ()
@@ -955,7 +991,7 @@ Mostly Major mode support.
     :custom
     (lsp-sourcekit-executable (find-sourcekit-lsp) "Find sourcekit-lsp"))  
 #+end_src
-*** web-mode
+**** web-mode
 | C-c C-r | Mark the tag we're in and it's pair for renaming |
 #+begin_src emacs-lisp
   (use-package web-mode
@@ -985,9 +1021,9 @@ Mostly Major mode support.
   (add-hook 'web-mode-hook 'my-web-mode-hook) 
 #+end_src
 
-* Helper Functions
+** Helper Functions
 
-** goto-line-with-feedback
+*** goto-line-with-feedback
 | M-g M-g | Show line numbers temporarily and prompt for the line to move to |         
 #+begin_src emacs-lisp
   (defun goto-line-with-feedback ()
@@ -1003,7 +1039,7 @@ Mostly Major mode support.
   (global-set-key [remap goto-line] 'goto-line-with-feedback)  
 #+end_src
 
-** json-format
+*** json-format
 Pretty print JSON using the Python helper function
 #+begin_src emacs-lisp
   (defun json-format ()
@@ -1013,7 +1049,7 @@ Pretty print JSON using the Python helper function
       (shell-command-on-region (mark) (point) "python -m json.tool" (buffer-name) t)))
 #+end_src
 
-** Custom Date insertion
+*** Custom Date insertion
 | C-c C-d         | 13/4/2024                    |
 | C-u C-t C-d     | 2024-04-13                   |
 | C-u C-u C-d C-d | Tuesday, April 13, 2024      |
@@ -1045,7 +1081,7 @@ Pretty print JSON using the Python helper function
   (global-set-key (kbd "C-c C-t") 'ygg-insert-iso-date-time)
 #+end_src
 
-** Xcode Line up/down
+*** Xcode Line up/down
 | M-S-] | Move line up   |
 | M-S-[ | Move line down |
 
@@ -1078,7 +1114,7 @@ Pretty print JSON using the Python helper function
                     (ygg/move-line-down)))  
 #+end_src
 
-** ygg/wrap-with
+*** ygg/wrap-with
 Wrapper for parentheses
 #+begin_src emacs-lisp
   (defun ygg/wrap-with (s)
@@ -1088,7 +1124,7 @@ Wrapper for parentheses
        (sp-wrap-with-pair ,s)))  
 #+end_src
 
-** Better Movement
+*** Better Movement
 #+begin_src emacs-lisp
   ;; Move about more quickly
   ;; move about in steps of 5 with C-S insteard of just C-
