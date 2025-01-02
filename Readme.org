@@ -437,7 +437,7 @@ Mark uncommitted changes in the fringe
 
 **** helm
 Better navigation
-| M-y     | First call open the kill-ring, next call moves to next lineq |
+| M-y     | First call open the kill-ring, next call moves to next line  |
 | C-x C-m | helm-M-x                                                     |
 | s-r     | Show recent files                                            |
 | C-x C-b | Return the current list of buffers                           |
