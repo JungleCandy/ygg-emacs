@@ -133,7 +133,7 @@ If I'm running Emacs, I want it to be a server
   ;; Turn off defadvice warnings during startup
   (setq ad-redefinition-action 'accept)
 
-    ;; use hippie-expand instead of dabbrev
+  ;; use hippie-expand instead of dabbrev
   (global-set-key (kbd "M-/") 'hippie-expand)
 
   ;; Always indent after a newline
@@ -144,6 +144,17 @@ If I'm running Emacs, I want it to be a server
 
   ;; Align your code in a pretty way.
   (global-set-key (kbd "C-x \\") 'align-regexp)
+
+  ;; Ask for y/n confirmation instead of yes/no
+  (fset 'yes-or-no-p 'y-or-n-p)
+
+  ;; Make sure to always use UTF-8
+  (setq locale-coding-system 'utf-8)
+  (set-terminal-coding-system 'utf-8)
+  (set-keyboard-coding-system 'utf-8)
+  (set-selection-coding-system 'utf-8)
+  (prefer-coding-system 'utf-8)
+
 #+end_src
 
 *** Custom storage directories
@@ -996,7 +1007,7 @@ Mostly Major mode support.
     (or (executable-find "sourcekit-lsp")
         (and (eq system-type 'darwin)
              (string-trim (shell-command-to-string "xcrun -f sourcekit-lsp")))
-        "/usr/local/swift/usr/bin/sourcekit-lsp"))
+        "/home/abizern/swift-6.0.3/usr/bin/sourcekit-lsp"))
 
   ;; Swift editing support
   (use-package swift-mode
