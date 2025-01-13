@@ -1,7 +1,7 @@
 #+TITLE: Ygg-Emacs
 My personal Emacs configuration
 
-* Prelude
+* Preamble
 
 This is not a starter kit, but maybe someone will find it useful, just as I have found others' configuration files useful, in particular, and not exclusively:
 
@@ -37,7 +37,8 @@ Running =(getenv "LANG")= on my system shows that the installed language is =en_
 Clone this repo to =.emacs.d=
 
 =git clone https://github.com/JungleCandy/ygg-emacs.git .emacs.d=
-
+*** Install Fonts
+I'm using Neotree with icons, this requires =M-x all-the-icons-install-fonts= to be run.
 ** Licence
 GPL v3, obviously
 
@@ -156,6 +157,19 @@ If I'm running Emacs, I want it to be a server
   (prefer-coding-system 'utf-8)
 
 #+end_src
+*** Themes
+Use the Dracula Pro theme
+#+begin_src emacs-lisp
+  (defun setup-gold-cursor (frame)
+    "A gold bar cursor"
+    (progn
+      (set-cursor-color "gold1")
+      (setq-default cursor-type 'bar)))
+
+  (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
+  (add-hook 'after-make-frame-functions 'setup-gold-cursor t)
+  (load-theme 'dracula-pro-pro :no-confirm)
+#+end_src
 
 *** Custom storage directories
 #+begin_src emacs-lisp
@@ -205,62 +219,6 @@ If I'm running Emacs, I want it to be a server
 
 *** Configuration
 
-**** Themes
-Use the Dracula Pro theme
-#+begin_src emacs-lisp
-  (defun setup-gold-cursor (frame)
-    "A gold bar cursor"
-    (progn
-      (set-cursor-color "gold1")
-      (setq-default cursor-type 'bar)))
-
-  (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
-  (add-hook 'after-make-frame-functions 'setup-gold-cursor t)
-  (load-theme 'dracula-pro-pro :no-confirm)
-#+end_src
-
-**** f
-Better handling of splitting and joining file names and paths
-#+begin_src emacs-lisp
-  (use-package f
-    :ensure t)
-#+end_src
-
-**** super-save
-Automatically save files
-#+begin_src emacs-lisp
-  (use-package super-save
-    :ensure t
-    :config
-    (super-save-mode +1))  
-#+end_src
-
-**** saveplace
-Save point position between sessions.
-#+begin_src emacs-lisp
-  (use-package saveplace
-    :ensure t
-    :init
-    (setq save-place-file (expand-file-name ".places" savefile-dir))
-    :config
-    (setq-default save-place t))
-#+end_src
-
-**** savehist
-Save history.
-#+begin_src emacs-lisp
-  (use-package savehist
-    :config
-    (setq savehist-additional-variables
-          ;; search entries
-          '(search-ring regexp-search-ring)
-          ;; save every minute
-          savehist-autosave-interval 60
-          ;; keep the home clean
-          savehist-file (expand-file-name "savehist" savefile-dir))
-    (savehist-mode +1))  
-#+end_src
-
 **** ace-window
 Easily move between windows, optimised for Dvorak layout.
 | C-x o   | Put up indicators to make moving between windows easier |
@@ -284,20 +242,6 @@ Quick navigation by word or character
     :defer t
     :bind (("C-;" . avy-goto-word-1)
            ("C-:" . avy-goto-char)))
-#+end_src
-
-**** flyspell
-Spell checking, which I don't know much about.
-#+begin_src emacs-lisp
-  (use-package flyspell
-    :hook ((text-mode . flyspell-mode)
-           (prog-mode . flyspell-prog-mode))
-    :config (when (executable-find "hunspell")
-              (setq ispell-program-name (executable-find "hunspell"))
-              (setq ispell-really-hunspell t)
-              (setenv "DICTIONARY" "en_GB")
-              (setq ispell-hunspell-dictionary-alist '(("en_GB" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "en_GB") nil utf-8))))
-    (setq ispell-dictionary "en_GB"))  
 #+end_src
 
 **** company
@@ -436,6 +380,27 @@ Select successively larger logical units. Works really well with multiple-cursor
   (global-set-key (kbd "M-C-=") 'er/contract-region)
 #+end_src
 
+**** f
+Better handling of splitting and joining file names and paths
+#+begin_src emacs-lisp
+  (use-package f
+    :ensure t)
+#+end_src
+
+**** flyspell
+Spell checking, which I don't know much about.
+#+begin_src emacs-lisp
+  (use-package flyspell
+    :hook ((text-mode . flyspell-mode)
+           (prog-mode . flyspell-prog-mode))
+    :config (when (executable-find "hunspell")
+              (setq ispell-program-name (executable-find "hunspell"))
+              (setq ispell-really-hunspell t)
+              (setenv "DICTIONARY" "en_GB")
+              (setq ispell-hunspell-dictionary-alist '(("en_GB" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "en_GB") nil utf-8))))
+    (setq ispell-dictionary "en_GB"))  
+#+end_src
+
 **** git-gutter-fringe
 Mark uncommitted changes in the fringe
 #+begin_src emacs-lisp
@@ -553,6 +518,47 @@ Why edit one line when you can work on many
     (setq mc/list-file (expand-file-name ".mc-lists.el" savefile-dir)))  
 #+end_src
 
+**** neotree
+| <F5> | neotree-toggle |
+
+Bindings only in Neotree buffer.
+| n, p                | next-line, previos-line                          |
+| <SPC>, <RET>, <TAB> | Open current item if file, Toggle if directory   |
+| U                   | Go up a directory                                |
+| g                   | Refresh                                          |
+| A                   | Toggle maximise window                           |
+| H                   | Toggle display hidden files                      |
+| Q                   | Recursively open a directory                     |
+| C-c C-n             | Create file (directory if filename ends with //) |
+| C-c C-d             | Delete file or directory                         |
+| C-c C-r             | Rename file or directory                         |
+| C-c C-c             | Change the root of the directory                 |
+| C-c C-p             | Copy a file or a directory                       |
+
+#+begin_src emacs-lisp
+  (use-package neotree
+    :ensure t
+    :bind ("<f5>" . neotree-toggle)
+    :custom
+    (neo-theme 'icons)
+    (neo-smart-open t)
+    (neo-autorefresh t)
+    (neo-show-hidden-files t))
+
+  (use-package all-the-icons
+
+    :ensure t
+    :defer
+    :if (display-graphic-p))
+
+  (use-package all-the-icons-completion
+    :ensure t
+    :defer
+    :hook (marginalia-mode . #'all-the-icons-completion-marginalia-setup)
+    :init
+    (all-the-icons-completion-mode))
+#+end_src
+
 **** org-mode
 This is where the magic happens!
 #+begin_src emacs-lisp
@@ -654,6 +660,18 @@ https://docs.projectile.mx/projectile/index.html
     :config (helm-projectile-on))
 
 #+end_src
+**** rainbow-mode
+Colourise names of colours in certain modes
+#+begin_src emacs-lisp
+  (use-package rainbow-mode
+    :ensure t
+    :config
+    (dolist (mode '(css-mode less-css-mode html-mode web-mode))
+      (add-hook (intern (concat (symbol-name mode) "-hook"))
+                (lambda () (rainbow-mode))))
+    :diminish rainbow-mode)  
+#+end_src
+
 **** recentf
 Recent File handling
 #+begin_src emacs-lisp
@@ -668,16 +686,30 @@ Recent File handling
                   recentf-max-menu-items 15))  
 #+end_src
 
-**** rainbow-mode
-Colourise names of colours in certain modes
+**** savehist
+Save history.
 #+begin_src emacs-lisp
-  (use-package rainbow-mode
-    :ensure t
+  (use-package savehist
     :config
-    (dolist (mode '(css-mode less-css-mode html-mode web-mode))
-      (add-hook (intern (concat (symbol-name mode) "-hook"))
-                (lambda () (rainbow-mode))))
-    :diminish rainbow-mode)  
+    (setq savehist-additional-variables
+          ;; search entries
+          '(search-ring regexp-search-ring)
+          ;; save every minute
+          savehist-autosave-interval 60
+          ;; keep the home clean
+          savehist-file (expand-file-name "savehist" savefile-dir))
+    (savehist-mode +1))  
+#+end_src
+
+**** saveplace
+Save point position between sessions.
+#+begin_src emacs-lisp
+  (use-package saveplace
+    :ensure t
+    :init
+    (setq save-place-file (expand-file-name ".places" savefile-dir))
+    :config
+    (setq-default save-place t))
 #+end_src
 
 **** smartparens
@@ -730,6 +762,15 @@ Brackets are really, really important
      ("M-S" . sp-split-sexp)
      ("M-J" . sp-join-sexp)
      ("C-M-t" . sp-transpose-sexp)))  
+#+end_src
+
+**** super-save
+Automatically save files
+#+begin_src emacs-lisp
+  (use-package super-save
+    :ensure t
+    :config
+    (super-save-mode +1))  
 #+end_src
 
 **** tex
