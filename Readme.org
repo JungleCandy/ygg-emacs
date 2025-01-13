@@ -905,25 +905,9 @@ Be more explicit about layout
     :ensure t)
 #+end_src
 **** Common-lisp
+I use SLY not Slime
+| M-h | sly-documentation-lookup |
 #+begin_src emacs-lisp
-  (defun setup-slime()
-    ;; Set up only if the quicklisp helper has been installed
-    (setq-local slime-helper (expand-file-name "~/.quicklisp/slime-helper.el"))
-    (when (file-exists-p slime-helper)
-
-      (load slime-helper)
-      (setq inferior-lisp-program "/opt/homebrew/bin/sbcl")
-
-      (use-package slime
-        :ensure t
-        :init
-        (slime-setup '(slime-fancy slime-company)))
-
-      (use-package slime-company
-        :ensure t
-        :after (slime company)
-        :config (setq slime-company-completion 'fuzzy))))
-
   (defun setup-sly()
     (setq inferior-lisp-program "/opt/homebrew/bin/sbcl")
     (use-package sly
@@ -932,7 +916,11 @@ Be more explicit about layout
       (with-eval-after-load 'sly
         `(define-key sly-prefix-map (kbd "M-h") 'sly-documentation-lookup))))
 
-  (setup-sly) 
+  (defun lisp-program-location ()
+    "The system dependent location of SBCL. Just macOS at the moment, update from Linux system later."
+    "/opt/homebrew/bin/sbcl")
+
+  (setup-sly)
 #+end_src
 **** Go Mode
 Turned off, but I should keep the configuration.
