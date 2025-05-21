@@ -277,8 +277,10 @@ For more verbose startup, uncomment the line below
 *** Productivity and usability
 **** ace-window
 Easily move between windows, optimised for Dvorak layout.
-| M-o     | Put up indicators to make moving between windows easier |
-| C-x C-o | Swap windows                                            |
+| M-o         | Put up indicators to make moving between windows easier |
+| C-x C-o     | Swap windows                                            |
+| C-u M-o     | Swaps current window with selected window               |
+| C-u C-u M-o | Deletes the selected window                             |
 #+begin_src emacs-lisp
   (use-package ace-window
     :ensure t
@@ -295,7 +297,6 @@ Quick navigation by word or character
 #+begin_src emacs-lisp
   (use-package avy
     :ensure t
-    :defer t
     :bind (("C-;" . avy-goto-word-1)
            ("C-:" . avy-goto-char)))
 #+end_src
@@ -327,6 +328,7 @@ All good IDEs have some interactivity
 
     (use-package company-quickhelp
       :ensure t
+      :after (company)
       :config
       (setq company-quickhelp-delay 1)
       (company-quickhelp-mode 1))
@@ -336,7 +338,7 @@ All good IDEs have some interactivity
 
     (use-package company-try-hard
       :ensure t
-      :commands company-try-hard
+      :after (company)
       :bind ("C-\\" . company-try-hard)
       :config
       (bind-keys :map company-active-map
@@ -369,6 +371,29 @@ All good IDEs have some interactivity
       "Face used for invalid Eshell commands."
       :group 'eshell-syntax-highlighting))
 #+end_src
+**** ethan-wspace
+See more at https://github.com/glasserc/ethan-wspace
+| C-c c | to clean up a file |
+#+begin_src emacs-lisp
+  (use-package ethan-wspace
+    :ensure t
+    :commands global-ethan-wspace-mode
+    :config (setq mode-require-final-newline nil)
+    (global-ethan-wspace-mode 1)
+    :bind ("C-c c" . ethan-wspace-clean-all)
+    :diminish ethan-wspace-mode)  
+#+end_src
+
+**** expand-region
+Select successively larger logical units. Works really well with multiple-cursors
+| C-=   | Select and expand by logical units   |
+| M-C-= | Contract the region be logical units |
+#+begin_src emacs-lisp
+  (use-package expand-region
+    :ensure t
+    :bind (("C-=" . er/expand-region)
+           ("M-C-=" . er/contract-region)
+#+end_src
 
 ** Helper Functions
 *** goto-line-with-feedback
@@ -386,7 +411,6 @@ All good IDEs have some interactivity
   ;; Remaps goto-line so that line numbers are turned on only when needed. M-g M-g
   (global-set-key [remap goto-line] 'goto-line-with-feedback)  
 #+end_src
-
 *** json-format
 Pretty print JSON using the Python helper function
 #+begin_src emacs-lisp
