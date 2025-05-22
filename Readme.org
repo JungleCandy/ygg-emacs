@@ -70,14 +70,6 @@ Configure what is built in.
         user-domain "abizern.dev")  
 #+end_src
 
-*** Server
-If I'm running Emacs, I want it to be a server
-#+begin_src emacs-lisp
-  (require 'server)
-  (unless (server-running-p)
-    (server-start))
-#+end_src
-
 *** Built-in Configuration
 #+begin_src emacs-lisp
   ;; We don't need a startup message.
@@ -221,6 +213,18 @@ Use the Dracula Pro theme
         `((".*" ,temporary-file-directory t)))
 
 #+end_src
+
+*** Uniquify
+Better buffer names if they clash
+#+begin_src emacs-lisp
+(require 'uniquify)
+(setq
+ uniquify-buffer-name-style 'forward
+ uniquify-separator "/"
+ uniquify-after-kill-buffer-p t     ;; rename after killing a buffer
+ uniquify-ignore-buffers-re "^\\*") ;; ignore special buffers
+#+end_src
+
 ** Packages
 *** Set up for using packages
 #+begin_src emacs-lisp
@@ -595,17 +599,29 @@ Show changes in a file
 **** Spell-fu
 Modern spelling checker. See note in preamble about personal dictionaries
 #+begin_src emacs-lisp
-  (use-package spell-fu
-    :ensure t
-    :hook ((text-mode . spell-fu-mode)
-           (org-mode . spell-fu-mode)
-           (markdown-mode . spell-fu-mode)
-           (latex-mode . spell-fu-mode)
-           (prog-mode . spell-fu-mode)) ; checks only strings/comments
-    :config
-    ;; Point to your preferred wordlist directory and dictionary
-    (setq spell-fu-dictionary (spell-fu-get-ispell-dictionary "en_GB"))
-    (add-to-list 'spell-fu-wordlist-directories "~/.spell-fu/"))
+ (use-package spell-fu
+  :ensure t
+  :defer nil  ;; Force loading immediately so functions are defined
+  :hook ((text-mode . spell-fu-mode)
+         (org-mode . spell-fu-mode)
+         (markdown-mode . spell-fu-mode)
+         (latex-mode . spell-fu-mode)
+         (prog-mode . spell-fu-mode))
+  :init
+  (setq spell-fu-idle-delay 0.5)
+  :config
+  (defun ygg/setup-spell-fu-dict ()
+    "Set up personal spell-fu dictionary if not already set."
+    (when (and (fboundp 'spell-fu-make-dictionary)
+               (null spell-fu-dictionary))
+      (setq spell-fu-dictionary
+            (spell-fu-make-dictionary
+             :name 'en_GB
+             :wordlist (expand-file-name "en_GB.txt" "~/.spell-fu/")))
+      (spell-fu-refresh)))
+  (add-hook 'spell-fu-mode-hook #'ygg/setup-spell-fu-dict))
+
+
 
   (defun spell-fu-add-word-to-personal-dict ()
   "Add the word at point to personal spell-fu dictionary."
@@ -841,16 +857,6 @@ A little simpler than undo tree
     (global-set-key (kbd "C-S-z") 'undo-fu-only-redo))  
 #+end_src
 
-**** uniquify
-Make buffer titles unique by adding more information, not just another number
-#+begin_src emacs-lisp
-  (use-package uniquify
-    :config (setq uniquify-buffer-name-style 'forward
-                  uniquify-separator "/"
-                  uniquify-after-kill-buffer-p t     ;; Rename after killing uniquified
-                  uniquify-ignore-buffers-re "^\\*"))  
-#+end_src
-
 **** zop-to-char
 A better version of zap-to-char.
 #+begin_src emacs-lisp
@@ -917,6 +923,7 @@ Mostly the mode hooks and a couple of keybindings
 #+begin_src emacs-lisp
   (use-package org
     :ensure t
+    :after yasnippet
     :hook ((org-mode . visual-line-mode)
            (org-mode . yas-minor-mode))
     :bind (:map org-mode-map
@@ -952,14 +959,6 @@ Mostly the mode hooks and a couple of keybindings
     :after org
     :bind (:map org-mode-map
                 ("C-c M-l" . org-cliplink)))
-
-  (use-package spell-fu
-    :ensure t
-    :hook ((org-mode markdown-mode text-mode latex-mode) . spell-fu-mode)
-    :config
-    (setq spell-fu-idle-delay 0.5)
-    (setq spell-fu-dictionaries
-          '(("en_GB" "~/.spell-fu/en_GB.txt"))))
 #+end_src
 
 **** Org Agenda & GTD
@@ -1019,6 +1018,22 @@ Mostly the mode hooks and a couple of keybindings
   (global-set-key (kbd "C-c l") #'org-store-link)
   (global-set-key (kbd "C-c a") #'org-agenda)
   (global-set-key (kbd "C-c c") #'org-capture)
+#+end_src
+
+**** YASnippets
+#+begin_src emacs-lisp
+  (use-package yasnippet
+    :ensure t
+    :init
+    (progn
+      (add-hook 'after-save-hook
+                (lambda ()
+                  (when (eql major-mode 'snippet-mode)
+                    (yas-reload-all))))
+      (setq yas-snippet-dirs (list (f-expand "snippets" user-emacs-directory)))
+      (setq yas-indent-line 'auto)
+      (yas-global-mode 1))
+    :mode ("\\.yasnippet" . snippet-mode))
 #+end_src
 
 ** Helper Functions
