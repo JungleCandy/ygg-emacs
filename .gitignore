@@ -18,3 +18,5 @@ Readme.el
 persist/
 projectile-bookmarks.eld
 projects
+eln-cache/
+tramp

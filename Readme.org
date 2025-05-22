@@ -392,7 +392,7 @@ Select successively larger logical units. Works really well with multiple-cursor
   (use-package expand-region
     :ensure t
     :bind (("C-=" . er/expand-region)
-           ("M-C-=" . er/contract-region)
+           ("M-C-=" . er/contract-region)))
 #+end_src
 
 ** Helper Functions
