@@ -68,23 +68,17 @@ Configure what is built in.
         user-domain "abizern.dev")  
 #+end_src
 
+*** Server
+If I'm running Emacs, I want it to be a server
+#+begin_src emacs-lisp
+  (require 'server)
+  (unless (server-running-p)
+    (server-start))
+#+end_src
+
 *** Built-in Configuration
 #+begin_src emacs-lisp
   ;; We don't need a startup message.
-  (setq inhibit-startup-message t)
-
-  ;; disable the annoying bell ring
-  (setq ring-bell-function 'ignore)
-
-  ;; A suitably wide fill-column
-  (set-default 'fill-column 140)
-
-  ;; Show column and line numbe;; disable the annoying bell ring
-  (setq ring-bell-function 'ignore)
-
-  ;; A suitably wide fill-column
-  (set-default 'fill-column 140)
-  ;; Show column and line numbe      ;; We don't need a startup message.
   (setq inhibit-startup-message t)
 
   ;; disable the annoying bell ring
@@ -162,6 +156,9 @@ Configure what is built in.
   ;; Ask for y/n confirmation instead of yes/no
   (fset 'yes-or-no-p 'y-or-n-p)
 
+  ;; Winner mode for layout persistence
+  (add-hook 'after-init-hook #'winner-mode)
+  
   ;; Make sure to always use UTF-8
   (setq locale-coding-system 'utf-8)
   (set-terminal-coding-system 'utf-8)
@@ -222,38 +219,6 @@ Use the Dracula Pro theme
         `((".*" ,temporary-file-directory t)))
 
 #+end_src
-#+end_src
-
-*** Custom storage directories
-#+begin_src emacs-lisp
-  ;; Directory for support files. Create if needed.
-  (defvar savefile-dir (expand-file-name "savefile" user-emacs-directory)
-    "The directory that stores support files.")
-  (unless (file-exists-p savefile-dir)
-    (make-directory savefile-dir))
-
-  ;; Define where to keep the autoload declarations.
-  (setq autoload-file (expand-file-name "loaddefs.el" savefile-dir))
-
-  ;; Define where to keep user-settings, and load them.
-  (setq custom-file (expand-file-name "custom.el" savefile-dir))
-  (load custom-file 'noerror)
-
-  ;; User lisp files. Create if needed.
-  (defvar ygg-lisp-dir (expand-file-name "lisp" user-emacs-directory)
-    "The directory for user lisp files.")
-  (unless (file-exists-p ygg-lisp-dir)
-    (make-directory ygg-lisp-dir))
-  ;; Add the user-lisp directory to the load path.
-  (add-to-list 'load-path ygg-lisp-dir)
-
-  ;; store all backup and autosave files in the tmp dir
-  (setq backup-directory-alist
-        `((".*" . ,temporary-file-directory)))
-  (setq auto-save-file-name-transforms
-        `((".*" ,temporary-file-directory t)))
-
-#+end_src
 ** Packages
 *** Set up for using packages
 #+begin_src emacs-lisp
@@ -265,7 +230,8 @@ Use the Dracula Pro theme
     (package-install 'use-package))
 
   (require 'use-package)
-
+  (setq use-package-always-ensure t)
+  
   ;; For more verbose startup, uncomment the line below
   ;; (setq use-package-verbose t)  
 #+end_src
@@ -304,7 +270,6 @@ Quick navigation by word or character
 All good IDEs have some interactivity
 #+begin_src emacs-lisp
   (use-package company
-    :ensure t
     :init (add-hook 'after-init-hook #'global-company-mode)
     :commands company-mode
     :config
@@ -395,7 +360,206 @@ Select successively larger logical units. Works really well with multiple-cursor
            ("M-C-=" . er/contract-region)))
 #+end_src
 
-** Helper Functions
+**** Ivy, Swiper, Counsel
+
+| C-s, C-r | Search in project                   |
+| M-x      | Run command                         |
+| C-x C-f  | Open File                           |
+| C-x b    | Switch buffer                       |
+| C-c k    | Search project with ripgrep         |
+| C-c g    | Counsel-git - find git tracked file |
+
+#+begin_src emacs-lisp
+;; Ivy: lightweight completion
+(use-package ivy
+  :diminish
+  :init
+  (ivy-mode 1)
+  :custom
+  (ivy-use-virtual-buffers t)
+  (ivy-count-format "(%d/%d) ") ;; Show current/total count
+  (enable-recursive-minibuffers t)
+  (ivy-initial-inputs-alist nil)) ;; Remove '^' from certain prompts
+
+;; Swiper: better search
+(use-package swiper
+  :bind (("C-s" . swiper)
+         ("C-r" . swiper))) ;; Optional: replace isearch backward
+
+;; Counsel: ivy-enhanced commands
+(use-package counsel
+  :after ivy
+  :bind (("M-x" . counsel-M-x)
+         ("C-x C-f" . counsel-find-file)
+         ("C-x b" . counsel-ibuffer)
+         ("C-c k" . counsel-rg) ;; Ripgrep if installed
+         ("C-c g" . counsel-git))
+  :config (counsel-mode 1))
+
+;; Nicer display
+(use-package ivy-rich
+  :after ivy
+  :init
+  (ivy-rich-mode 1))
+#+end_src
+
+**** Projectile
+For working in projects, integrated with Ivy, Swiper and Counsel
+| C-c p f | Find file in current project |
+| C-c p s | Search project with ripgrep  |
+| C-c p p | Switch project               |
+
+#+begin_src emacs-lisp
+(use-package projectile
+  :diminish projectile-mode
+  :config
+  (projectile-mode 1)
+  :custom
+  (projectile-completion-system 'ivy)
+  (projectile-project-search-path '("~/Developer")) ; No depth restriction
+  (projectile-sort-order 'recentf)
+  :bind-keymap
+  ("C-c p" . projectile-command-map))
+#+end_src
+
+**** Git support
+***** Status & Navigation
+| Open Magit status   | C-x g       |
+| Refresh status      | g           |
+| Cycle sections      | TAB / S-TAB |
+| Next / prev section | n / p       |
+| Visit file / commit | RET         |
+
+***** Staging / Committing
+| Stage file / hunk   | s   |
+| Unstage file / hunk | u   |
+| Commit              | c c |
+| Amend last commit   | c a |
+| Push                | P P |
+| Pull / Fetch        | F F |
+
+***** Branches / Refs
+| Checkout branch | b b |
+| Create branch   | b c |
+| Merge           | m m |
+| Rebase          | r r |
+| Delete branch   | b k |
+| Rename branch   | b m |
+
+***** Forge – Issues / Pull Requests
+| Forge dispatch menu         | # (from magit-status)            |
+| List issues                 | # i                              |
+| List pull requests          | # p                              |
+| Create issue                | M-x forge-create-issue           |
+| Create pull request         | M-x forge-create-pullreq         |
+| Visit PR for current branch | M-x forge-visit-pullreq          |
+| Fetch issues / PRs (sync)   | M-x forge-pull                   |
+| Checkout PR branch          | b y / M-x forge-checkout-pullreq |
+
+***** Discussion & Comments
+| Add / send comment       | C-c C-c           |
+| Reply to comment         | r (on comment)    |
+| Add emoji reaction       | :                 |
+| View discussion timeline | RET (on issue/PR) |
+
+***** Miscellaneous
+| Toggle fine-grained diff    | d                   |
+| Edit patch inline           | e                   |
+| Resolve merge conflict      | s +C-c ^ (or Ediff) |
+| Quit Magit & restore layout | q (winner-undo)     |
+
+***** Bonus Commands (to M-x)
+| magit-status        | Open status for current repo        |
+| forge-browse-issues | Show issues in Forge buffer         |
+| forge-pull          | Sync issues & PRs from remote forge |
+| forge-push          | Push issue / PR updates             |
+
+***** Magit
+#+begin_src emacs-lisp
+  (defun my-magit-quit-session ()
+    "Quit Magit and restore previous window configuration."
+    (interactive)
+    (kill-buffer)
+    (winner-undo))
+
+  (use-package magit
+    :commands (magit-status)
+    :bind (("C-x g" . magit-status))
+    :config
+    ;; Make magit-status open in the same window (like fullscreen)
+    (setq magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1)
+
+    ;; Bind `q` to your custom quit in magit-status
+    (define-key magit-status-mode-map (kbd "q") #'my-magit-quit-session))
+#+end_src
+
+
+***** Forge
+For GitHub integration - set up for an authenticated gh.
+#+begin_src emacs-lisp
+  (use-package forge
+    :after magit)
+#+end_src
+**** Counsel Projectile Integration
+Improves project file search and project switching with Ivy.
+
+| Keybinding | Action                          |
+|------------+---------------------------------|
+| C-c p f    | Find file in current project    |
+| C-c p s    | Search project (ripgrep)        |
+| C-c p p    | Switch project (opens Magit)    |
+
+#+begin_src emacs-lisp
+(use-package counsel-projectile
+  :after (projectile counsel)
+  :config
+  (counsel-projectile-mode 1)
+  :bind (("C-c p f" . counsel-projectile-find-file)
+         ("C-c p s" . counsel-projectile-rg)
+         ("C-c p p" . counsel-projectile-switch-project)))
+
+;; Open magit-status when switching projects
+(setq projectile-switch-project-action #'magit-status)
+#+end_src
+
+****** Git + Magit Integration
+
+| Keybinding | Action                         |
+|------------+--------------------------------|
+| C-c g      | Fuzzy find Git-tracked files   |
+| C-c l      | Fuzzy search Git commit log    |
+
+#+begin_src emacs-lisp
+;; Use counsel-git to find files tracked by Git
+(global-set-key (kbd "C-c g") #'counsel-git)
+;; Use counsel-git-log for fuzzy searching Git commits
+(global-set-key (kbd "C-c l") #'counsel-git-log)
+#+end_src
+
+***** Optional: Better Ivy Sorting and Fuzzy Matching
+
+Adds smarter sorting and global fuzzy matching for all Ivy interfaces
+#+begin_src emacs-lisp
+  ;; Optional: Prescient sorting for Ivy
+  (use-package ivy-prescient
+    :after counsel
+    :config
+    (ivy-prescient-mode 1)
+    (prescient-persist-mode 1)
+    (setq counsel-M-x-sort-function #'ivy-prescient-sort-function))
+
+  ;; Optional: Enable fuzzy matching in Ivy
+  (setq ivy-re-builders-alist '((t . ivy--regex-fuzzy)))
+#+end_src
+
+**** Which Key
+Aids discoverability with all these shortcuts
+#+begin_src emacs-lisp
+  (use-package which-key
+    :config (which-key-mode))
+#+end_src
+
+** helper Functions
 *** goto-line-with-feedback
 | M-g M-g | Show line numbers temporarily and prompt for the line to move to |         
 #+begin_src emacs-lisp
@@ -411,6 +575,7 @@ Select successively larger logical units. Works really well with multiple-cursor
   ;; Remaps goto-line so that line numbers are turned on only when needed. M-g M-g
   (global-set-key [remap goto-line] 'goto-line-with-feedback)  
 #+end_src
+
 *** json-format
 Pretty print JSON using the Python helper function
 #+begin_src emacs-lisp
@@ -521,33 +686,4 @@ Wrapper for parentheses
                   (lambda ()
                     (interactive)
                     (ignore-errors (backward-char 5))))
-
- 
-
-
-#+end_src
-
-#+begin_src emacs-lisp
-  (use-package eshell
-    :ensure t)
-#+end_src
-
-**** eshell-git-prompt
-#+begin_src emacs-lisp
-  (use-package eshell-git-prompt
-    :after eshell
-    :ensure t)
-#+end_src
-
-**** eshell-syntax-highlighting
-#+begin_src emacs-lisp
-  (use-package eshell-syntax-highlighting
-    :ensure t
-    :config
-    (eshell-syntax-highlighting-global-mode +1)
-    :init
-    (defface eshell-syntax-highlighting-invalid-face
-      '((t :inherit diff-error))
-      "Face used for invalid Eshell commands."
-      :group 'eshell-syntax-highlighting))
 #+end_src
