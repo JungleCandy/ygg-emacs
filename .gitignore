@@ -20,3 +20,5 @@ projectile-bookmarks.eld
 projects
 eln-cache/
 tramp
+/var/
+/forge-database.sqlite
