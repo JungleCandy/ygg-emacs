@@ -860,8 +860,169 @@ A better version of zap-to-char.
     (("M-z" . zop-up-to-char)
      ("M-Z" . zop-to-char)))  
 #+end_src
+*** Writing Modes
+**** markdown-mode
+Mostly the mode hooks and a couple of keybindings
+| M-n | Add line below |
+| M-p | Add line above |
+#+begin_src emacs-lisp
+  (use-package markdown-mode
+    :ensure t
+    :mode ("\\.md\\'" "\\.markdown\\'")
+    :hook ((markdown-mode . visual-line-mode)
+           (markdown-mode . spell-fu-mode))
+    :bind (:map markdown-mode-map
+                ("M-n" . open-line-below)
+                ("M-p" . open-line-above)))
+#+end_src
 
-*** goto-line-with-feedback
+
+**** Latex
+#+begin_src emacs-lisp
+  (use-package tex
+  :ensure auctex
+  :hook ((LaTeX-mode . visual-line-mode)
+         (LaTeX-mode . spell-fu-mode)
+         (LaTeX-mode . LaTeX-math-mode)
+         (LaTeX-mode . turn-on-reftex))
+  :custom
+  (TeX-auto-save t)
+  (TeX-parse-self t)
+  (TeX-save-query nil)
+  (TeX-PDF-mode t)
+  (TeX-source-correlate-mode t)
+  (TeX-source-correlate-start-server t)
+  ;; Default to latexmk
+  (TeX-command-default "LatexMk")
+  (TeX-command-list
+   '(("LatexMk" "latexmk -pdf -interaction=nonstopmode -synctex=1 %s"
+      TeX-run-TeX nil t
+      :help "Run LatexMk")))
+  ;; View PDFs with PDF Tools if available
+  (TeX-view-program-selection
+   '((output-pdf "PDF Tools"))))
+#+end_src
+
+**** PDF Viewer integration
+#+begin_src emacs-lisp
+  (use-package pdf-tools
+  :ensure t
+  :config
+  (pdf-tools-install)
+  ;; Auto-refresh the PDF when the file changes
+  (add-hook 'TeX-after-compilation-finished-functions
+            #'TeX-revert-document-buffer))
+#+end_src
+**** Core Org Configuration
+#+begin_src emacs-lisp
+  (use-package org
+    :ensure t
+    :hook ((org-mode . visual-line-mode)
+           (org-mode . yas-minor-mode))
+    :bind (:map org-mode-map
+                ("M-j" . org-metaup)
+                ("M-k" . org-metadown)
+                ("C-c t" . yas-next-field))
+    :config
+    (setq org-directory "~/Documents/Org"
+          org-metadir (concat org-directory "_orgmata/")
+          org-default-notes-file (concat org-directory "refile.org")
+          org-archive-location (concat org-metadir "archive.org::date-tree")
+          org-agenda-files '("~/Documents/Org/")
+          org-startup-indented t
+          org-src-tab-acts-natively t
+          org-src-fontify-natively t
+          org-src-preserve-indentation t
+          org-edit-src-content-indentation 0))
+#+end_src
+
+**** Org Visual Enhancements
+#+begin_src emacs-lisp
+  (use-package org-bullets
+    :ensure t
+    :hook (org-mode . org-bullets-mode))
+
+  (setq org-pretty-entities t)
+#+end_src
+
+**** Org Writing & Note Tools
+#+begin_src emacs-lisp
+  (use-package org-cliplink
+    :ensure t
+    :after org
+    :bind (:map org-mode-map
+                ("C-c M-l" . org-cliplink)))
+
+  (use-package spell-fu
+    :ensure t
+    :hook ((org-mode markdown-mode text-mode latex-mode) . spell-fu-mode)
+    :config
+    (setq spell-fu-idle-delay 0.5)
+    (setq spell-fu-dictionaries
+          '(("en_GB" "~/.spell-fu/en_GB.txt"))))
+#+end_src
+
+**** Org Agenda & GTD
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org
+    (setq org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
+                              (sequence "DRAFT(r)" "|" "PUBLISH(p)"))
+          org-use-fast-todo-selection t
+          org-log-done 'time
+          org-treat-S-cursor-todo-selection-as-state-change nil))
+#+end_src
+
+**** Org Export & Publishing
+#+begin_src emacs-lisp
+  (with-eval-after-load 'ox-latex
+    (add-to-list 'org-latex-classes
+                 '("article"
+                   "\\documentclass[a4paper]{scrartcl}
+  \\usepackage[utf8]{inputenc}
+  \\usepackage{amsmath}
+  \\usepackage{amssymb}
+  \\usepackage{fullpage}"
+                   ("\\section{%s}" . "\\section*{%s}")
+                   ("\\subsection{%s}" . "\\subsection*{%s}")
+                   ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                   ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                   ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+
+    (add-to-list 'org-latex-classes
+                 '("tufte-handout"
+                   "\\documentclass[a4paper]{tufte-handout}
+  \\usepackage[utf8]{inputenc}
+  \\usepackage{amsmath}
+  \\usepackage{amssymb}"
+                   ("\\section{%s}" . "\\section*{%s}")
+                   ("\\subsection{%s}" . "\\subsection*{%s}")
+                   ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                   ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
+
+  (use-package ox-hugo
+    :ensure t
+    :after ox)
+#+end_src
+
+**** Org Extensions
+#+begin_src emacs-lisp
+  (use-package org-drill
+    :ensure t
+    :config
+    (add-to-list 'org-modules 'org-drill)
+    (setq org-drill-add-random-noise-to-intervals-p t
+          org-drill-learn-fraction 0.25))
+#+end_src
+
+**** Org Global Keybindings
+#+begin_src emacs-lisp
+  (global-set-key (kbd "C-c l") #'org-store-link)
+  (global-set-key (kbd "C-c a") #'org-agenda)
+  (global-set-key (kbd "C-c c") #'org-capture)
+#+end_src
+
+** Helper Functions
+**** goto-line-with-feedback
 | M-g M-g | Show line numbers temporarily and prompt for the line to move to |         
 #+begin_src emacs-lisp
   (defun goto-line-with-feedback ()
@@ -877,7 +1038,7 @@ A better version of zap-to-char.
   (global-set-key [remap goto-line] 'goto-line-with-feedback)  
 #+end_src
 
-*** json-format
+**** json-format
 Pretty print JSON using the Python helper function
 #+begin_src emacs-lisp
   (defun json-format ()
@@ -887,7 +1048,7 @@ Pretty print JSON using the Python helper function
       (shell-command-on-region (mark) (point) "python -m json.tool" (buffer-name) t)))
 #+end_src
 
-*** Custom Date insertion
+**** Custom Date insertion
 | C-c C-d         | 13/4/2024                    |
 | C-u C-t C-d     | 2024-04-13                   |
 | C-u C-u C-d C-d | Tuesday, April 13, 2024      |
@@ -919,7 +1080,7 @@ Pretty print JSON using the Python helper function
   (global-set-key (kbd "C-c C-t") 'ygg-insert-iso-date-time)
 #+end_src
 
-*** ygg/wrap-with
+**** ygg/wrap-with
 Wrapper for parentheses
 #+begin_src emacs-lisp
   (defun ygg/wrap-with (s)
