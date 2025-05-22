@@ -40,6 +40,8 @@ in =~/Library/Spelling/= download and install the required dictionaries with
 Running =(getenv "LANG")= on my system shows that the installed language is =en_GB= so there is no need to create symlinks to the directory as some web guides have suggested.
 **** Linux
 Installed with the App Manager
+**** Personal dictionary
+In the dotfiles repo there is a folder called =spell-fu=. Create a link to this with =ln -s dotfiles/spell-fu ~/.spell-fu=
 *** Clone the repo
 Clone this repo to =.emacs.d=
 
@@ -622,7 +624,24 @@ Modern spelling checker. See note in preamble about personal dictionaries
 
   (global-set-key (kbd "C-c w") #'spell-fu-add-word-to-personal-dict)
 #+end_src
-** helper Functions
+**** Key-chord
+Move like a ninja if I could only remember the chords
+| jj | avy-goto-word-1    | Jump forward by word      |
+| jl | avy-goto-line      | Jump by line              |
+| jk | avy-goto-char      | 'k' like navigation       |
+| jf | avy-goto-subword-0 | Fine grained symbol jumps |
+#+begin_src emacs-lisp
+  (use-package key-chord
+    :ensure t
+    :custom
+    (key-chord-two-keys-delay 0.2) ;; adjust to your typing rhythm
+    :config
+    (key-chord-mode 1)
+    (key-chord-define-global "jj" 'avy-goto-word-1)
+    (key-chord-define-global "jl" 'avy-goto-line)
+    (key-chord-define-global "jk" 'avy-goto-char)
+    (key-chord-define-global "jf" 'avy-goto-subword-0))
+#+end_src
 *** goto-line-with-feedback
 | M-g M-g | Show line numbers temporarily and prompt for the line to move to |         
 #+begin_src emacs-lisp
