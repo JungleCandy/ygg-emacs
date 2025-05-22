@@ -392,9 +392,11 @@ Select successively larger logical units. Works really well with multiple-cursor
   :bind (("M-x" . counsel-M-x)
          ("C-x C-f" . counsel-find-file)
          ("C-x b" . counsel-ibuffer)
-         ("C-c k" . counsel-rg) ;; Ripgrep if installed
-         ("C-c g" . counsel-git))
-  :config (counsel-mode 1))
+         ("C-c k" . counsel-rg)
+         ("C-c g" . counsel-git)
+         ("C-x RET" . counsel-M-x))  ;; Easier access to M-x
+  :config
+  (counsel-mode 1))
 
 ;; Nicer display
 (use-package ivy-rich
@@ -558,7 +560,68 @@ Aids discoverability with all these shortcuts
   (use-package which-key
     :config (which-key-mode))
 #+end_src
+**** diff-hl
+Show changes in a file
+#+begin_src emacs-lisp
+  (use-package diff-hl
+    :ensure t
+    :hook ((prog-mode . diff-hl-mode)
+           (text-mode . diff-hl-mode)
+           (magit-pre-refresh . diff-hl-magit-pre-refresh)
+           (magit-post-refresh . diff-hl-magit-post-refresh))
+    :config
+    ;; Enable real-time diff updates
+    (diff-hl-flydiff-mode 1)
 
+    ;; Optionally enable diff highlighting in the margin (if fringes are disabled)
+    ;; (diff-hl-margin-mode 1)
+
+    ;; Show staged changes (useful if using partial staging in Magit)
+    (diff-hl-show-hunk-mouse-mode 1)
+
+    ;; Jump between hunks
+    (global-set-key (kbd "C-x v =") 'diff-hl-diff-goto-hunk)
+    (global-set-key (kbd "C-x v n") 'diff-hl-next-hunk)
+    (global-set-key (kbd "C-x v p") 'diff-hl-previous-hunk)
+
+    ;; Revert hunk
+    (global-set-key (kbd "C-x v r") 'diff-hl-revert-hunk))
+#+end_src
+**** Spell-fu
+Modern spelling checker. See note in preamble about personal dictionaries
+#+begin_src emacs-lisp
+  (use-package spell-fu
+    :ensure t
+    :hook ((text-mode . spell-fu-mode)
+           (org-mode . spell-fu-mode)
+           (markdown-mode . spell-fu-mode)
+           (latex-mode . spell-fu-mode)
+           (prog-mode . spell-fu-mode)) ; checks only strings/comments
+    :config
+    ;; Point to your preferred wordlist directory and dictionary
+    (setq spell-fu-dictionary (spell-fu-get-ispell-dictionary "en_GB"))
+    (add-to-list 'spell-fu-wordlist-directories "~/.spell-fu/"))
+
+  (defun spell-fu-add-word-to-personal-dict ()
+  "Add the word at point to personal spell-fu dictionary."
+  (interactive)
+  (let* ((word (thing-at-point 'word t))
+         (file (expand-file-name "en_GB.txt" "~/.spell-fu/")))
+    (if (and word (not (string-blank-p word)))
+        (progn
+          (with-temp-buffer
+            (when (file-exists-p file)
+              (insert-file-contents file))
+            (goto-char (point-max))
+            (unless (save-excursion (re-search-backward (concat "^" (regexp-quote word) "$") nil t))
+              (insert word "\n")
+              (write-region (point-min) (point-max) file))
+            (message "Added '%s' to your spell-fu dictionary." word))
+          (spell-fu-refresh))
+      (message "No word at point."))))
+
+  (global-set-key (kbd "C-c w") #'spell-fu-add-word-to-personal-dict)
+#+end_src
 ** helper Functions
 *** goto-line-with-feedback
 | M-g M-g | Show line numbers temporarily and prompt for the line to move to |         
