@@ -1079,17 +1079,36 @@ Be more explicit about layout
 #+end_src
 **** LSP Support
 #+begin_src emacs-lisp
+;; Global LSP configuration
 (use-package lsp-mode
   :ensure t
-  :hook ((python-mode . lsp))
-  :commands lsp)
+  :commands lsp
+  :init
+  ;; Set up eldoc and flycheck preferences
+  (setq lsp-eldoc-enable-hover nil        ;; Let lsp-ui handle eldoc
+        lsp-prefer-flymake nil)           ;; Prefer Flycheck over Flymake
+  :config
+  ;; Common settings
+  (setq lsp-enable-symbol-highlighting t
+        lsp-keymap-prefix "C-c l"
+        lsp-headerline-breadcrumb-enable nil)
+  ;; Hook into major modes here, without repeating setup
+  (dolist (hook '(python-mode-hook
+                  swift-mode-hook
+                  go-mode-hook
+                  json-mode-hook
+                  web-mode-hook))
+    (add-hook hook #'lsp)))
 
+;; Optional but nice UI tweaks
 (use-package lsp-ui
   :ensure t
-  :commands lsp-ui-mode
-  :config (setq lsp-ui-doc-enable t
-                lsp-ui-doc-show-with-cursor t
-                lsp-ui-sideline-enable t))
+  :after lsp-mode
+  :hook (lsp-mode . lsp-ui-mode)
+  :custom
+  (lsp-ui-doc-enable t)
+  (lsp-ui-doc-show-with-cursor t)
+  (lsp-ui-sideline-enable t))
 #+end_src
 *** Swift Development
 My primary language. I should be able to use it on Linux as well.
@@ -1109,28 +1128,11 @@ Enable `swift-mode` and hook it up to LSP:
 (use-package swift-mode
   :ensure t
   :mode "\\.swift\\'"
-  :interpreter "swift"
-  :hook (swift-mode . (lambda ()
-                        (setq tab-width 2)
-                        (lsp))))
+  :interpreter "swift")
 #+end_src
 
 LSP support for Swift:
 #+begin_src emacs-lisp
-(use-package lsp-mode
-  :ensure t
-  :commands lsp
-  :hook ((swift-mode . lsp))
-  :custom
-  (lsp-eldoc-enable-hover nil))  ;; Let lsp-ui handle docs
-
-(use-package lsp-ui
-  :ensure t
-  :hook (lsp-mode . lsp-ui-mode)
-  :custom
-  (lsp-ui-doc-enable t)
-  (lsp-ui-sideline-enable t))
-
 (use-package lsp-sourcekit
   :ensure t
   :after lsp-mode
@@ -1161,15 +1163,7 @@ Run =M-x python-activate= and point it at the =.venv= directory, although there 
 #+begin_src emacs-lisp
 (use-package pyvenv
   :ensure t
-  :config
-  (pyvenv-mode 1))
-
-(use-package lsp-pyright
-  :ensure t
-  :after lsp-mode
-  :hook (python-mode . (lambda ()
-                         (require 'lsp-pyright)
-                         (lsp))))  ; or lsp-deferred
+  :config (pyvenv-mode 1))
 
 (use-package blacken
   :ensure t
@@ -1193,11 +1187,7 @@ Run =M-x python-activate= and point it at the =.venv= directory, although there 
 #+begin_src emacs-lisp
 (use-package go-mode
   :ensure t
-  :mode "\\.go\\'"
-  :hook ((go-mode . lsp-deferred)
-         (before-save . gofmt-before-save))
-  :config
-  (setq gofmt-command "gofmt"))
+  :hook (before-save . gofmt-before-save))
 #+end_src
 
 *** web-mode
