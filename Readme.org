@@ -1060,7 +1060,20 @@ Be more explicit about layout
   :ensure t
   :init (global-flycheck-mode))
 #+end_src
-*** Common-lisp** Specific Languages
+**** LSP Support
+#+begin_src emacs-lisp
+(use-package lsp-mode
+  :ensure t
+  :hook ((python-mode . lsp))
+  :commands lsp)
+
+(use-package lsp-ui
+  :ensure t
+  :commands lsp-ui-mode
+  :config (setq lsp-ui-doc-enable t
+      lsp-ui-doc-show-with-cursor t
+      lsp-ui-sideline-enable t))
+#+end_src
 *** Common-lisp
 I use SLY not Slime
 | M-h | sly-documentation-lookup |
@@ -1079,6 +1092,51 @@ I use SLY not Slime
   :config
   (define-key sly-prefix-map (kbd "M-h") 'sly-documentation-lookup))
 #+end_src
+*** Python Development
+Active with venv, once I figure out how to do that.
+Run =M-x python-activate= and point it at the =.venv= directory, although there is now a hook to point to one at the root of a project.
+#+begin_src emacs-lisp
+(use-package pyvenv
+  :ensure t
+  :config
+  (pyvenv-mode 1))
+
+(use-package lsp-pyright
+  :ensure t
+  :after lsp-mode
+  :hook (python-mode . (lambda ()
+                         (require 'lsp-pyright)
+                         (lsp))))  ; or lsp-deferred
+
+(use-package blacken
+  :ensure t
+  :hook (python-mode . blacken-mode)
+  :custom
+  (blacken-line-length 88))
+
+(use-package py-isort
+  :ensure t
+  :hook (before-save . py-isort-before-save))
+
+(defun ygg/auto-pyvenv-activate ()
+  "Auto-activate local .venv if present."
+  (let ((root (locate-dominating-file default-directory ".venv")))
+    (when root
+      (pyvenv-activate (expand-file-name ".venv" root)))))
+
+(add-hook 'python-mode-hook #'ygg/auto-pyvenv-activate)
+#+end_src
+*** Go Mode
+#+begin_src emacs-lisp
+(use-package go-mode
+  :ensure t
+  :mode "\\.go\\'"
+  :hook ((go-mode . lsp-deferred)
+         (before-save . gofmt-before-save))
+  :config
+  (setq gofmt-command "gofmt"))
+#+end_src
+
 *** web-mode
 | C-c C-r | Mark the tag we're in and it's pair for renaming |
 #+begin_src emacs-lisp
