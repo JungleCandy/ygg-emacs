@@ -936,14 +936,18 @@ Mostly the mode hooks and a couple of keybindings
 
 **** PDF Viewer integration
 #+begin_src emacs-lisp
+;; Compile LaTeX to PDF by default
+(setq TeX-PDF-mode t)
+
+;; Auto-revert PDF buffer after LaTeX compilation
 (use-package pdf-tools
   :ensure t
   :config
   (pdf-tools-install)
-  ;; Auto-refresh the PDF when the file changes
   (add-hook 'TeX-after-compilation-finished-functions
             #'TeX-revert-document-buffer))
 #+end_src
+
 **** Core Org Configuration
 #+begin_src emacs-lisp
 (use-package org
