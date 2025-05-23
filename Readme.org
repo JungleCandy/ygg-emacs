@@ -430,7 +430,7 @@ For working in projects, integrated with Ivy, Swiper and Counsel
   (projectile-mode 1)
   :custom
   (projectile-completion-system 'ivy)
-  (projectile-project-search-path '("~/Developer")) ; No depth restriction
+  (projectile-project-search-path '("~/Developer" "~/Developer/Tools for building" "~/Sites")) ; No depth restriction
   (projectile-sort-order 'recentf)
   :bind-keymap
   ("C-c p" . projectile-command-map))
@@ -1073,7 +1073,6 @@ Be more explicit about layout
 **** Flycheck
 #+begin_src emacs-lisp
 (use-package flycheck
-  :diminish
   :ensure t
   :init (global-flycheck-mode))
 #+end_src
@@ -1082,28 +1081,15 @@ Be more explicit about layout
 ;; Global LSP configuration
 (use-package lsp-mode
   :ensure t
+  :hook ((swift-mode . lsp)
+         (go-mode . lsp)
+         (python-mode . lsp))
   :commands lsp
-  :init
-  ;; Set up eldoc and flycheck preferences
-  (setq lsp-eldoc-enable-hover nil        ;; Let lsp-ui handle eldoc
-        lsp-prefer-flymake nil)           ;; Prefer Flycheck over Flymake
-  :config
-  ;; Common settings
-  (setq lsp-enable-symbol-highlighting t
-        lsp-keymap-prefix "C-c l"
-        lsp-headerline-breadcrumb-enable nil)
-  ;; Hook into major modes here, without repeating setup
-  (dolist (hook '(python-mode-hook
-                  swift-mode-hook
-                  go-mode-hook
-                  json-mode-hook
-                  web-mode-hook))
-    (add-hook hook #'lsp)))
+  :custom
+  (lsp-eldoc-enable-hover nil)) ;; Let lsp-ui handle hover
 
-;; Optional but nice UI tweaks
 (use-package lsp-ui
   :ensure t
-  :after lsp-mode
   :hook (lsp-mode . lsp-ui-mode)
   :custom
   (lsp-ui-doc-enable t)
@@ -1116,11 +1102,10 @@ My primary language. I should be able to use it on Linux as well.
 First, locate `sourcekit-lsp`:
 #+begin_src emacs-lisp
 (defun find-sourcekit-lsp ()
-  "Locate the sourcekit-lsp binary."
   (or (executable-find "sourcekit-lsp")
       (and (eq system-type 'darwin)
            (string-trim (shell-command-to-string "xcrun -f sourcekit-lsp")))
-      "sourcekit-lsp"))  ;; fallback if all else fails
+      "sourcekit-lsp"))
 #+end_src
 
 Enable `swift-mode` and hook it up to LSP:
@@ -1129,15 +1114,13 @@ Enable `swift-mode` and hook it up to LSP:
   :ensure t
   :mode "\\.swift\\'"
   :interpreter "swift")
-#+end_src
 
-LSP support for Swift:
-#+begin_src emacs-lisp
 (use-package lsp-sourcekit
   :ensure t
   :after lsp-mode
   :custom
   (lsp-sourcekit-executable (find-sourcekit-lsp)))
+
 #+end_src
 *** Common-lisp
 I use SLY not Slime
@@ -1163,13 +1146,13 @@ Run =M-x python-activate= and point it at the =.venv= directory, although there 
 #+begin_src emacs-lisp
 (use-package pyvenv
   :ensure t
-  :config (pyvenv-mode 1))
+  :config
+  (pyvenv-mode 1))
 
 (use-package blacken
   :ensure t
   :hook (python-mode . blacken-mode)
-  :custom
-  (blacken-line-length 88))
+  :custom (blacken-line-length 88))
 
 (use-package py-isort
   :ensure t
@@ -1182,12 +1165,14 @@ Run =M-x python-activate= and point it at the =.venv= directory, although there 
       (pyvenv-activate (expand-file-name ".venv" root)))))
 
 (add-hook 'python-mode-hook #'ygg/auto-pyvenv-activate)
+
 #+end_src
 *** Go Mode
 #+begin_src emacs-lisp
 (use-package go-mode
   :ensure t
-  :hook (before-save . gofmt-before-save))
+  :mode "\\.go\\'"
+  :hook ((before-save . gofmt-before-save)))
 #+end_src
 
 *** web-mode
