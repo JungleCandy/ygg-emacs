@@ -211,7 +211,6 @@ Use the Dracula Pro theme
         `((".*" . ,temporary-file-directory)))
   (setq auto-save-file-name-transforms
         `((".*" ,temporary-file-directory t)))
-
 #+end_src
 
 *** Uniquify
@@ -374,7 +373,6 @@ Select successively larger logical units. Works really well with multiple-cursor
 | C-x b    | Switch buffer                       |
 | C-c k    | Search project with ripgrep         |
 | C-c g    | Counsel-git - find git tracked file |
-| C-x RET  | Counsel-M-X                         |
 | C-C r    | Open recent files list              |
 
 #+begin_src emacs-lisp
@@ -396,16 +394,16 @@ Select successively larger logical units. Works really well with multiple-cursor
 
   ;; Counsel: ivy-enhanced commands
   (use-package counsel
-    :after ivy
-    :bind (("M-x" . counsel-M-x)
-           ("C-x C-f" . counsel-find-file)
-           ("C-x b" . counsel-ibuffer)
-           ("C-c k" . counsel-rg)
-           ("C-c g" . counsel-git)
-           ("C-x RET" . counsel-M-x)
-           ("C-c r" . counsel-recentf))  ;; Easier access to M-x
-    :config
-    (counsel-mode 1))
+  :after ivy
+  :bind (("M-x" . counsel-M-x)
+         ("C-x C-m" . counsel-M-x)
+         ("C-x C-f" . counsel-find-file)
+         ("C-x b" . counsel-ibuffer)
+         ("C-c k" . counsel-rg)
+         ("C-c g" . counsel-git)
+         ("C-c r" . counsel-recentf))
+  :config
+  (counsel-mode 1))
 
   ;; Nicer display
   (use-package ivy-rich
@@ -645,10 +643,11 @@ Modern spelling checker. See note in preamble about personal dictionaries
 #+end_src
 **** Key-chord
 Move like a ninja if I could only remember the chords
-| jj | avy-goto-word-1    | Jump forward by word      |
-| jl | avy-goto-line      | Jump by line              |
-| jk | avy-goto-char      | 'k' like navigation       |
-| jf | avy-goto-subword-0 | Fine grained symbol jumps |
+| jj | avy-goto-word-1    | Jump forward by word         |
+| jl | avy-goto-line      | Jump by line                 |
+| jk | avy-goto-char      | 'k' like navigation          |
+| jf | avy-goto-subword-0 | Fine grained symbol jumps    |
+| xx | counsel M-x        | Easier to reach for than M-x |
 #+begin_src emacs-lisp
   (use-package key-chord
     :ensure t
@@ -659,7 +658,8 @@ Move like a ninja if I could only remember the chords
     (key-chord-define-global "jj" 'avy-goto-word-1)
     (key-chord-define-global "jl" 'avy-goto-line)
     (key-chord-define-global "jk" 'avy-goto-char)
-    (key-chord-define-global "jf" 'avy-goto-subword-0))
+    (key-chord-define-global "jf" 'avy-goto-subword-0)
+    (key-chord-define-global "xx" #'counsel-M-x))
 #+end_src
 **** multiple-cursors
 Why edit one line when you can work on many
@@ -802,37 +802,39 @@ Brackets are really, really important
 | M-J   | Join the sexp before and after the point if they are of the same type         |
 | C-M-t | Transpose the expressions around the point                                    |
 #+begin_src emacs-lisp
-  (use-package smartparens
-    :ensure t
-    :init
-    (progn
-      (require 'smartparens-config)
-      (smartparens-global-mode t)
-      (show-smartparens-global-mode t))
-    :config
-    (progn
-      (add-hook 'prog-mode-hook (lambda () (smartparens-strict-mode t))) ;; If I don't do this, it doesn't turn on properly.
-      (sp-local-pair 'emacs-lisp-mode "`" nil :when '(sp-in-string-p))
-      (setq sp-highlight-pair-overlay nil)
-      (setq sp-highlight-wrap-overlay nil)
-      (setq sp-highlight-wrap-tag-overlay nil))
-    :bind
-    (("C-M-f" . sp-forward-sexp)
-     ("C-M-b" . sp-backward-sexp)
-     ("C-M-n" . sp-up-sexp)
-     ("C-M-d" . sp-down-sexp)
-     ("C-M-u" . sp-backward-up-sexp)
-     ("C-M-p" . sp-backward-down-sexp)
-     ("C-M-w" . sp-copy-sexp)
-     ("M-s" . sp-splice-sexp)
-     ("M-r" . sp-splice-sexp-killing-around)
-     ("C-)" . sp-forward-slurp-sexp)
-     ("C-}" . sp-forward-barf-sexp)
-     ("C-(" . sp-backward-slurp-sexp)
-     ("C-{" . sp-backward-barf-sexp)
-     ("M-S" . sp-split-sexp)
-     ("M-J" . sp-join-sexp)
-     ("C-M-t" . sp-transpose-sexp)))  
+(use-package smartparens
+  :ensure t
+  :init
+  (require 'smartparens-config)
+  :hook
+  ((emacs-lisp-mode . smartparens-strict-mode)
+   (lisp-mode . smartparens-strict-mode)
+   (sly-mrepl-mode . smartparens-strict-mode))
+  :config
+  (smartparens-global-mode t)
+  (show-smartparens-global-mode t)
+  (setq sp-highlight-pair-overlay nil
+        sp-highlight-wrap-overlay nil
+        sp-highlight-wrap-tag-overlay nil)
+  ;; Avoid pairing backticks in elisp strings
+  (sp-local-pair 'emacs-lisp-mode "`" nil :when '(sp-in-string-p))
+  :bind
+  (("C-M-f" . sp-forward-sexp)
+   ("C-M-b" . sp-backward-sexp)
+   ("C-M-n" . sp-up-sexp)
+   ("C-M-d" . sp-down-sexp)
+   ("C-M-u" . sp-backward-up-sexp)
+   ("C-M-p" . sp-backward-down-sexp)
+   ("C-M-w" . sp-copy-sexp)
+   ("M-s" . sp-splice-sexp)
+   ("M-r" . sp-splice-sexp-killing-around)
+   ("C-)" . sp-forward-slurp-sexp)
+   ("C-}" . sp-forward-barf-sexp)
+   ("C-(" . sp-backward-slurp-sexp)
+   ("C-{" . sp-backward-barf-sexp)
+   ("M-S" . sp-split-sexp)
+   ("M-J" . sp-join-sexp)
+   ("C-M-t" . sp-transpose-sexp)))
 #+end_src
 
 **** super-save
@@ -866,6 +868,13 @@ A better version of zap-to-char.
     (("M-z" . zop-up-to-char)
      ("M-Z" . zop-to-char)))  
 #+end_src
+
+**** F for filepaths
+#+begin_src emacs-lisp
+(use-package f
+  :ensure t)
+#+end_src
+
 *** Writing Modes
 **** markdown-mode
 Mostly the mode hooks and a couple of keybindings
@@ -1020,6 +1029,16 @@ Mostly the mode hooks and a couple of keybindings
   (global-set-key (kbd "C-c c") #'org-capture)
 #+end_src
 
+** Programming Support
+
+*** Helpers
+**** editorconfig
+Be more explicit about layout
+#+begin_src emacs-lisp
+  (use-package editorconfig
+    :ensure t
+    :config (editorconfig-mode +1))
+#+end_src
 **** YASnippets
 #+begin_src emacs-lisp
   (use-package yasnippet
@@ -1034,6 +1053,25 @@ Mostly the mode hooks and a couple of keybindings
       (setq yas-indent-line 'auto)
       (yas-global-mode 1))
     :mode ("\\.yasnippet" . snippet-mode))
+#+end_src
+*** Specific Languages
+*** Common-lisp
+I use SLY not Slime
+| M-h | sly-documentation-lookup |
+#+begin_src emacs-lisp
+(defun lisp-program-location ()
+  "Return the SBCL path based on OS."
+  (cond
+   ((eq system-type 'darwin) "/opt/homebrew/bin/sbcl")      ;; macOS
+   ((eq system-type 'gnu/linux) "ros run")                  ;; Linux via Roswell
+   (t "sbcl")))                                             ;; fallback
+
+(use-package sly
+  :ensure t
+  :init
+  (setq inferior-lisp-program (lisp-program-location))
+  :config
+  (define-key sly-prefix-map (kbd "M-h") 'sly-documentation-lookup))
 #+end_src
 
 ** Helper Functions
