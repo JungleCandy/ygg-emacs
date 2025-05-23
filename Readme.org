@@ -65,152 +65,151 @@ Doing this in Org-Mode As a better way to be organised. And while I am looking a
 Configure what is built in.
 *** Personal Information
 #+begin_src emacs-lisp
-  (setq user-full-name "Abizer Nasir"
-        user-mail-address "abizern@mac.com"
-        user-domain "abizern.dev")  
+(setq user-full-name "Abizer Nasir"
+      user-mail-address "abizern@mac.com"
+      user-domain "abizern.dev")  
 #+end_src
 
 *** Built-in Configuration
 #+begin_src emacs-lisp
-  ;; We don't need a startup message.
-  (setq inhibit-startup-message t)
+;; We don't need a startup message.
+(setq inhibit-startup-message t)
 
-  ;; disable the annoying bell ring
-  (setq ring-bell-function 'ignore)
+;; disable the annoying bell ring
+(setq ring-bell-function 'ignore)
 
-  ;; A suitably wide fill-column
-  (set-default 'fill-column 140)
+;; A suitably wide fill-column
+(set-default 'fill-column 140)
 
-  ;; Show column and line number in the modeline
-  (setq line-number-mode t)
-  (setq column-number-mode t)
+;; Show column and line number in the modeline
+(setq line-number-mode t)
+(setq column-number-mode t)
 
-  ;; Turn off modes that look ugly.
-  (mapc
-   (lambda (mode)
-     (when (fboundp mode)
-       (funcall mode -1)))
-   '(menu-bar-mode tool-bar-mode scroll-bar-mode horizontal-scroll-bar-mode))
+;; Turn off modes that look ugly.
+(mapc
+ (lambda (mode)
+   (when (fboundp mode)
+     (funcall mode -1)))
+ '(menu-bar-mode tool-bar-mode scroll-bar-mode horizontal-scroll-bar-mode))
 
+;; more useful frame title, that show either a file or a
+;; buffer name (if the buffer isn't visiting a file)
+(setq frame-title-format
+      '((:eval (if (buffer-file-name)
+                   (abbreviate-file-name (buffer-file-name))
+                 "%b"))))
 
-  ;; more useful frame title, that show either a file or a
-  ;; buffer name (if the buffer isn't visiting a file)
-  (setq frame-title-format
-        '((:eval (if (buffer-file-name)
-                     (abbreviate-file-name (buffer-file-name))
-                   "%b"))))
+;; Tab-bar-mode
+(tab-bar-mode 1)
+(setq tab-bar-show 1)
 
-  ;; Tab-bar-mode
-  (tab-bar-mode 1)
-  (setq tab-bar-show 1)
+;; Always load the newest version of a file, prevents stale compiled elisp code
+(setq load-prefer-newer t)
 
-  ;; Always load the newest version of a file, prevents stale compiled elisp code
-  (setq load-prefer-newer t)
+;; Tab indentation is a curse, a historical pestilence.
+;; Turn it off and let's never talk about this default again.
+(set-default 'indent-tabs-mode nil)
 
-  ;; Tab indentation is a curse, a historical pestilence.
-  ;; Turn it off and let's never talk about this default again.
-  (set-default 'indent-tabs-mode nil)
+;; Move files to trash
+(setq delete-by-moving-to-trash t)
 
-  ;; Move files to trash
-  (setq delete-by-moving-to-trash t)
+;; Automatically save buffers before launching M-x compile and friends,
+;; instead of asking you if you want to save.
+(setq compilation-ask-about-save nil)
 
-  ;; Automatically save buffers before launching M-x compile and friends,
-  ;; instead of asking you if you want to save.
-  (setq compilation-ask-about-save nil)
+;; Make the selection work like most people expect.
+(delete-selection-mode t)
+(transient-mark-mode t)
 
-  ;; Make the selection work like most people expect.
-  (delete-selection-mode t)
-  (transient-mark-mode t)
+;; Automatically update unmodified buffers whose files have changed.
+(global-auto-revert-mode t)
 
-  ;; Automatically update unmodified buffers whose files have changed.
-  (global-auto-revert-mode t)
+;; We aren't using monospace typewriters anymore
+(setq sentence-end-double-space nil)
 
-  ;; We aren't using monospace typewriters anymore
-  (setq sentence-end-double-space nil)
+;; Since ethan-wspace takes care of this for us, we don't need it
+(setq mode-require-final-newline nil)
+(setq require-final-newline nil)
 
-  ;; Since ethan-wspace takes care of this for us, we don't need it
-  (setq mode-require-final-newline nil)
-  (setq require-final-newline nil)
+;; Turn off defadvice warnings during startup
+(setq ad-redefinition-action 'accept)
 
-  ;; Turn off defadvice warnings during startup
-  (setq ad-redefinition-action 'accept)
+;; use hippie-expand instead of dabbrev
+(global-set-key (kbd "M-/") 'hippie-expand)
 
-  ;; use hippie-expand instead of dabbrev
-  (global-set-key (kbd "M-/") 'hippie-expand)
+;; Always indent after a newline
+(define-key global-map (kbd "RET") 'newline-and-indent)
 
-  ;; Always indent after a newline
-  (define-key global-map (kbd "RET") 'newline-and-indent)
+;; A quick major mode help with discover-my-major
+(define-key 'help-command (kbd "C-m") 'discover-my-major)
 
-  ;; A quick major mode help with discover-my-major
-  (define-key 'help-command (kbd "C-m") 'discover-my-major)
+;; Align your code in a pretty way.
+(global-set-key (kbd "C-x \\") 'align-regexp)
 
-  ;; Align your code in a pretty way.
-  (global-set-key (kbd "C-x \\") 'align-regexp)
+;; Ask for y/n confirmation instead of yes/no
+(fset 'yes-or-no-p 'y-or-n-p)
 
-  ;; Ask for y/n confirmation instead of yes/no
-  (fset 'yes-or-no-p 'y-or-n-p)
+;; Winner mode for layout persistence
+(add-hook 'after-init-hook #'winner-mode)
 
-  ;; Winner mode for layout persistence
-  (add-hook 'after-init-hook #'winner-mode)
-  
-  ;; Make sure to always use UTF-8
-  (setq locale-coding-system 'utf-8)
-  (set-terminal-coding-system 'utf-8)
-  (set-keyboard-coding-system 'utf-8)
-  (set-selection-coding-system 'utf-8)
-  (prefer-coding-system 'utf-8)
+;; Make sure to always use UTF-8
+(setq locale-coding-system 'utf-8)
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+(set-selection-coding-system 'utf-8)
+(prefer-coding-system 'utf-8)
 
-  ;; Make eshell work nicely with zsh
-  (setq shell-file-name "/bin/zsh")
-  (setq explicit-zsh-args '("--interactive" "--login"))
-  (setq comint-process-echoes 0)
+;; Make eshell work nicely with zsh
+(setq shell-file-name "/bin/zsh")
+(setq explicit-zsh-args '("--interactive" "--login"))
+(setq comint-process-echoes 0)
 
-  ;; prevents echoes of commands in shell
-  (add-hook 'shell-mode-hook
+;; prevents echoes of commands in shell
+(add-hook 'shell-mode-hook
           (lambda () (setq comint-process-echoes t)))
 #+end_src
 *** Themes
 Use the Dracula Pro theme
 #+begin_src emacs-lisp
-  (defun setup-gold-cursor (frame)
-    "A gold bar cursor"
-    (progn
-      (set-face-attribute 'cursor nil :background "gold1")
-      (setq-default cursor-type 'bar)))
+(defun setup-gold-cursor (frame)
+  "A gold bar cursor"
+  (progn
+    (set-face-attribute 'cursor nil :background "gold1")
+    (setq-default cursor-type 'bar)))
 
-  (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
-  (load-theme 'dracula-pro-pro :no-confirm)
-  (add-hook 'after-make-frame-functions 'setup-gold-cursor t)
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
+(load-theme 'dracula-pro-pro :no-confirm)
+(add-hook 'after-make-frame-functions 'setup-gold-cursor t)
 #+end_src
 
 *** Custom storage directories
 #+begin_src emacs-lisp
-  ;; Directory for support files. Create if needed.
-  (defvar savefile-dir (expand-file-name "savefile" user-emacs-directory)
-    "The directory that stores support files.")
-  (unless (file-exists-p savefile-dir)
-    (make-directory savefile-dir))
+;; Directory for support files. Create if needed.
+(defvar savefile-dir (expand-file-name "savefile" user-emacs-directory)
+  "The directory that stores support files.")
+(unless (file-exists-p savefile-dir)
+  (make-directory savefile-dir))
 
-  ;; Define where to keep the autoload declarations.
-  (setq autoload-file (expand-file-name "loaddefs.el" savefile-dir))
+;; Define where to keep the autoload declarations.
+(setq autoload-file (expand-file-name "loaddefs.el" savefile-dir))
 
-  ;; Define where to keep user-settings, and load them.
-  (setq custom-file (expand-file-name "custom.el" savefile-dir))
-  (load custom-file 'noerror)
+;; Define where to keep user-settings, and load them.
+(setq custom-file (expand-file-name "custom.el" savefile-dir))
+(load custom-file 'noerror)
 
-  ;; User lisp files. Create if needed.
-  (defvar ygg-lisp-dir (expand-file-name "lisp" user-emacs-directory)
-    "The directory for user lisp files.")
-  (unless (file-exists-p ygg-lisp-dir)
-    (make-directory ygg-lisp-dir))
-  ;; Add the user-lisp directory to the load path.
-  (add-to-list 'load-path ygg-lisp-dir)
+;; User lisp files. Create if needed.
+(defvar ygg-lisp-dir (expand-file-name "lisp" user-emacs-directory)
+  "The directory for user lisp files.")
+(unless (file-exists-p ygg-lisp-dir)
+  (make-directory ygg-lisp-dir))
+;; Add the user-lisp directory to the load path.
+(add-to-list 'load-path ygg-lisp-dir)
 
-  ;; store all backup and autosave files in the tmp dir
-  (setq backup-directory-alist
-        `((".*" . ,temporary-file-directory)))
-  (setq auto-save-file-name-transforms
-        `((".*" ,temporary-file-directory t)))
+;; store all backup and autosave files in the tmp dir
+(setq backup-directory-alist
+      `((".*" . ,temporary-file-directory)))
+(setq auto-save-file-name-transforms
+      `((".*" ,temporary-file-directory t)))
 #+end_src
 
 *** Uniquify
@@ -227,25 +226,31 @@ Better buffer names if they clash
 ** Packages
 *** Set up for using packages
 #+begin_src emacs-lisp
-  ;; Update package metadata if required
-  (unless package-archive-contents
-    (package-refresh-contents))
+;; Update package metadata if required
+(unless package-archive-contents
+  (package-refresh-contents))
 
-  (unless (package-installed-p 'use-package)
-    (package-install 'use-package))
+(unless (package-installed-p 'use-package)
+  (package-install 'use-package))
 
-  (require 'use-package)
-  (setq use-package-always-ensure t)
-  
-  ;; For more verbose startup, uncomment the line below
-  ;; (setq use-package-verbose t)  
+(require 'use-package)
+(setq use-package-always-ensure t)
+
+;; For more verbose startup, uncomment the line below
+;; (setq use-package-verbose t)  
 #+end_src
 
 For more verbose startup, uncomment the line below
 #+begin_src emacs-lisp
-  (setq use-package-verbose t)
+(setq use-package-verbose t)
 #+end_src
 *** Productivity and usability
+**** Diminish
+Don't clutter the modeline with global minor modes
+#+begin_src emacs-lisp
+(use-package diminish
+  :ensure t)
+#+end_src
 **** ace-window
 Easily move between windows, optimised for Dvorak layout.
 | M-o         | Put up indicators to make moving between windows easier |
@@ -253,12 +258,12 @@ Easily move between windows, optimised for Dvorak layout.
 | C-u M-o     | Swaps current window with selected window               |
 | C-u C-u M-o | Deletes the selected window                             |
 #+begin_src emacs-lisp
-  (use-package ace-window
-    :ensure t
-    :bind (("M-o" . ace-window)
-           ("C-x C-o" . ace-swap-window))
-    :config
-    (setq aw-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n)))  
+(use-package ace-window
+  :ensure t
+  :bind (("M-o" . ace-window)
+         ("C-x C-o" . ace-swap-window))
+  :config
+  (setq aw-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n)))  
 #+end_src
 
 **** avy
@@ -266,92 +271,92 @@ Quick navigation by word or character
 | C-; | avy-goto-word-1 |
 | C-: | avy-goto-char   |
 #+begin_src emacs-lisp
-  (use-package avy
-    :ensure t
-    :bind (("C-;" . avy-goto-word-1)
-           ("C-:" . avy-goto-char)))
+(use-package avy
+  :ensure t
+  :bind (("C-;" . avy-goto-word-1)
+         ("C-:" . avy-goto-char)))
 #+end_src
 **** company
 All good IDEs have some interactivity
 #+begin_src emacs-lisp
-  (use-package company
-    :init (add-hook 'after-init-hook #'global-company-mode)
-    :commands company-mode
+(use-package company
+  :init (add-hook 'after-init-hook #'global-company-mode)
+  :commands company-mode
+  :config
+  ;; Enable company-mode globally.
+  (global-company-mode +1)
+  ;; Except when you're in term-mode.
+  (setq company-global-modes '(not term-mode))
+  ;; Give Company a decent default configuration.
+  (setq company-minimum-prefix-length 2
+        company-selection-wrap-around t
+        company-show-numbers t
+        company-tooltip-align-annotations t
+        company-require-match nil
+        company-dabbrev-downcase nil
+        company-dabbrev-ignore-case nil)
+  ;; Sort completion candidates that already occur in the current
+  ;; buffer at the top of the candidate list.
+  (setq company-transformers '(company-sort-by-occurrence))
+  ;; Show documentation where available for selected completion
+  ;; after a short delay.
+
+  (use-package company-quickhelp
+    :ensure t
+    :after (company)
     :config
-    ;; Enable company-mode globally.
-    (global-company-mode +1)
-    ;; Except when you're in term-mode.
-    (setq company-global-modes '(not term-mode))
-    ;; Give Company a decent default configuration.
-    (setq company-minimum-prefix-length 2
-          company-selection-wrap-around t
-          company-show-numbers t
-          company-tooltip-align-annotations t
-          company-require-match nil
-          company-dabbrev-downcase nil
-          company-dabbrev-ignore-case nil)
-    ;; Sort completion candidates that already occur in the current
-    ;; buffer at the top of the candidate list.
-    (setq company-transformers '(company-sort-by-occurrence))
-    ;; Show documentation where available for selected completion
-    ;; after a short delay.
+    (setq company-quickhelp-delay 1)
+    (company-quickhelp-mode 1))
+  ;; Use C-\ to activate the Company autocompleter.
+  ;; We invoke company-try-hard to gather completion candidates from multiple
+  ;; sources if the active source isn't being very forthcoming.
 
-    (use-package company-quickhelp
-      :ensure t
-      :after (company)
-      :config
-      (setq company-quickhelp-delay 1)
-      (company-quickhelp-mode 1))
-    ;; Use C-\ to activate the Company autocompleter.
-    ;; We invoke company-try-hard to gather completion candidates from multiple
-    ;; sources if the active source isn't being very forthcoming.
-
-    (use-package company-try-hard
-      :ensure t
-      :after (company)
-      :bind ("C-\\" . company-try-hard)
-      :config
-      (bind-keys :map company-active-map
-                 ("C-\\" . company-try-hard)))
-    :diminish company-mode)  
+  (use-package company-try-hard
+    :ensure t
+    :after (company)
+    :bind ("C-\\" . company-try-hard)
+    :config
+    (bind-keys :map company-active-map
+               ("C-\\" . company-try-hard)))
+  :diminish company-mode)  
 #+end_src
 **** eshell
 ***** eshell
 #+begin_src emacs-lisp
-  (use-package eshell
-    :ensure t)
+(use-package eshell
+  :ensure t)
 #+end_src
 
 ***** eshell-git-prompt
 #+begin_src emacs-lisp
-  (use-package eshell-git-prompt
-    :after shell
-    :ensure t)
+(use-package eshell-git-prompt
+  :after shell
+  :ensure t)
 #+end_src
 
 ***** eshell-syntax-highlighting
 #+begin_src emacs-lisp
-  (use-package eshell-syntax-highlighting
-    :ensure t
-    :config
-    (eshell-syntax-highlighting-global-mode +1)
-    :init
-    (defface eshell-syntax-highlighting-invalid-face
-      '((t :inherit diff-error))
-      "Face used for invalid Eshell commands."
-      :group 'eshell-syntax-highlighting))
+(use-package eshell-syntax-highlighting
+  :ensure t
+  :config
+  (eshell-syntax-highlighting-global-mode +1)
+  :init
+  (defface eshell-syntax-highlighting-invalid-face
+    '((t :inherit diff-error))
+    "Face used for invalid Eshell commands."
+    :group 'eshell-syntax-highlighting))
 #+end_src
 **** ethan-wspace
 See more at https://github.com/glasserc/ethan-wspace
 | C-c c | to clean up a file |
 #+begin_src emacs-lisp
-  (use-package ethan-wspace
-    :ensure t
-    :commands global-ethan-wspace-mode
-    :config (setq mode-require-final-newline nil)
-    (global-ethan-wspace-mode 1)
-    :bind ("C-c c" . ethan-wspace-clean-all)
-    :diminish ethan-wspace-mode)  
+(use-package ethan-wspace
+  :ensure t
+  :commands global-ethan-wspace-mode
+  :config (setq mode-require-final-newline nil)
+  (global-ethan-wspace-mode 1)
+  :bind ("C-c c" . ethan-wspace-clean-all)
+  :diminish ethan-wspace-mode)  
 #+end_src
 
 **** expand-region
@@ -359,10 +364,10 @@ Select successively larger logical units. Works really well with multiple-cursor
 | C-=   | Select and expand by logical units   |
 | M-C-= | Contract the region be logical units |
 #+begin_src emacs-lisp
-  (use-package expand-region
-    :ensure t
-    :bind (("C-=" . er/expand-region)
-           ("M-C-=" . er/contract-region)))
+(use-package expand-region
+  :ensure t
+  :bind (("C-=" . er/expand-region)
+         ("M-C-=" . er/contract-region)))
 #+end_src
 
 **** Ivy, Swiper, Counsel
@@ -376,24 +381,25 @@ Select successively larger logical units. Works really well with multiple-cursor
 | C-C r    | Open recent files list              |
 
 #+begin_src emacs-lisp
-  ;; Ivy: lightweight completion
-  (use-package ivy
-    :diminish
-    :init
-    (ivy-mode 1)
-    :custom
-    (ivy-use-virtual-buffers t)
-    (ivy-count-format "(%d/%d) ") ;; Show current/total count
-    (enable-recursive-minibuffers t)
-    (ivy-initial-inputs-alist nil)) ;; Remove '^' from certain prompts
+;; Ivy: lightweight completion
+(use-package ivy
+  :diminish
+  :init
+  (ivy-mode 1)
+  :custom
+  (ivy-use-virtual-buffers t)
+  (ivy-count-format "(%d/%d) ") ;; Show current/total count
+  (enable-recursive-minibuffers t)
+  (ivy-initial-inputs-alist nil)) ;; Remove '^' from certain prompts
 
-  ;; Swiper: better search
-  (use-package swiper
-    :bind (("C-s" . swiper)
-           ("C-r" . swiper))) ;; Optional: replace isearch backward
+;; Swiper: better search
+(use-package swiper
+  :bind (("C-s" . swiper)
+         ("C-r" . swiper))) ;; Optional: replace isearch backward
 
-  ;; Counsel: ivy-enhanced commands
-  (use-package counsel
+;; Counsel: ivy-enhanced commands
+(use-package counsel
+  :diminish
   :after ivy
   :bind (("M-x" . counsel-M-x)
          ("C-x C-m" . counsel-M-x)
@@ -404,12 +410,11 @@ Select successively larger logical units. Works really well with multiple-cursor
          ("C-c r" . counsel-recentf))
   :config
   (counsel-mode 1))
-
-  ;; Nicer display
-  (use-package ivy-rich
-    :after ivy
-    :init
-    (ivy-rich-mode 1))
+;; Nicer display
+(use-package ivy-rich
+  :after ivy
+  :init
+  (ivy-rich-mode 1))
 #+end_src
 
 **** Projectile
@@ -485,29 +490,29 @@ For working in projects, integrated with Ivy, Swiper and Counsel
 
 ***** Magit
 #+begin_src emacs-lisp
-  (defun my-magit-quit-session ()
-    "Quit Magit and restore previous window configuration."
-    (interactive)
-    (kill-buffer)
-    (winner-undo))
+(defun my-magit-quit-session ()
+  "Quit Magit and restore previous window configuration."
+  (interactive)
+  (kill-buffer)
+  (winner-undo))
 
-  (use-package magit
-    :commands (magit-status)
-    :bind (("C-x g" . magit-status))
-    :config
-    ;; Make magit-status open in the same window (like fullscreen)
-    (setq magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1)
+(use-package magit
+  :commands (magit-status)
+  :bind (("C-x g" . magit-status))
+  :config
+  ;; Make magit-status open in the same window (like fullscreen)
+  (setq magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1)
 
-    ;; Bind `q` to your custom quit in magit-status
-    (define-key magit-status-mode-map (kbd "q") #'my-magit-quit-session))
+  ;; Bind `q` to your custom quit in magit-status
+  (define-key magit-status-mode-map (kbd "q") #'my-magit-quit-session))
 #+end_src
 
 
 ***** Forge
 For GitHub integration - set up for an authenticated gh.
 #+begin_src emacs-lisp
-  (use-package forge
-    :after magit)
+(use-package forge
+  :after magit)
 #+end_src
 **** Counsel Projectile Integration
 Improves project file search and project switching with Ivy.
@@ -549,55 +554,58 @@ Improves project file search and project switching with Ivy.
 
 Adds smarter sorting and global fuzzy matching for all Ivy interfaces
 #+begin_src emacs-lisp
-  ;; Optional: Prescient sorting for Ivy
-  (use-package ivy-prescient
-    :after counsel
-    :config
-    (ivy-prescient-mode 1)
-    (prescient-persist-mode 1)
-    (setq counsel-M-x-sort-function #'ivy-prescient-sort-function))
+;; Optional: Prescient sorting for Ivy
+(use-package ivy-prescient
+  :after counsel
+  :config
+  (ivy-prescient-mode 1)
+  (prescient-persist-mode 1)
+  (setq counsel-M-x-sort-function #'ivy-prescient-sort-function))
 
-  ;; Optional: Enable fuzzy matching in Ivy
-  (setq ivy-re-builders-alist '((t . ivy--regex-fuzzy)))
+;; Optional: Enable fuzzy matching in Ivy
+(setq ivy-re-builders-alist
+      '((swiper . ivy--regex-plus)
+        (t . ivy--regex-ignore-order)))
 #+end_src
 
 **** Which Key
 Aids discoverability with all these shortcuts
 #+begin_src emacs-lisp
-  (use-package which-key
-    :config (which-key-mode))
+(use-package which-key
+  :diminish
+  :config (which-key-mode))
 #+end_src
 **** diff-hl
 Show changes in a file
 #+begin_src emacs-lisp
-  (use-package diff-hl
-    :ensure t
-    :hook ((prog-mode . diff-hl-mode)
-           (text-mode . diff-hl-mode)
-           (magit-pre-refresh . diff-hl-magit-pre-refresh)
-           (magit-post-refresh . diff-hl-magit-post-refresh))
-    :config
-    ;; Enable real-time diff updates
-    (diff-hl-flydiff-mode 1)
+(use-package diff-hl
+  :ensure t
+  :hook ((prog-mode . diff-hl-mode)
+         (text-mode . diff-hl-mode)
+         (magit-pre-refresh . diff-hl-magit-pre-refresh)
+         (magit-post-refresh . diff-hl-magit-post-refresh))
+  :config
+  ;; Enable real-time diff updates
+  (diff-hl-flydiff-mode 1)
 
-    ;; Optionally enable diff highlighting in the margin (if fringes are disabled)
-    ;; (diff-hl-margin-mode 1)
+  ;; Optionally enable diff highlighting in the margin (if fringes are disabled)
+  ;; (diff-hl-margin-mode 1)
 
-    ;; Show staged changes (useful if using partial staging in Magit)
-    (diff-hl-show-hunk-mouse-mode 1)
+  ;; Show staged changes (useful if using partial staging in Magit)
+  (diff-hl-show-hunk-mouse-mode 1)
 
-    ;; Jump between hunks
-    (global-set-key (kbd "C-x v =") 'diff-hl-diff-goto-hunk)
-    (global-set-key (kbd "C-x v n") 'diff-hl-next-hunk)
-    (global-set-key (kbd "C-x v p") 'diff-hl-previous-hunk)
+  ;; Jump between hunks
+  (global-set-key (kbd "C-x v =") 'diff-hl-diff-goto-hunk)
+  (global-set-key (kbd "C-x v n") 'diff-hl-next-hunk)
+  (global-set-key (kbd "C-x v p") 'diff-hl-previous-hunk)
 
-    ;; Revert hunk
-    (global-set-key (kbd "C-x v r") 'diff-hl-revert-hunk))
+  ;; Revert hunk
+  (global-set-key (kbd "C-x v r") 'diff-hl-revert-hunk))
 #+end_src
 **** Spell-fu
 Modern spelling checker. See note in preamble about personal dictionaries
 #+begin_src emacs-lisp
- (use-package spell-fu
+(use-package spell-fu
   :ensure t
   :defer nil  ;; Force loading immediately so functions are defined
   :hook ((text-mode . spell-fu-mode)
@@ -621,7 +629,7 @@ Modern spelling checker. See note in preamble about personal dictionaries
 
 
 
-  (defun spell-fu-add-word-to-personal-dict ()
+(defun spell-fu-add-word-to-personal-dict ()
   "Add the word at point to personal spell-fu dictionary."
   (interactive)
   (let* ((word (thing-at-point 'word t))
@@ -639,7 +647,7 @@ Modern spelling checker. See note in preamble about personal dictionaries
           (spell-fu-refresh))
       (message "No word at point."))))
 
-  (global-set-key (kbd "C-c w") #'spell-fu-add-word-to-personal-dict)
+(global-set-key (kbd "C-c w") #'spell-fu-add-word-to-personal-dict)
 #+end_src
 **** Key-chord
 Move like a ninja if I could only remember the chords
@@ -649,17 +657,17 @@ Move like a ninja if I could only remember the chords
 | jf | avy-goto-subword-0 | Fine grained symbol jumps    |
 | xx | counsel M-x        | Easier to reach for than M-x |
 #+begin_src emacs-lisp
-  (use-package key-chord
-    :ensure t
-    :custom
-    (key-chord-two-keys-delay 0.2) ;; adjust to your typing rhythm
-    :config
-    (key-chord-mode 1)
-    (key-chord-define-global "jj" 'avy-goto-word-1)
-    (key-chord-define-global "jl" 'avy-goto-line)
-    (key-chord-define-global "jk" 'avy-goto-char)
-    (key-chord-define-global "jf" 'avy-goto-subword-0)
-    (key-chord-define-global "xx" #'counsel-M-x))
+(use-package key-chord
+  :ensure t
+  :custom
+  (key-chord-two-keys-delay 0.2) ;; adjust to your typing rhythm
+  :config
+  (key-chord-mode 1)
+  (key-chord-define-global "jj" 'avy-goto-word-1)
+  (key-chord-define-global "jl" 'avy-goto-line)
+  (key-chord-define-global "jk" 'avy-goto-char)
+  (key-chord-define-global "jf" 'avy-goto-subword-0)
+  (key-chord-define-global "xx" #'counsel-M-x))
 #+end_src
 **** multiple-cursors
 Why edit one line when you can work on many
@@ -670,17 +678,17 @@ Why edit one line when you can work on many
 | C-S-c C-S-e | mc/edit-ends-of-lines       |
 | C-S-c C-S-a | mc/edit-beginnings-of-lines |
 #+begin_src emacs-lisp
-  (use-package multiple-cursors
-    :ensure t
-    :commands multiple-cursors-mode
-    :bind (("C->" . mc/mark-next-like-this)
-           ("C-<" . mc/mark-previous-like-this)
-           ("C-c C-<" . mc/mark-all-like-this)
-           ("C-S-c C-S-c" . mc/edit-lines)
-           ("C-S-c C-S-e" . mc/edit-ends-of-lines)
-           ("C-S-c C-S-a" . mc/edit-beginnings-of-lines))
-    :config
-    (setq mc/list-file (expand-file-name ".mc-lists.el" savefile-dir)))  
+(use-package multiple-cursors
+  :ensure t
+  :commands multiple-cursors-mode
+  :bind (("C->" . mc/mark-next-like-this)
+         ("C-<" . mc/mark-previous-like-this)
+         ("C-c C-<" . mc/mark-all-like-this)
+         ("C-S-c C-S-c" . mc/edit-lines)
+         ("C-S-c C-S-e" . mc/edit-ends-of-lines)
+         ("C-S-c C-S-a" . mc/edit-beginnings-of-lines))
+  :config
+  (setq mc/list-file (expand-file-name ".mc-lists.el" savefile-dir)))  
 #+end_src
 
 **** neotree
@@ -701,86 +709,86 @@ Bindings only in Neotree buffer.
 | C-c C-p             | Copy a file or a directory                       |
 
 #+begin_src emacs-lisp
-  (use-package neotree
-    :ensure t
-    :bind ("<f5>" . neotree-toggle)
-    :custom
-    (neo-theme 'icons)
-    (neo-smart-open t)
-    (neo-autorefresh t)
-    (neo-show-hidden-files t))
+(use-package neotree
+  :ensure t
+  :bind ("<f5>" . neotree-toggle)
+  :custom
+  (neo-theme 'icons)
+  (neo-smart-open t)
+  (neo-autorefresh t)
+  (neo-show-hidden-files t))
 
-  (use-package all-the-icons
+(use-package all-the-icons
 
-    :ensure t
-    :defer
-    :if (display-graphic-p))
+  :ensure t
+  :defer
+  :if (display-graphic-p))
 
-  (use-package all-the-icons-completion
-    :ensure t
-    :defer
-    :hook (marginalia-mode . #'all-the-icons-completion-marginalia-setup)
-    :init
-    (all-the-icons-completion-mode))
+(use-package all-the-icons-completion
+  :ensure t
+  :defer
+  :hook (marginalia-mode . #'all-the-icons-completion-marginalia-setup)
+  :init
+  (all-the-icons-completion-mode))
 #+end_src
 
 **** rainbow-mode
 Colourise names of colours in certain modes
 #+begin_src emacs-lisp
-  (use-package rainbow-mode
-    :ensure t
-    :config
-    (dolist (mode '(css-mode less-css-mode html-mode web-mode))
-      (add-hook (intern (concat (symbol-name mode) "-hook"))
-                (lambda () (rainbow-mode))))
-    :diminish rainbow-mode)  
+(use-package rainbow-mode
+  :ensure t
+  :config
+  (dolist (mode '(css-mode less-css-mode html-mode web-mode))
+    (add-hook (intern (concat (symbol-name mode) "-hook"))
+              (lambda () (rainbow-mode))))
+  :diminish rainbow-mode)  
 #+end_src
 
 **** recentf
 Recent File handling
 #+begin_src emacs-lisp
-  (use-package recentf
-    :ensure t
-    :init
-    (setq recentf-save-file (expand-file-name "recentf" savefile-dir)
-          recentf-max-saved-items 100
-          recentf-max-menu-items 15
-          recentf-auto-cleanup 'never
-          recentf-exclude
-          '("\\COMMIT_EDITMSG\\'"
-            ".*-autoloads\\.el\\'"
-            ".*/elpa/.*"
-            "/tmp/"
-            "^/ssh:"
-            "^/sudo:"))
-    :config
-    (recentf-mode 1))
+(use-package recentf
+  :ensure t
+  :init
+  (setq recentf-save-file (expand-file-name "recentf" savefile-dir)
+        recentf-max-saved-items 100
+        recentf-max-menu-items 15
+        recentf-auto-cleanup 'never
+        recentf-exclude
+        '("\\COMMIT_EDITMSG\\'"
+          ".*-autoloads\\.el\\'"
+          ".*/elpa/.*"
+          "/tmp/"
+          "^/ssh:"
+          "^/sudo:"))
+  :config
+  (recentf-mode 1))
 #+end_src
 
 **** savehist
 Save history.
 #+begin_src emacs-lisp
-  (use-package savehist
-    :config
-    (setq savehist-additional-variables
-          ;; search entries
-          '(search-ring regexp-search-ring)
-          ;; save every minute
-          savehist-autosave-interval 60
-          ;; keep the home clean
-          savehist-file (expand-file-name "savehist" savefile-dir))
-    (savehist-mode +1))  
+(use-package savehist
+  :config
+  (setq savehist-additional-variables
+        ;; search entries
+        '(search-ring regexp-search-ring)
+        ;; save every minute
+        savehist-autosave-interval 60
+        ;; keep the home clean
+        savehist-file (expand-file-name "savehist" savefile-dir))
+  (savehist-mode +1))  
 #+end_src
 
 **** saveplace
 Save point position between sessions.
 #+begin_src emacs-lisp
-  (use-package saveplace
-    :ensure t
-    :init
-    (setq save-place-file (expand-file-name ".places" savefile-dir))
-    :config
-    (setq-default save-place t))
+(use-package saveplace
+  :ensure t
+  :init
+  (setq save-place-file (expand-file-name ".places" savefile-dir))
+  :config
+  (setq-default save-place t))
 #+end_src
 
 **** smartparens
@@ -803,6 +811,7 @@ Brackets are really, really important
 | C-M-t | Transpose the expressions around the point                                    |
 #+begin_src emacs-lisp
 (use-package smartparens
+  :diminish
   :ensure t
   :init
   (require 'smartparens-config)
@@ -840,10 +849,11 @@ Brackets are really, really important
 **** super-save
 Automatically save files
 #+begin_src emacs-lisp
-  (use-package super-save
-    :ensure t
-    :config
-    (super-save-mode +1))  
+(use-package super-save
+  :diminish
+  :ensure t
+  :config
+  (super-save-mode +1))  
 #+end_src
 
 **** undo-fu
@@ -851,22 +861,22 @@ A little simpler than undo tree
 | C-z   | Undo |
 | C-S-z | Redo |
 #+begin_src emacs-lisp
-  (use-package undo-fu
-    :ensure t
-    :config
-    (global-unset-key (kbd "C-z"))
-    (global-set-key (kbd "C-z") 'undo-fu-only-undo)
-    (global-set-key (kbd "C-S-z") 'undo-fu-only-redo))  
+(use-package undo-fu
+  :ensure t
+  :config
+  (global-unset-key (kbd "C-z"))
+  (global-set-key (kbd "C-z") 'undo-fu-only-undo)
+  (global-set-key (kbd "C-S-z") 'undo-fu-only-redo))  
 #+end_src
 
 **** zop-to-char
 A better version of zap-to-char.
 #+begin_src emacs-lisp
-  (use-package zop-to-char
-    :ensure t
-    :bind
-    (("M-z" . zop-up-to-char)
-     ("M-Z" . zop-to-char)))  
+(use-package zop-to-char
+  :ensure t
+  :bind
+  (("M-z" . zop-up-to-char)
+   ("M-Z" . zop-to-char)))  
 #+end_src
 
 **** F for filepaths
@@ -881,20 +891,20 @@ Mostly the mode hooks and a couple of keybindings
 | M-n | Add line below |
 | M-p | Add line above |
 #+begin_src emacs-lisp
-  (use-package markdown-mode
-    :ensure t
-    :mode ("\\.md\\'" "\\.markdown\\'")
-    :hook ((markdown-mode . visual-line-mode)
-           (markdown-mode . spell-fu-mode))
-    :bind (:map markdown-mode-map
-                ("M-n" . open-line-below)
-                ("M-p" . open-line-above)))
+(use-package markdown-mode
+  :ensure t
+  :mode ("\\.md\\'" "\\.markdown\\'")
+  :hook ((markdown-mode . visual-line-mode)
+         (markdown-mode . spell-fu-mode))
+  :bind (:map markdown-mode-map
+              ("M-n" . open-line-below)
+              ("M-p" . open-line-above)))
 #+end_src
 
 
 **** Latex
 #+begin_src emacs-lisp
-  (use-package tex
+(use-package tex
   :ensure auctex
   :hook ((LaTeX-mode . visual-line-mode)
          (LaTeX-mode . spell-fu-mode)
@@ -920,7 +930,7 @@ Mostly the mode hooks and a couple of keybindings
 
 **** PDF Viewer integration
 #+begin_src emacs-lisp
-  (use-package pdf-tools
+(use-package pdf-tools
   :ensure t
   :config
   (pdf-tools-install)
@@ -930,103 +940,109 @@ Mostly the mode hooks and a couple of keybindings
 #+end_src
 **** Core Org Configuration
 #+begin_src emacs-lisp
-  (use-package org
-    :ensure t
-    :after yasnippet
-    :hook ((org-mode . visual-line-mode)
-           (org-mode . yas-minor-mode))
-    :bind (:map org-mode-map
-                ("M-j" . org-metaup)
-                ("M-k" . org-metadown)
-                ("C-c t" . yas-next-field))
-    :config
-    (setq org-directory "~/Documents/Org"
-          org-metadir (concat org-directory "_orgmata/")
-          org-default-notes-file (concat org-directory "refile.org")
-          org-archive-location (concat org-metadir "archive.org::date-tree")
-          org-agenda-files '("~/Documents/Org/")
-          org-startup-indented t
-          org-src-tab-acts-natively t
-          org-src-fontify-natively t
-          org-src-preserve-indentation t
-          org-edit-src-content-indentation 0))
+(use-package org
+  :ensure t
+  :after yasnippet
+  :hook ((org-mode . visual-line-mode)
+         (org-mode . yas-minor-mode))
+  :bind (:map org-mode-map
+              ("M-j" . org-metaup)
+              ("M-k" . org-metadown)
+              ("C-c t" . yas-next-field))
+  :config
+  (setq org-directory "~/Documents/Org"
+        org-metadir (concat org-directory "_orgmata/")
+        org-default-notes-file (concat org-directory "refile.org")
+        org-archive-location (concat org-metadir "archive.org::date-tree")
+        org-agenda-files '("~/Documents/Org/")
+        org-startup-indented t
+        org-src-tab-acts-natively t
+        org-src-fontify-natively t
+        org-src-preserve-indentation t
+        org-edit-src-content-indentation 0))
+
+(defun ygg/fix-org-tab-width ()
+  "Ensure tab-width is 8 in Org mode buffers to satisfy parser requirements."
+  (setq-local tab-width 8))
+
+(add-hook 'org-mode-hook #'ygg/fix-org-tab-width)
 #+end_src
 
 **** Org Visual Enhancements
 #+begin_src emacs-lisp
-  (use-package org-bullets
-    :ensure t
-    :hook (org-mode . org-bullets-mode))
+(use-package org-bullets
+  :ensure t
+  :hook (org-mode . org-bullets-mode))
 
-  (setq org-pretty-entities t)
+(setq org-pretty-entities t)
 #+end_src
 
 **** Org Writing & Note Tools
 #+begin_src emacs-lisp
-  (use-package org-cliplink
-    :ensure t
-    :after org
-    :bind (:map org-mode-map
-                ("C-c M-l" . org-cliplink)))
+(use-package org-cliplink
+  :ensure t
+  :after org
+  :bind (:map org-mode-map
+              ("C-c M-l" . org-cliplink)))
 #+end_src
 
 **** Org Agenda & GTD
 #+begin_src emacs-lisp
-  (with-eval-after-load 'org
-    (setq org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
-                              (sequence "DRAFT(r)" "|" "PUBLISH(p)"))
-          org-use-fast-todo-selection t
-          org-log-done 'time
-          org-treat-S-cursor-todo-selection-as-state-change nil))
+(with-eval-after-load 'org
+  (setq org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
+                            (sequence "DRAFT(r)" "|" "PUBLISH(p)"))
+        org-use-fast-todo-selection t
+        org-log-done 'time
+        org-treat-S-cursor-todo-selection-as-state-change nil))
 #+end_src
 
 **** Org Export & Publishing
 #+begin_src emacs-lisp
-  (with-eval-after-load 'ox-latex
-    (add-to-list 'org-latex-classes
-                 '("article"
-                   "\\documentclass[a4paper]{scrartcl}
+(with-eval-after-load 'ox-latex
+  (add-to-list 'org-latex-classes
+               '("article"
+                 "\\documentclass[a4paper]{scrartcl}
   \\usepackage[utf8]{inputenc}
   \\usepackage{amsmath}
   \\usepackage{amssymb}
   \\usepackage{fullpage}"
-                   ("\\section{%s}" . "\\section*{%s}")
-                   ("\\subsection{%s}" . "\\subsection*{%s}")
-                   ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                   ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                   ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 
-    (add-to-list 'org-latex-classes
-                 '("tufte-handout"
-                   "\\documentclass[a4paper]{tufte-handout}
+  (add-to-list 'org-latex-classes
+               '("tufte-handout"
+                 "\\documentclass[a4paper]{tufte-handout}
   \\usepackage[utf8]{inputenc}
   \\usepackage{amsmath}
   \\usepackage{amssymb}"
-                   ("\\section{%s}" . "\\section*{%s}")
-                   ("\\subsection{%s}" . "\\subsection*{%s}")
-                   ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                   ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
 
-  (use-package ox-hugo
-    :ensure t
-    :after ox)
+(use-package ox-hugo
+  :ensure t
+  :after ox)
 #+end_src
 
 **** Org Extensions
 #+begin_src emacs-lisp
-  (use-package org-drill
-    :ensure t
-    :config
-    (add-to-list 'org-modules 'org-drill)
-    (setq org-drill-add-random-noise-to-intervals-p t
-          org-drill-learn-fraction 0.25))
+(use-package org-drill
+  :ensure t
+  :config
+  (add-to-list 'org-modules 'org-drill)
+  (setq org-drill-add-random-noise-to-intervals-p t
+        org-drill-learn-fraction 0.25))
 #+end_src
 
 **** Org Global Keybindings
 #+begin_src emacs-lisp
-  (global-set-key (kbd "C-c l") #'org-store-link)
-  (global-set-key (kbd "C-c a") #'org-agenda)
-  (global-set-key (kbd "C-c c") #'org-capture)
+(global-set-key (kbd "C-c l") #'org-store-link)
+(global-set-key (kbd "C-c a") #'org-agenda)
+(global-set-key (kbd "C-c c") #'org-capture)
 #+end_src
 
 ** Programming Support
@@ -1035,28 +1051,29 @@ Mostly the mode hooks and a couple of keybindings
 **** editorconfig
 Be more explicit about layout
 #+begin_src emacs-lisp
-  (use-package editorconfig
-    :ensure t
-    :config (editorconfig-mode +1))
+(use-package editorconfig
+  :ensure t
+  :config (editorconfig-mode +1))
 #+end_src
 **** YASnippets
 #+begin_src emacs-lisp
-  (use-package yasnippet
-    :ensure t
-    :init
-    (progn
-      (add-hook 'after-save-hook
-                (lambda ()
-                  (when (eql major-mode 'snippet-mode)
-                    (yas-reload-all))))
-      (setq yas-snippet-dirs (list (f-expand "snippets" user-emacs-directory)))
-      (setq yas-indent-line 'auto)
-      (yas-global-mode 1))
-    :mode ("\\.yasnippet" . snippet-mode))
+(use-package yasnippet
+  :ensure t
+  :init
+  (progn
+    (add-hook 'after-save-hook
+              (lambda ()
+                (when (eql major-mode 'snippet-mode)
+                  (yas-reload-all))))
+    (setq yas-snippet-dirs (list (f-expand "snippets" user-emacs-directory)))
+    (setq yas-indent-line 'auto)
+    (yas-global-mode 1))
+  :mode ("\\.yasnippet" . snippet-mode))
 #+end_src
 **** Flycheck
 #+begin_src emacs-lisp
 (use-package flycheck
+  :diminish
   :ensure t
   :init (global-flycheck-mode))
 #+end_src
@@ -1071,8 +1088,54 @@ Be more explicit about layout
   :ensure t
   :commands lsp-ui-mode
   :config (setq lsp-ui-doc-enable t
-      lsp-ui-doc-show-with-cursor t
-      lsp-ui-sideline-enable t))
+                lsp-ui-doc-show-with-cursor t
+                lsp-ui-sideline-enable t))
+#+end_src
+*** Swift Development
+My primary language. I should be able to use it on Linux as well.
+
+First, locate `sourcekit-lsp`:
+#+begin_src emacs-lisp
+(defun find-sourcekit-lsp ()
+  "Locate the sourcekit-lsp binary."
+  (or (executable-find "sourcekit-lsp")
+      (and (eq system-type 'darwin)
+           (string-trim (shell-command-to-string "xcrun -f sourcekit-lsp")))
+      "sourcekit-lsp"))  ;; fallback if all else fails
+#+end_src
+
+Enable `swift-mode` and hook it up to LSP:
+#+begin_src emacs-lisp
+(use-package swift-mode
+  :ensure t
+  :mode "\\.swift\\'"
+  :interpreter "swift"
+  :hook (swift-mode . (lambda ()
+                        (setq tab-width 2)
+                        (lsp))))
+#+end_src
+
+LSP support for Swift:
+#+begin_src emacs-lisp
+(use-package lsp-mode
+  :ensure t
+  :commands lsp
+  :hook ((swift-mode . lsp))
+  :custom
+  (lsp-eldoc-enable-hover nil))  ;; Let lsp-ui handle docs
+
+(use-package lsp-ui
+  :ensure t
+  :hook (lsp-mode . lsp-ui-mode)
+  :custom
+  (lsp-ui-doc-enable t)
+  (lsp-ui-sideline-enable t))
+
+(use-package lsp-sourcekit
+  :ensure t
+  :after lsp-mode
+  :custom
+  (lsp-sourcekit-executable (find-sourcekit-lsp)))
 #+end_src
 *** Common-lisp
 I use SLY not Slime
@@ -1185,27 +1248,27 @@ Run =M-x python-activate= and point it at the =.venv= directory, although there 
 **** goto-line-with-feedback
 | M-g M-g | Show line numbers temporarily and prompt for the line to move to |         
 #+begin_src emacs-lisp
-  (defun goto-line-with-feedback ()
-    "Show line numbers temporarily, while prompting for the line number input."
-    (interactive)
-    (unwind-protect
-        (progn
-          (display-line-numbers-mode 1)
-          (call-interactively 'goto-line))
-      (display-line-numbers-mode -1)))
+(defun goto-line-with-feedback ()
+  "Show line numbers temporarily, while prompting for the line number input."
+  (interactive)
+  (unwind-protect
+      (progn
+        (display-line-numbers-mode 1)
+        (call-interactively 'goto-line))
+    (display-line-numbers-mode -1)))
 
-  ;; Remaps goto-line so that line numbers are turned on only when needed. M-g M-g
-  (global-set-key [remap goto-line] 'goto-line-with-feedback)  
+;; Remaps goto-line so that line numbers are turned on only when needed. M-g M-g
+(global-set-key [remap goto-line] 'goto-line-with-feedback)  
 #+end_src
 
 **** json-format
 Pretty print JSON using the Python helper function
 #+begin_src emacs-lisp
-  (defun json-format ()
-    "Reformats the JSON in the region for humans."
-    (interactive)
-    (save-excursion
-      (shell-command-on-region (mark) (point) "python -m json.tool" (buffer-name) t)))
+(defun json-format ()
+  "Reformats the JSON in the region for humans."
+  (interactive)
+  (save-excursion
+    (shell-command-on-region (mark) (point) "python -m json.tool" (buffer-name) t)))
 #+end_src
 
 **** Custom Date insertion
@@ -1215,39 +1278,39 @@ Pretty print JSON using the Python helper function
 | C-c C-t         | ISO 8601 formatted date/time |
 
 #+begin_src emacs-lisp
-  ;; Insert Date
-  ;; Usage
-  ;; - `C-c C-d` -> 13/04/2024
-  ;; - `C-u C-c C-d` -> 2024-04-13
-  ;; - `C-u C-u C-d C-d` -> Tuesday, April 13, 2024
-  (defun ygg-insert-date (prefix)
-    "Insert the current date. With prefix-argument use ISO format. With two
+;; Insert Date
+;; Usage
+;; - `C-c C-d` -> 13/04/2024
+;; - `C-u C-c C-d` -> 2024-04-13
+;; - `C-u C-u C-d C-d` -> Tuesday, April 13, 2024
+(defun ygg-insert-date (prefix)
+  "Insert the current date. With prefix-argument use ISO format. With two
         prefix arguments, write out the day and month name"
-    (interactive "P")
-    (let ((format (cond
-                   ((not prefix) "%d/%m/%Y")
-                   ((equal prefix '(4)) "%F")
-                   ((equal prefix '(16)) "%A, %B %d, %Y")))
-          (system-time-locale "en_GB"))
-      (insert (format-time-string format))))
+  (interactive "P")
+  (let ((format (cond
+                 ((not prefix) "%d/%m/%Y")
+                 ((equal prefix '(4)) "%F")
+                 ((equal prefix '(16)) "%A, %B %d, %Y")))
+        (system-time-locale "en_GB"))
+    (insert (format-time-string format))))
 
-  (defun ygg-insert-iso-date-time ()
-    "Insert the current date in ISO format for UTC"
-    (interactive)
-    (insert (format-time-string "%FT%T%z" nil "UTC")))
+(defun ygg-insert-iso-date-time ()
+  "Insert the current date in ISO format for UTC"
+  (interactive)
+  (insert (format-time-string "%FT%T%z" nil "UTC")))
 
-  (global-set-key (kbd "C-c C-d") 'ygg-insert-date)
-  (global-set-key (kbd "C-c C-t") 'ygg-insert-iso-date-time)
+(global-set-key (kbd "C-c C-d") 'ygg-insert-date)
+(global-set-key (kbd "C-c C-t") 'ygg-insert-iso-date-time)
 #+end_src
 
 **** ygg/wrap-with
 Wrapper for parentheses
 #+begin_src emacs-lisp
-  (defun ygg/wrap-with (s)
-    "Create a wrapper function for smartparens using S."
-    `(lambda (&optional arg)
-       (interactive "P")
-       (sp-wrap-with-pair ,s)))  
+(defun ygg/wrap-with (s)
+  "Create a wrapper function for smartparens using S."
+  `(lambda (&optional arg)
+     (interactive "P")
+     (sp-wrap-with-pair ,s)))  
 #+end_src
 
 
@@ -1257,55 +1320,55 @@ Wrapper for parentheses
 | M-S-[ | Move line down |
 
 #+begin_src emacs-lisp
-  ;; Xcode binding to move line up
-  (defun ygg/move-line-up ()
-    "Move the current line up"
-    (interactive)
-    (transpose-lines 1)
-    (forward-line -2)
-    (indent-according-to-mode))
+;; Xcode binding to move line up
+(defun ygg/move-line-up ()
+  "Move the current line up"
+  (interactive)
+  (transpose-lines 1)
+  (forward-line -2)
+  (indent-according-to-mode))
 
-  (global-set-key (kbd "M-s-]")
-                  (lambda ()
-                    (interactive)
-                    (ygg/move-line-up)))
+(global-set-key (kbd "M-s-]")
+                (lambda ()
+                  (interactive)
+                  (ygg/move-line-up)))
 
-  ;; Xcode binding to move line down
-  (defun ygg/move-line-down ()
-    "Move the current line down"
-    (interactive)
-    (forward-line 1)
-    (transpose-lines 1)
-    (forward-line -1)
-    (indent-according-to-mode))
+;; Xcode binding to move line down
+(defun ygg/move-line-down ()
+  "Move the current line down"
+  (interactive)
+  (forward-line 1)
+  (transpose-lines 1)
+  (forward-line -1)
+  (indent-according-to-mode))
 
-  (global-set-key (kbd "M-s-[")
-                  (lambda ()
-                    (interactive)
-                    (ygg/move-line-down)))  
+(global-set-key (kbd "M-s-[")
+                (lambda ()
+                  (interactive)
+                  (ygg/move-line-down)))  
 #+end_src
 
 *** Better Movement
 #+begin_src emacs-lisp
-  ;; Move about more quickly
-  ;; move about in steps of 5 with C-S insteard of just C-
-  (global-set-key (kbd "C-S-n")
-                  (lambda ()
-                    (interactive)
-                    (ignore-errors (forward-line 5))))
+;; Move about more quickly
+;; move about in steps of 5 with C-S insteard of just C-
+(global-set-key (kbd "C-S-n")
+                (lambda ()
+                  (interactive)
+                  (ignore-errors (forward-line 5))))
 
-  (global-set-key (kbd "C-S-p")
-                  (lambda ()
-                    (interactive)
-                    (ignore-errors (forward-line -5))))
+(global-set-key (kbd "C-S-p")
+                (lambda ()
+                  (interactive)
+                  (ignore-errors (forward-line -5))))
 
-  (global-set-key (kbd "C-S-f")
-                  (lambda ()
-                    (interactive)
-                    (ignore-errors (forward-char 5))))
+(global-set-key (kbd "C-S-f")
+                (lambda ()
+                  (interactive)
+                  (ignore-errors (forward-char 5))))
 
-  (global-set-key (kbd "C-S-b")
-                  (lambda ()
-                    (interactive)
-                    (ignore-errors (backward-char 5))))
+(global-set-key (kbd "C-S-b")
+                (lambda ()
+                  (interactive)
+                  (ignore-errors (backward-char 5))))
 #+end_src

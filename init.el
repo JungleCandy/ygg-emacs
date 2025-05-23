@@ -1,10 +1,12 @@
+;;; package --- Create my Readme.el file
+;;; Commentary:
+;;; Tangle the Readme.org file.
+
 ;; -*- no-byte-compile: t -*-
 ;; -*- lexical-binding: t -*-
 
-;;; init.el --- My personal configuration file.
+;;; Code:
 
-(setq gc-cons-threshold 50000000)
-(setq large-file-warning-threshold 100000000)
 
 (require 'package)
 
@@ -33,7 +35,8 @@
   (package-install 'org))
 
 (require 'org)
+(require 'ob-tangle)
 
 ;; Load and tangle the Org configuration
 (org-babel-load-file
- (expand-file-name "Readme.org" user-emacs-directory))
+(expand-file-name "Readme.org" user-emacs-directory))
