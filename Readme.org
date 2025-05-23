@@ -72,6 +72,12 @@ Configure what is built in.
 
 *** Built-in Configuration
 #+begin_src emacs-lisp
+;; Reduce the frequency of garbage collection
+(setq gc-cons-threshold 50000000)
+
+;; Warn when opening very large files about 100MB
+(setq large-file-warning-threshold 100000000)
+
 ;; We don't need a startup message.
 (setq inhibit-startup-message t)
 
