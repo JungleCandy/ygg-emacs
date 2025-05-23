@@ -1054,7 +1054,13 @@ Be more explicit about layout
       (yas-global-mode 1))
     :mode ("\\.yasnippet" . snippet-mode))
 #+end_src
-*** Specific Languages
+**** Flycheck
+#+begin_src emacs-lisp
+(use-package flycheck
+  :ensure t
+  :init (global-flycheck-mode))
+#+end_src
+*** Common-lisp** Specific Languages
 *** Common-lisp
 I use SLY not Slime
 | M-h | sly-documentation-lookup |
@@ -1073,6 +1079,49 @@ I use SLY not Slime
   :config
   (define-key sly-prefix-map (kbd "M-h") 'sly-documentation-lookup))
 #+end_src
+*** web-mode
+| C-c C-r | Mark the tag we're in and it's pair for renaming |
+#+begin_src emacs-lisp
+(defun my-web-mode-hook ()
+  (setq web-mode-markup-indent-offset 2
+        web-mode-css-indent-offset 2
+        web-mode-code-indent-offset 2))
+
+(use-package web-mode
+  :ensure t
+  :mode (;; Want to use web-mode for HTML, not default html-mode.
+         ("\\.html?\\'" . web-mode)
+         ;; Add some extensions as per web-mode docs
+         ("\\.phtml\\'" . web-mode)
+         ("\\.tpl\\.php\\'" . web-mode)
+         ("\\.[agj]sp\\'" . web-mode)
+         ("\\.erb\\'" . web-mode)
+         ("\\.mustache\\'" . web-mode)
+         ("\\.djhtml\\'" . web-mode))
+  :hook (web-mode . my-web-mode-hook)
+  :config
+  (setq-default web-mode-enable-auto-pairing t
+                web-mode-enable-auto-closing t
+                web-mode-enable-auto-quoting t
+                web-mode-enable-css-colorization t
+                web-mode-enable-comment-keywords t
+                web-mode-enable-current-column-highlight t)
+  (bind-keys :map web-mode-map
+             ("C-c C-r" . 'mc/mark-sgml-tag-pair)))
+#+end_src
+
+**** json-mode
+| C-c <tab> | Beautify | 
+#+begin_src emacs-lisp
+(use-package json-mode
+  :ensure t
+  :mode "\\.json\\'"
+  :hook ((json-mode . spell-fu-mode)
+         (json-mode . smartparens-strict-mode))
+  :bind (:map json-mode-map
+              ("C-c <tab>" . json-mode-beautify)))
+#+end_src
+
 
 ** Helper Functions
 **** goto-line-with-feedback
