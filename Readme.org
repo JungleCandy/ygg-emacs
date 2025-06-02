@@ -531,28 +531,6 @@ For GitHub integration - set up for an authenticated gh.
   :after magit)
 #+end_src
 
-**** Counsel Projectile Integration
-Improves project file search and project switching with Ivy.
-
-| Keybinding | Action                          |
-|------------+---------------------------------|
-| C-c p f    | Find file in current project    |
-| C-c p s    | Search project (ripgrep)        |
-| C-c p p    | Switch project (opens Magit)    |
-
-#+begin_src emacs-lisp
-(use-package counsel-projectile
-  :after (projectile counsel)
-  :bind (("C-c p f" . counsel-projectile-find-file)
-         ("C-c p s" . counsel-projectile-rg)
-         ("C-c p p" . counsel-projectile-switch-project))
-  :config
-  (counsel-projectile-mode))
-
-;; Open magit-status when switching projects
-(setq projectile-switch-project-action #'magit-status)
-#+end_src
-
 ****** Git + Magit Integration
 
 | Keybinding | Action                         |
@@ -1369,6 +1347,45 @@ Wrapper for parentheses
                   (ignore-errors (backward-char 5))))
 #+end_src
 
+*** Remove Super Keybindings (conflict prevention)
+
+Some packages bind Super key combinations (e.g. s-g, s-r), which may cause startup errors on systems where Super is not a recognized modifier. This block disables those bindings safely.
+
+#+begin_src emacs-lisp
+;; Remove problematic Super keybindings after init
+(add-hook 'after-init-hook
+          (lambda ()
+            ;; Unbind from global-map safely
+            (define-key global-map (kbd "s-g") nil)
+            (define-key global-map (kbd "s-r") nil)
+            (define-key global-map (kbd "s-s") nil)
+            (define-key global-map (kbd "s-x") nil)))
+
+;; Also remove Super bindings from projectile-mode-map after it's loaded
+(with-eval-after-load 'projectile
+  (define-key projectile-mode-map (kbd "s-g") nil)
+  (define-key projectile-mode-map (kbd "s-r") nil)
+  (define-key projectile-mode-map (kbd "s-s") nil)
+  (define-key projectile-mode-map (kbd "s-x") nil))
+#+end_src
+
+*** Final Super Key Purge (prevent s-* errors permanently)
+
+#+begin_src emacs-lisp
+(defun ygg/unbind-super-globally ()
+  "Unbind all known s-* keys that might be bound by packages or OS overrides."
+  (dolist (key '("s-g" "s-r" "s-s" "s-x" "s-i"))
+    (when (stringp key)
+      (ignore-errors (define-key global-map (kbd key) nil)))))
+
+(add-hook 'after-init-hook #'ygg/unbind-super-globally)
+
+(with-eval-after-load 'projectile
+  (dolist (key '("s-g" "s-r" "s-s" "s-x" "s-i"))
+    (ignore-errors (define-key projectile-mode-map (kbd key) nil))))
+#+end_src
+
+
 *** Set up personal keymaps
 Override the package shortcuts that use the Super Key
 #+begin_src emacs-lisp
@@ -1376,15 +1393,32 @@ Override the package shortcuts that use the Super Key
 (global-set-key (kbd "C-c C-p") 'my/project-map)
 
 (with-eval-after-load 'projectile
-  (define-key my/project-map (kbd "f") #'counsel-projectile-find-file)
-  (define-key my/project-map (kbd "s") #'counsel-projectile-rg)
-  (define-key my/project-map (kbd "g") #'projectile-grep)
-  (define-key my/project-map (kbd "x") #'projectile-find-references)
-  (define-key my/project-map (kbd "p") #'counsel-projectile-switch-project)
+  (define-key my/project-map (kbd "f") #'projectile-find-file)
+  (define-key my/project-map (kbd "s") #'projectile-ripgrep)
+  (define-key my/project-map (kbd "p") #'projectile-switch-project))
+#+end_src
 
-  ;; Clean up Super bindings from packages
-  (define-key projectile-command-map (kbd "s g") nil)
-  (define-key projectile-command-map (kbd "s r") nil)
-  (define-key projectile-command-map (kbd "s s") nil)
-  (define-key projectile-command-map (kbd "s x") nil))
+*** Project Hydra
+
+Hydra provides a transient menu for fast access to project tools.
+
+#+begin_src emacs-lisp
+(use-package hydra
+  :ensure t)
+
+(defhydra hydra-project (:color blue :hint nil)
+  "
+🛠 Project Tools:
+
+_f_: Find file     _s_: Search (ripgrep)    _g_: Grep
+_x_: References    _p_: Switch project      _q_: Quit
+"
+  ("f" counsel-projectile-find-file)
+  ("s" counsel-projectile-rg)
+  ("g" projectile-grep)
+  ("x" projectile-find-references)
+  ("p" counsel-projectile-switch-project)
+  ("q" nil "Quit"))
+
+(global-set-key (kbd "C-c C-p") 'hydra-project/body)
 #+end_src
