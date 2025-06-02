@@ -30,6 +30,10 @@
 (unless package-archive-contents
   (package-refresh-contents))
 
+;; Make sure Super is not used as a modifier
+(setq mac-command-modifier 'none
+      ns-command-modifier 'none)
+
 ;; Ensure org is installed before loading the .org config
 (unless (package-installed-p 'org)
   (package-install 'org))

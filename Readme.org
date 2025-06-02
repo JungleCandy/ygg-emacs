@@ -435,20 +435,22 @@ Select successively larger logical units. Works really well with multiple-cursor
 For working in projects, integrated with Ivy, Swiper and Counsel
 | C-c p f | Find file in current project |
 | C-c p s | Search project with ripgrep  |
+| C-c p g | Grop                         |
 | C-c p p | Switch project               |
+| C-c p x | Find references              |
 
 #+begin_src emacs-lisp
 (use-package projectile
   :diminish projectile-mode
+  :init (define-key global-map (kbd "C-c p") 'projectile-command-map)
   :config
   (projectile-mode 1)
   :custom
   (projectile-completion-system 'ivy)
   (projectile-project-search-path '("~/Developer" "~/Developer/Tools for building" "~/Sites")) ; No depth restriction
-  (projectile-sort-order 'recentf)
-  :bind-keymap
-  ("C-c p" . projectile-command-map))
+  (projectile-sort-order 'recentf))
 #+end_src
+
 
 **** Git support
 ***** Status & Navigation
@@ -528,6 +530,7 @@ For GitHub integration - set up for an authenticated gh.
 (use-package forge
   :after magit)
 #+end_src
+
 **** Counsel Projectile Integration
 Improves project file search and project switching with Ivy.
 
@@ -540,11 +543,11 @@ Improves project file search and project switching with Ivy.
 #+begin_src emacs-lisp
 (use-package counsel-projectile
   :after (projectile counsel)
-  :config
-  (counsel-projectile-mode 1)
   :bind (("C-c p f" . counsel-projectile-find-file)
          ("C-c p s" . counsel-projectile-rg)
-         ("C-c p p" . counsel-projectile-switch-project)))
+         ("C-c p p" . counsel-projectile-switch-project))
+  :config
+  (counsel-projectile-mode))
 
 ;; Open magit-status when switching projects
 (setq projectile-switch-project-action #'magit-status)
@@ -1364,4 +1367,24 @@ Wrapper for parentheses
                 (lambda ()
                   (interactive)
                   (ignore-errors (backward-char 5))))
+#+end_src
+
+*** Set up personal keymaps
+Override the package shortcuts that use the Super Key
+#+begin_src emacs-lisp
+(define-prefix-command 'my/project-map)
+(global-set-key (kbd "C-c C-p") 'my/project-map)
+
+(with-eval-after-load 'projectile
+  (define-key my/project-map (kbd "f") #'counsel-projectile-find-file)
+  (define-key my/project-map (kbd "s") #'counsel-projectile-rg)
+  (define-key my/project-map (kbd "g") #'projectile-grep)
+  (define-key my/project-map (kbd "x") #'projectile-find-references)
+  (define-key my/project-map (kbd "p") #'counsel-projectile-switch-project)
+
+  ;; Clean up Super bindings from packages
+  (define-key projectile-command-map (kbd "s g") nil)
+  (define-key projectile-command-map (kbd "s r") nil)
+  (define-key projectile-command-map (kbd "s s") nil)
+  (define-key projectile-command-map (kbd "s x") nil))
 #+end_src
