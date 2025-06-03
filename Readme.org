@@ -967,6 +967,21 @@ Mostly the mode hooks and a couple of keybindings
 (add-hook 'org-mode-hook #'ygg/fix-org-tab-width)
 #+end_src
 
+***** Keybinding corrections
+| C-c ! | Insert an inactive timestamp (between square brackets) default behaviour |
+| C-c f | Flycheck menu command prefix                                             |
+
+#+begin_src emacs-lisp
+(with-eval-after-load 'flycheck
+  (define-key flycheck-mode-map (kbd "C-c !") nil)) ;; remove prefix map
+
+(with-eval-after-load 'org
+  (define-key org-mode-map (kbd "C-c !") #'org-time-stamp-inactive))
+
+(with-eval-after-load 'flycheck
+  (define-key flycheck-mode-map (kbd "C-c f") flycheck-command-map))
+#+end_src
+
 **** Org Visual Enhancements
 #+begin_src emacs-lisp
 (use-package org-bullets
