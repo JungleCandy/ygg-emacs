@@ -646,11 +646,13 @@ Modern spelling checker. See note in preamble about personal dictionaries
 #+end_src
 **** Key-chord
 Move like a ninja if I could only remember the chords
-| jj | avy-goto-word-1    | Jump forward by word         |
-| jl | avy-goto-line      | Jump by line                 |
-| jk | avy-goto-char      | 'k' like navigation          |
-| jf | avy-goto-subword-0 | Fine grained symbol jumps    |
-| xx | counsel M-x        | Easier to reach for than M-x |
+| jj | avy-goto-word-1            | Jump forward by word         |
+| jl | avy-goto-line              | Jump by line                 |
+| jk | avy-goto-char              | 'k' like navigation          |
+| jf | avy-goto-subword-0         | Fine grained symbol jumps    |
+| xx | counsel M-x                | Easier to reach for than M-x |
+| dk | docker                     | Help with docker             |
+| dy | docker-compose-helper-menu | For docker.yml               |
 #+begin_src emacs-lisp
 (use-package key-chord
   :ensure t
@@ -662,7 +664,9 @@ Move like a ninja if I could only remember the chords
   (key-chord-define-global "jl" 'avy-goto-line)
   (key-chord-define-global "jk" 'avy-goto-char)
   (key-chord-define-global "jf" 'avy-goto-subword-0)
-  (key-chord-define-global "xx" #'counsel-M-x))
+  (key-chord-define-global "xx" #'counsel-M-x)
+  (key-chord-define-global "dk" 'docker)
+  (key-chord-define-global "dy" 'docker-compose-helper-menu))
 #+end_src
 **** multiple-cursors
 Why edit one line when you can work on many
@@ -1231,6 +1235,89 @@ Run =M-x python-activate= and point it at the =.venv= directory, although there 
   :bind (:map json-mode-map
               ("C-c <tab>" . json-mode-beautify)))
 #+end_src
+
+*** Docker Support
+**** docker.el
+#+begin_src emacs-lisp
+(use-package docker
+  :ensure t
+  :bind ("C-c d" . docker))
+#+end_src
+
+**** dockerfile-mode
+#+begin_src emacs-lisp
+(use-package dockerfile-mode
+  :ensure t
+  :mode "Dockerfile\\'")
+#+end_src
+
+**** yaml-mode
+#+begin_src emacs-lisp
+(use-package yaml-mode
+  :ensure t
+  :mode "\\.ya?ml\\'")
+#+end_src
+**** Docker Transient Menu
+| C-c D | Show docker transient menu |
+#+begin_src emacs-lisp
+(require 'transient)
+
+(transient-define-prefix docker-transient-menu ()
+  "Docker & Docker Compose Menu"
+  ["Docker"
+   ("p" "ps"     (lambda () (interactive) (shell-command "docker ps")))
+   ("l" "logs"   (lambda () (interactive) (shell-command "docker logs -f $(docker ps -lq)")))
+   ("r" "restart last" (lambda () (interactive) (shell-command "docker restart $(docker ps -lq)")))
+   ("s" "stop all"     (lambda () (interactive) (shell-command "docker stop $(docker ps -q)")))
+   ("c" "clean system" (lambda () (interactive) (shell-command "docker system prune -af --volumes")))]
+
+  ["Compose"
+   ("u" "compose up"     (lambda () (interactive) (shell-command "docker-compose up -d")))
+   ("d" "compose down"   (lambda () (interactive) (shell-command "docker-compose down")))
+   ("b" "compose build"  (lambda () (interactive) (shell-command "docker-compose build")))
+   ("P" "compose ps"     (lambda () (interactive) (shell-command "docker-compose ps")))])
+
+(global-set-key (kbd "C-c D") #'docker-transient-menu)
+#+end_src
+
+**** Docker Compose Tools
+| C-c C-d | docker-compose-helper-menu |
+#+begin_src emacs-lisp
+(require 'transient)
+
+(transient-define-prefix docker-compose-helper-menu ()
+  "Docker Compose Utilities"
+  ["YAML & Validation"
+   ("v" "config validation" (lambda () (interactive)
+                              (shell-command "docker-compose config")))
+   ("y" "show resolved YAML" (lambda () (interactive)
+                               (shell-command "docker-compose config --resolve-image-digests")))]
+
+  ["Service Info"
+   ("l" "list services" (lambda () (interactive)
+                          (shell-command "docker-compose config --services")))
+   ("i" "inspect service" (lambda ()
+                            (interactive)
+                            (let ((svc (read-shell-command "Service name: ")))
+                              (shell-command (format "docker-compose config --service %s" svc)))))])
+
+(global-set-key (kbd "C-c C-d") #'docker-compose-helper-menu)
+#+end_src
+
+
+
+**** Docker Babel Support
+#+begin_src emacs-lisp
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((shell . t)))
+#+end_src
+
+***** Example: Run docker in Org-mode
+#+begin_src sh :results output
+docker ps --format "{{.Names}}"
+#+end_src
+
 
 
 ** Helper Functions
