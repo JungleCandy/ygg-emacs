@@ -254,10 +254,6 @@ Better buffer names if they clash
 ;; (setq use-package-verbose t)  
 #+end_src
 
-For more verbose startup, uncomment the line below
-#+begin_src emacs-lisp
-(setq use-package-verbose t)
-#+end_src
 *** Productivity and usability
 **** Diminish
 Don't clutter the modeline with global minor modes
