@@ -928,6 +928,13 @@ Mostly the mode hooks and a couple of keybindings
 ;; Compile LaTeX to PDF by default
 (setq TeX-PDF-mode t)
 
+;; Set path to epdfinfo dynamically (important for macOS)
+(let ((default-directory "~/.emacs.d/elpa/"))
+  (setq pdf-info-epdfinfo-program
+        (expand-file-name
+         "epdfinfo"
+         (car (directory-files default-directory t "pdf-tools.*" t)))))
+
 ;; Auto-revert PDF buffer after LaTeX compilation
 (use-package pdf-tools
   :ensure t
