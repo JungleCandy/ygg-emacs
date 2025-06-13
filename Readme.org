@@ -984,8 +984,8 @@ Mostly the mode hooks and a couple of keybindings
         org-startup-indented t
         org-src-tab-acts-natively t
         org-src-fontify-natively t
-        org-src-preserve-indentation nil
-        org-edit-src-content-indentation 2))
+        org-src-preserve-indentation t
+        org-edit-src-content-indentation 0))
 
 (defun ygg/fix-org-tab-width ()
   "Ensure tab-width is 8 in Org mode buffers to satisfy parser requirements."
@@ -1096,6 +1096,50 @@ Be more explicit about layout
   :ensure t
   :config (editorconfig-mode +1))
 #+end_src
+
+Apply styles to emacs modes that don't pick these up automatically
+
+#+begin_src emacs-lisp
+  (defun ygg/apply-editorconfig-style ()
+    "Mimic .editorconfig indentation settings for various major modes."
+    (cond
+     ;; Swift — 2-space soft indent
+     ((derived-mode-p 'swift-mode)
+      (setq indent-tabs-mode nil
+            tab-width 2
+            swift-indent-offset 2))
+
+     ;; C/C++/ObjC — 2-space soft indent
+     ((derived-mode-p 'c-mode 'c++-mode 'objc-mode)
+      (setq indent-tabs-mode nil
+            tab-width 2
+            c-basic-offset 2))
+
+     ;; Python — PEP 8
+     ((derived-mode-p 'python-mode)
+      (setq indent-tabs-mode nil
+            tab-width 4
+            python-indent-offset 4))
+
+     ;; Makefile — tabs required
+     ((derived-mode-p 'makefile-gmake-mode)
+      (setq indent-tabs-mode t
+            tab-width 8))
+
+     ;; Org — strict 8-wide tabs
+     ((derived-mode-p 'org-mode)
+      (setq indent-tabs-mode nil
+            tab-width 8))
+
+     ;; Markdown / text — allow spacey editing, usually 2
+     ((derived-mode-p 'markdown-mode 'text-mode)
+      (setq indent-tabs-mode nil
+            tab-width 2))))
+
+  (add-hook 'org-mode-hook #'ygg/apply-editorconfig-style)
+  (add-hook 'org-src-mode-hook #'ygg/apply-editorconfig-style)
+
+#+end_src
 **** YASnippets
 #+begin_src emacs-lisp
 (use-package yasnippet
@@ -1153,6 +1197,8 @@ Enable `swift-mode` and hook it up to LSP:
 #+begin_src emacs-lisp
 (use-package swift-mode
   :ensure t
+  :custom
+  (swift-mode:basic-offset 2)
   :mode "\\.swift\\'"
   :interpreter "swift")
 
@@ -1161,8 +1207,8 @@ Enable `swift-mode` and hook it up to LSP:
   :after lsp-mode
   :custom
   (lsp-sourcekit-executable (find-sourcekit-lsp)))
-
 #+end_src
+
 *** Common-lisp
 I use SLY not Slime
 | M-h | sly-documentation-lookup |
