@@ -1,0 +1,21 @@
+# -*- mode: snippet -*-
+# name: tufte
+# key: tufte
+# --
+# Tufte org-mode export snippet
+# Inserts boilerplate for LaTeX export using tufte-handout class.
+# Includes title, author, abstract block, and an editable first section header.
+# Use when starting a new exportable .org document.
+
+#+TITLE: ${1:Tufte Test Document}
+#+AUTHOR: Abizer Nasir
+#+DATE: ${2:\today}
+#+LATEX_CLASS: tufte-handout
+#+OPTIONS: toc:nil
+
+#+LATEX: \begin{abstract}
+#+LATEX: ${3:This is a summary of the document.}
+#+LATEX: \end{abstract}
+
+* ${4:Section Title}
+$0

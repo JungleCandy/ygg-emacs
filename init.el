@@ -10,6 +10,10 @@
 
 (require 'package)
 
+(require 'server)
+(unless (server-running-p)
+  (server-start))
+
 (setq package-user-dir
       (expand-file-name "elpa" user-emacs-directory))
 
