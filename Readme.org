@@ -617,6 +617,17 @@ Modern spelling checker. See note in preamble about personal dictionaries
   :init
   (setq spell-fu-idle-delay 0.5)
   :config
+  ;; Exclude spell checking in certain faces (like code, comments, etc.)
+  (setq spell-fu-faces-exclude
+        '(org-code
+          org-verbatim
+          org-block
+          org-block-begin-line
+          org-block-end-line
+          org-meta-line
+          font-lock-comment-face
+          font-lock-string-face))
+
   (defun ygg/setup-spell-fu-dict ()
     "Set up personal spell-fu dictionary if not already set."
     (when (and (fboundp 'spell-fu-make-dictionary)
@@ -626,9 +637,8 @@ Modern spelling checker. See note in preamble about personal dictionaries
              :name 'en_GB
              :wordlist (expand-file-name "en_GB.txt" "~/.spell-fu/")))
       (spell-fu-refresh)))
+
   (add-hook 'spell-fu-mode-hook #'ygg/setup-spell-fu-dict))
-
-
 
 (defun spell-fu-add-word-to-personal-dict ()
   "Add the word at point to personal spell-fu dictionary."
@@ -974,8 +984,8 @@ Mostly the mode hooks and a couple of keybindings
         org-startup-indented t
         org-src-tab-acts-natively t
         org-src-fontify-natively t
-        org-src-preserve-indentation t
-        org-edit-src-content-indentation 0))
+        org-src-preserve-indentation nil
+        org-edit-src-content-indentation 2))
 
 (defun ygg/fix-org-tab-width ()
   "Ensure tab-width is 8 in Org mode buffers to satisfy parser requirements."
