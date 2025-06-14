@@ -603,63 +603,36 @@ Show changes in a file
   ;; Revert hunk
   (global-set-key (kbd "C-x v r") 'diff-hl-revert-hunk))
 #+end_src
-**** Spell-fu
-Modern spelling checker. See note in preamble about personal dictionaries
+
+**** Flyspell
+Spell check prose and code.
+| M-x ispell-word RET | `ispell-word`   | then press `a` to accept & add word |
+| C-c w               | `ispell-word`   | one-key shortcut                    |
+
 #+begin_src emacs-lisp
-(use-package spell-fu
-  :ensure t
-  :defer nil  ;; Force loading immediately so functions are defined
-  :hook ((text-mode . spell-fu-mode)
-         (org-mode . spell-fu-mode)
-         (markdown-mode . spell-fu-mode)
-         (latex-mode . spell-fu-mode)
-         (prog-mode . spell-fu-mode))
-  :init
-  (setq spell-fu-idle-delay 0.5)
+;; Hunspell setup (shared across machines)
+(setq ispell-program-name        "hunspell"
+      ispell-dictionary          "en_GB"
+      ispell-personal-dictionary "~/.hunspell_en_GB"
+      ispell-hunspell-dictionary-alist
+      '(("en_GB" "[A-Za-z]" "[^A-Za-z]" "[']" nil
+         ("-d" "en_GB") nil utf-8)))
+
+(use-package flyspell
+  :ensure nil              ;; built–in
+  :defer 2                 ;; give Emacs 2s to start up before loading, prevents recursion during tangling
+  :hook ((text-mode     . flyspell-mode)
+         (org-mode      . flyspell-mode)
+         (markdown-mode . flyspell-mode)
+         (latex-mode    . flyspell-mode)
+         (prog-mode     . flyspell-prog-mode))
+  :bind (("C-c w" . ispell-word))
   :config
-  ;; Exclude spell checking in certain faces (like code, comments, etc.)
-  (setq spell-fu-faces-exclude
-        '(org-code
-          org-verbatim
-          org-block
-          org-block-begin-line
-          org-block-end-line
-          org-meta-line
-          font-lock-comment-face
-          font-lock-string-face))
-
-  (defun ygg/setup-spell-fu-dict ()
-    "Set up personal spell-fu dictionary if not already set."
-    (when (and (fboundp 'spell-fu-make-dictionary)
-               (null spell-fu-dictionary))
-      (setq spell-fu-dictionary
-            (spell-fu-make-dictionary
-             :name 'en_GB
-             :wordlist (expand-file-name "en_GB.txt" "~/.spell-fu/")))
-      (spell-fu-refresh)))
-
-  (add-hook 'spell-fu-mode-hook #'ygg/setup-spell-fu-dict))
-
-(defun spell-fu-add-word-to-personal-dict ()
-  "Add the word at point to personal spell-fu dictionary."
-  (interactive)
-  (let* ((word (thing-at-point 'word t))
-         (file (expand-file-name "en_GB.txt" "~/.spell-fu/")))
-    (if (and word (not (string-blank-p word)))
-        (progn
-          (with-temp-buffer
-            (when (file-exists-p file)
-              (insert-file-contents file))
-            (goto-char (point-max))
-            (unless (save-excursion (re-search-backward (concat "^" (regexp-quote word) "$") nil t))
-              (insert word "\n")
-              (write-region (point-min) (point-max) file))
-            (message "Added '%s' to your spell-fu dictionary." word))
-          (spell-fu-refresh))
-      (message "No word at point."))))
-
-(global-set-key (kbd "C-c w") #'spell-fu-add-word-to-personal-dict)
+  ;; red wavy underline for mis-spellings
+  (set-face-attribute 'flyspell-incorrect nil
+                      :underline '(:style wave :color "red")))
 #+end_src
+
 **** Key-chord
 Move like a ninja if I could only remember the chords
 | jj | avy-goto-word-1            | Jump forward by word         |
