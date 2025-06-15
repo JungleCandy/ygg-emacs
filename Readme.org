@@ -578,6 +578,11 @@ Aids discoverability with all these shortcuts
 #+end_src
 **** diff-hl
 Show changes in a file
+| C-c g = | diff-hl-goto-hunk     |
+| C-c g n | diff-hl-next-hunk     |
+| C-c g p | diff-hl-previous-hunk |
+| C-c g r | diff-hl-revert-hunk   |
+
 #+begin_src emacs-lisp
 (use-package diff-hl
   :ensure t
@@ -585,23 +590,13 @@ Show changes in a file
          (text-mode . diff-hl-mode)
          (magit-pre-refresh . diff-hl-magit-pre-refresh)
          (magit-post-refresh . diff-hl-magit-post-refresh))
+  :bind (("C-c g =" . diff-hl-diff-goto-hunk)
+         ("C-c g n" . diff-hl-next-hunk)
+         ("C-c g p" . diff-hl-previous-hunk) 
+         ("C-c g r" . diff-hl-revert-hunk))
   :config
-  ;; Enable real-time diff updates
   (diff-hl-flydiff-mode 1)
-
-  ;; Optionally enable diff highlighting in the margin (if fringes are disabled)
-  ;; (diff-hl-margin-mode 1)
-
-  ;; Show staged changes (useful if using partial staging in Magit)
-  (diff-hl-show-hunk-mouse-mode 1)
-
-  ;; Jump between hunks
-  (global-set-key (kbd "C-x v =") 'diff-hl-diff-goto-hunk)
-  (global-set-key (kbd "C-x v n") 'diff-hl-next-hunk)
-  (global-set-key (kbd "C-x v p") 'diff-hl-previous-hunk)
-
-  ;; Revert hunk
-  (global-set-key (kbd "C-x v r") 'diff-hl-revert-hunk))
+  (diff-hl-show-hunk-mouse-mode 1))
 #+end_src
 
 **** Flyspell
