@@ -24,7 +24,7 @@ I use [[https://github.com/d12frosted/homebrew-emacs-plus][Emacs Plus]]. On macO
 
 =brew tap d12frosted/emacs-plus=
 
-=brew install emacs-plus=
+=brew install emacs-plus@30=
 **** Linux
 Installed with the App Manager
 *** Install Spell checking support
