@@ -41,7 +41,7 @@ Running =(getenv "LANG")= on my system shows that the installed language is =en_
 **** Linux
 Installed with the App Manager
 **** Personal dictionary
-In the dotfiles repo there is a folder called =spell-fu=. Create a link to this with =ln -s dotfiles/spell-fu ~/.spell-fu=
+In the dotfiles repo there is a file =hunspell_en_GB=. Create a link to this with =ln -s dotfiles/hunspell_en_GB ~/.hunspell_en_GB=
 *** Clone the repo
 Clone this repo to =.emacs.d=
 
