@@ -578,12 +578,17 @@ Aids discoverability with all these shortcuts
 #+end_src
 **** diff-hl
 Show changes in a file
+| C-c g   | prefix key            |
 | C-c g = | diff-hl-goto-hunk     |
 | C-c g n | diff-hl-next-hunk     |
 | C-c g p | diff-hl-previous-hunk |
 | C-c g r | diff-hl-revert-hunk   |
 
 #+begin_src emacs-lisp
+(define-prefix-command 'my/diff-hl-prefix)
+(global-set-key (kbd "C-c g") 'my/diff-hl-prefix)
+
+
 (use-package diff-hl
   :ensure t
   :hook ((prog-mode . diff-hl-mode)
@@ -1559,5 +1564,5 @@ _x_: References    _p_: Switch project      _q_: Quit
   ("p" counsel-projectile-switch-project)
   ("q" nil "Quit"))
 
-(global-set-key (kbd "C-c C-p") 'hydra-project/body)
+(global-set-key (kbd "C-c C-h") 'hydra-project/body)
 #+end_src
