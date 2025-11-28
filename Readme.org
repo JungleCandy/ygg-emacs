@@ -1200,6 +1200,79 @@ I use SLY not Slime
   :config
   (define-key sly-prefix-map (kbd "M-h") 'sly-documentation-lookup))
 #+end_src
+
+*** Rust
+Portable Rust configuration for Emacs 30.2 and environments where Rust
+may or may not be installed.
+
+Useful Emacs keybindings and commands for working with Rust, rust-analyzer,
+Cargo, and Eglot. Safe to keep in your config even on machines without Rust.
+
+| Category       | Command / Keybinding     | What It Does                               |
+|----------------+--------------------------+--------------------------------------------|
+| **Editing**    | `TAB` / `C-M-i`          | Trigger completion (via rust-analyzer)     |
+|                | `M-.`                    | Jump to definition                         |
+|                | `M-,`                    | Jump back                                  |
+|                | `C-c C-d`                | Show documentation / type info (Eglot)     |
+|                | `C-c C-r`                | Apply code action / fix (Eglot)            |
+|                | `C-M-\`                  | Indent region                              |
+|                | *(auto)*                 | Format on save (rustfmt)                   |
+|----------------+--------------------------+--------------------------------------------|
+| **Cargo**      | `M-x cargo-build`        | Run `cargo build`                          |
+|                | `M-x cargo-run`          | Run `cargo run`                            |
+|                | `M-x cargo-test`         | Run `cargo test`                           |
+|                | `M-x cargo-clean`        | Clean project                              |
+|                | `M-x cargo-check`        | Type-check project (`cargo check`)         |
+|----------------+--------------------------+--------------------------------------------|
+| **Eglot**      | `M-x eglot`              | Start Eglot manually                       |
+|                | *(auto)*                 | Eglot starts automatically in Rust buffers |
+|                | `M-x eglot-code-actions` | Show code fixes / refactorings             |
+|                | `M-x eglot-reconnect`    | Restart Eglot                              |
+|                | `M-x eglot-shutdown`     | Stop LSP server                            |
+|----------------+--------------------------+--------------------------------------------|
+| **Rust Tools** | `M-x rust-format-buffer` | Format buffer using rustfmt                |
+|                | *(auto)*                 | rustfmt runs on save                       |
+|----------------+--------------------------+--------------------------------------------|
+| **Navigation** | `M-.`                    | Jump to definition                         |
+|                | `M-,`                    | Go back                                    |
+|                | `C-s` / `C-r`            | Search forward/backward                    |
+|----------------+--------------------------+--------------------------------------------|
+| **Help**       | `C-h f`                  | Describe function                          |
+|                | `C-h v`                  | Describe variable                          |
+|                | `C-h m`                  | Show mode help (very useful!)              |
+
+#+begin_src emacs-lisp :tangle yes
+;;; ----------------------
+;;; Rust (tree-sitter) support
+;;; ----------------------
+
+;; Prefer the tree-sitter Rust mode
+(use-package rust-ts-mode
+  :ensure t
+  :mode ("\\.rs\\'" . rust-ts-mode)
+  :init
+  ;; Use rustfmt on save (if available)
+  (setq rust-format-on-save t))
+
+;; Start Eglot only if rust-analyzer is present
+(defun my/rust-eglot-if-available ()
+  (when (executable-find "rust-analyzer")
+    (eglot-ensure)))
+
+(use-package eglot
+  :ensure nil                     ;; Eglot is built into Emacs 30
+  :hook (rust-ts-mode . my/rust-eglot-if-available))
+
+;; Enable cargo-minor-mode only if cargo is installed
+(defun my/rust-cargo-if-available ()
+  (when (executable-find "cargo")
+    (cargo-minor-mode 1)))
+
+(use-package cargo
+  :ensure t
+  :hook (rust-ts-mode . my/rust-cargo-if-available))
+#+end_src
+
 *** Python Development
 Active with venv, once I figure out how to do that.
 Run =M-x python-activate= and point it at the =.venv= directory, although there is now a hook to point to one at the root of a project.
