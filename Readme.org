@@ -48,6 +48,8 @@ Clone this repo to =.emacs.d=
 =git clone https://github.com/JungleCandy/ygg-emacs.git .emacs.d=
 *** Install Fonts
 I'm using Neotree with icons, this requires =M-x all-the-icons-install-fonts= to be run.
+*** Org-roam
+If using Org-roam, make sure the directory structure is set up as defined, and pull down the content.
 ** Licence
 GPL v3, obviously
 
@@ -991,7 +993,8 @@ Mostly the mode hooks and a couple of keybindings
             #'TeX-revert-document-buffer))
 #+end_src
 
-**** Core Org Configuration
+**** Org-Mode Configuration
+Support for using Org mode for writing, blogging and note-taking.
 #+begin_src emacs-lisp
 (use-package org
   :ensure t
@@ -1036,7 +1039,7 @@ Mostly the mode hooks and a couple of keybindings
   (define-key flycheck-mode-map (kbd "C-c f") flycheck-command-map))
 #+end_src
 
-**** Org Visual Enhancements
+***** Org Visual Enhancements
 #+begin_src emacs-lisp
 (use-package org-bullets
   :ensure t
@@ -1045,7 +1048,7 @@ Mostly the mode hooks and a couple of keybindings
 (setq org-pretty-entities t)
 #+end_src
 
-**** Org Writing & Note Tools
+***** Org Writing & Note Tools
 #+begin_src emacs-lisp
 (use-package org-cliplink
   :ensure t
@@ -1054,7 +1057,70 @@ Mostly the mode hooks and a couple of keybindings
               ("C-c M-l" . org-cliplink)))
 #+end_src
 
-**** Org Agenda & GTD
+***** Org-roam
+Build a cross-platform “second brain” (macOS + Linux) backed by a Git repo.
+
+- Repo root: ~/org-roam/
+- Notes:     ~/org-roam/notes/
+- Dailies:   ~/org-roam/daily/
+- Database:  ~/org-roam/org-roam.db (gitignored; rebuilt locally)
+
+Key bindings:
+
+| Key     | Command                        | What it does                                         |
+|---------+--------------------------------+------------------------------------------------------|
+| C-c n f | org-roam-node-find             | Find a node; creates it if it doesn’t exist.         |
+| C-c n i | org-roam-node-insert           | Insert a link to a node at point (create if needed). |
+| C-c n c | org-roam-capture               | Create a new node using capture templates.           |
+| C-c n l | org-roam-buffer-toggle         | Toggle backlinks/side buffer for the current node.   |
+| C-c n d | org-roam-dailies-capture-today | Open/create today’s daily note.                      |
+
+Troubleshooting:
+- M-x org-roam-db-sync (rebuild DB)
+- M-x org-roam-db-clear-all then org-roam-db-sync (full reset)
+
+#+begin_src emacs-lisp
+(use-package org-roam
+  :ensure t
+  :after org
+  :init
+  ;; Paths
+  (setq org-roam-repo-root
+        (file-truename (expand-file-name "~/org-roam/")))
+
+  (setq org-roam-directory
+        (file-truename (expand-file-name "notes" org-roam-repo-root)))
+
+  (setq org-roam-dailies-directory
+        (file-truename (expand-file-name "daily" org-roam-repo-root)))
+
+  (setq org-roam-db-location
+        (file-truename (expand-file-name "org-roam.db" org-roam-repo-root)))
+
+  :bind (("C-c n l" . org-roam-buffer-toggle)
+         ("C-c n f" . org-roam-node-find)
+         ("C-c n i" . org-roam-node-insert)
+         ("C-c n c" . org-roam-capture)
+         ("C-c n d" . org-roam-dailies-capture-today))
+  :config
+  (org-roam-db-autosync-mode)
+
+  ;; Node capture template
+  (setq org-roam-capture-templates
+        '(("d" "default" plain "%?"
+           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                              "#+title: ${title}\n#+date: %U\n\n")
+           :unnarrowed t)))
+
+  ;; Daily capture template
+  (setq org-roam-dailies-capture-templates
+        '(("d" "default" entry "* %?"
+           :if-new (file+head "%<%Y-%m-%d>.org"
+                              "#+title: %<%Y-%m-%d>\n\n")))))
+
+#+end_src
+
+***** Org Agenda & GTD
 #+begin_src emacs-lisp
 (with-eval-after-load 'org
   (setq org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
@@ -1064,7 +1130,7 @@ Mostly the mode hooks and a couple of keybindings
         org-treat-S-cursor-todo-selection-as-state-change nil))
 #+end_src
 
-**** Org Export & Publishing
+***** Org Export & Publishing
 #+begin_src emacs-lisp
 (with-eval-after-load 'ox-latex
   (add-to-list 'org-latex-classes
@@ -1096,7 +1162,7 @@ Mostly the mode hooks and a couple of keybindings
   :after ox)
 #+end_src
 
-**** Org Extensions
+***** Org Extensions
 #+begin_src emacs-lisp
 (use-package org-drill
   :ensure t
@@ -1106,7 +1172,7 @@ Mostly the mode hooks and a couple of keybindings
         org-drill-learn-fraction 0.25))
 #+end_src
 
-**** Org Global Keybindings
+***** Org Global Keybindings
 #+begin_src emacs-lisp
 (global-set-key (kbd "C-c l") #'org-store-link)
 (global-set-key (kbd "C-c a") #'org-agenda)
