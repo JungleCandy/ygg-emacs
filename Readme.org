@@ -1162,7 +1162,25 @@ Troubleshooting:
   :after ox)
 #+end_src
 
-***** Org Extensions
+***** Org-Drill
+Spaced Repetitive learning.
+
+| org-drill        | Start a drill                                |
+| q                | Finish the drill early                       |
+| s                | Skip the current item                        |
+| e                | Escape the drill and edit the current buffer |
+| org-drill-resume | Continue the drill after editing             |
+
+Result of recall can be scored:
+
+| 0 | Wrong, answer unfamiliar             |
+| 1 | Wrong answer                         |
+| 2 | Almost, but not quite correct        |
+| 3 | Correct answer with some effort      |
+| 4 | Correct answer with a little thought |
+| 5 | Correct answer, effortless           |
+| ? | Show help for these options          |
+
 #+begin_src emacs-lisp
 (use-package org-drill
   :ensure t
