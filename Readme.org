@@ -1121,6 +1121,7 @@ Troubleshooting:
 #+end_src
 
 ***** Org Agenda & GTD
+Not sure if I actually use this, but leaving it in for now.
 #+begin_src emacs-lisp
 (with-eval-after-load 'org
   (setq org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
@@ -1130,7 +1131,7 @@ Troubleshooting:
         org-treat-S-cursor-todo-selection-as-state-change nil))
 #+end_src
 
-***** Org Export & Publishing
+***** Org and Latex
 #+begin_src emacs-lisp
 (with-eval-after-load 'ox-latex
   (add-to-list 'org-latex-classes
@@ -1156,11 +1157,16 @@ Troubleshooting:
                  ("\\subsection{%s}" . "\\subsection*{%s}")
                  ("\\paragraph{%s}" . "\\paragraph*{%s}")
                  ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
+#+end_src
 
+***** Ox-Hugo for blogging
+
+#+begin_src emacs-lisp
 (use-package ox-hugo
   :ensure t
   :after ox)
 #+end_src
+
 
 ***** Org-Drill
 Spaced Repetitive learning.
