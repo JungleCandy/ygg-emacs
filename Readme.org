@@ -1120,6 +1120,20 @@ Troubleshooting:
 
 #+end_src
 
+***** org-roam-ui
+For nice visualisation other than using backlinks
+
+#+begin_src emacs-lisp
+(use-package org-roam-ui
+  :ensure t
+  :after org-roam
+  :config
+  (setq org-roam-ui-sync-theme t
+        org-roam-ui-follow t
+        org-roam-ui-update-on-save t
+        org-roam-ui-open-on-start t))
+#+end_src
+
 ***** Org Agenda & GTD
 Not sure if I actually use this, but leaving it in for now.
 #+begin_src emacs-lisp
@@ -1444,6 +1458,7 @@ Run =M-x python-activate= and point it at the =.venv= directory, although there 
 (add-hook 'python-mode-hook #'ygg/auto-pyvenv-activate)
 
 #+end_src
+
 *** Go Mode
 #+begin_src emacs-lisp
 (use-package go-mode
@@ -1516,6 +1531,7 @@ Run =M-x python-activate= and point it at the =.venv= directory, although there 
   :ensure t
   :mode "\\.ya?ml\\'")
 #+end_src
+
 **** Docker Transient Menu
 | C-c D | Show docker transient menu |
 #+begin_src emacs-lisp
@@ -1541,6 +1557,7 @@ Run =M-x python-activate= and point it at the =.venv= directory, although there 
 
 **** Docker Compose Tools
 | C-c C-d | docker-compose-helper-menu |
+
 #+begin_src emacs-lisp
 (require 'transient)
 
@@ -1563,9 +1580,8 @@ Run =M-x python-activate= and point it at the =.venv= directory, although there 
 (global-set-key (kbd "C-c C-d") #'docker-compose-helper-menu)
 #+end_src
 
-
-
 **** Docker Babel Support
+
 #+begin_src emacs-lisp
 (org-babel-do-load-languages
  'org-babel-load-languages
@@ -1577,11 +1593,10 @@ Run =M-x python-activate= and point it at the =.venv= directory, although there 
 docker ps --format "{{.Names}}"
 #+end_src
 
-
-
 ** Helper Functions
 **** goto-line-with-feedback
-| M-g M-g | Show line numbers temporarily and prompt for the line to move to |         
+| M-g M-g | Show line numbers temporarily and prompt for the line to move to |
+
 #+begin_src emacs-lisp
 (defun goto-line-with-feedback ()
   "Show line numbers temporarily, while prompting for the line number input."
@@ -1651,6 +1666,8 @@ Wrapper for parentheses
 
 ** Key Bindings
 *** Xcode Line up/down
+Not the easiest on a compact keyboard, but still useful to have.
+
 | M-S-] | Move line up   |
 | M-S-[ | Move line down |
 
@@ -1762,6 +1779,8 @@ Override the package shortcuts that use the Super Key
 *** Project Hydra
 
 Hydra provides a transient menu for fast access to project tools.
+
+Use C-c C-h to bring it up.
 
 #+begin_src emacs-lisp
 (use-package hydra

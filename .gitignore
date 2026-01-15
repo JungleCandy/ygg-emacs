@@ -23,3 +23,6 @@ tramp
 /var/
 /forge-database.sqlite
 /spell-fu/
+
+# Org-roam database
+org-roam.db
