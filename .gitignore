@@ -26,3 +26,9 @@ tramp
 
 # Org-roam database
 org-roam.db
+
+# Tree-sitter grammars (auto-compiled by Emacs)
+/tree-sitter/
+
+# Local Claude Code guidance
+CLAUDE.md

@@ -48,6 +48,11 @@ Clone this repo to =.emacs.d=
 =git clone https://github.com/JungleCandy/ygg-emacs.git .emacs.d=
 *** Install Fonts
 I'm using Neotree with icons, this requires =M-x all-the-icons-install-fonts= to be run.
+*** Rust
+After installing Rust via rustup, the rust-analyzer component must be added explicitly — the binary at =~/.cargo/bin/rust-analyzer= is only a proxy shim and will fail without it:
+
+=rustup component add rust-analyzer=
+
 *** Org-roam
 If using Org-roam, make sure the directory structure is set up as defined, and pull down the content.
 ** Licence
@@ -294,6 +299,17 @@ Better buffer names if they clash
 #+end_src
 
 ** Packages
+*** exec-path-from-shell
+On macOS, GUI Emacs doesn't inherit the shell's PATH. This ensures tools installed
+via Homebrew, rustup, etc. are visible to Emacs.
+#+begin_src emacs-lisp
+(use-package exec-path-from-shell
+  :ensure t
+  :if (memq window-system '(mac ns))
+  :config
+  (exec-path-from-shell-initialize))
+#+end_src
+
 *** Set up for using packages
 #+begin_src emacs-lisp
 ;; Update package metadata if required
@@ -1404,9 +1420,16 @@ Cargo, and Eglot. Safe to keep in your config even on machines without Rust.
 ;;; Rust (tree-sitter) support
 ;;; ----------------------
 
-;; Prefer the tree-sitter Rust mode
+;; Install the Rust tree-sitter grammar if not already present
+(when (and (fboundp 'treesit-available-p) (treesit-available-p))
+  (unless (treesit-language-available-p 'rust)
+    (add-to-list 'treesit-language-source-alist
+                 '(rust "https://github.com/tree-sitter/tree-sitter-rust"))
+    (treesit-install-language-grammar 'rust)))
+
+;; rust-ts-mode is built into Emacs 29+, no :ensure needed
 (use-package rust-ts-mode
-  :ensure t
+  :ensure nil
   :mode ("\\.rs\\'" . rust-ts-mode)
   :init
   ;; Use rustfmt on save (if available)
@@ -1429,6 +1452,11 @@ Cargo, and Eglot. Safe to keep in your config even on machines without Rust.
 (use-package cargo
   :ensure t
   :hook (rust-ts-mode . my/rust-cargo-if-available))
+
+(use-package flycheck-rust
+  :ensure t
+  :after flycheck
+  :hook (flycheck-mode . flycheck-rust-setup))
 #+end_src
 
 *** Python Development
