@@ -1135,6 +1135,12 @@ Troubleshooting:
            "* What is this?\n%?\n\n* Why does it matter?\n\n* Sources\n"
            :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
                               "#+title: ${title}\n#+date: %U\n#+filetags: :concept:\n\n")
+           :unnarrowed t)
+
+          ("i" "Index" plain
+           "* Source\n%?"
+           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                              "#+title: ${title}\n#+date: %U\n#+filetags: :index:\n\n")
            :unnarrowed t)))
 
   ;; Daily capture template
