@@ -190,12 +190,12 @@ I like a bar cursor, so that that up in advance.
 #+end_src
 
 First, create a convenience function to setup the cursor I like with Dracula Pro theme
-,#+begin_src emacs-lisp
+
+#+begin_src emacs-lisp
 (defun ygg/setup-dracula-cursor ()
   "Set a gold bar cursor for Dracula Pro."
   (when (display-graphic-p)
     (set-face-attribute 'cursor nil :background "gold1")))
-
 #+end_src
 
 Add the custom theme load path to the list
