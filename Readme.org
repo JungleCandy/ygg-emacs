@@ -175,7 +175,6 @@ Configure what is built in.
 ;; Make eshell work nicely with zsh
 (setq shell-file-name "/bin/zsh")
 (setq explicit-zsh-args '("--interactive" "--login"))
-(setq comint-process-echoes 0)
 
 ;; prevents echoes of commands in shell
 (add-hook 'shell-mode-hook
