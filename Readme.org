@@ -937,8 +937,7 @@ Mostly the mode hooks and a couple of keybindings
 (use-package markdown-mode
   :ensure t
   :mode ("\\.md\\'" "\\.markdown\\'")
-  :hook ((markdown-mode . visual-line-mode)
-         (markdown-mode . flyspell-mode))
+  :hook (markdown-mode . visual-line-mode)
   :bind (:map markdown-mode-map
               ("M-n" . open-line-below)
               ("M-p" . open-line-above)))
@@ -950,7 +949,6 @@ Mostly the mode hooks and a couple of keybindings
 (use-package tex
   :ensure auctex
   :hook ((LaTeX-mode . visual-line-mode)
-         (LaTeX-mode . flyspell-mode)
          (LaTeX-mode . LaTeX-math-mode)
          (LaTeX-mode . turn-on-reftex))
   :custom
@@ -1634,7 +1632,7 @@ Pretty print JSON using the Python helper function
 **** Custom Date insertion
 | C-c i d         | 13/4/2024                    |
 | C-u C-c i d     | 2024-04-13                   |
-| C-u C-u C-d i d | Tuesday, April 13, 2024      |
+| C-u C-u C-c i d | Tuesday, April 13, 2024      |
 | C-c i t         | ISO 8601 formatted date/time |
 
 #+begin_src emacs-lisp
