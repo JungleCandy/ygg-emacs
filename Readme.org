@@ -1070,6 +1070,7 @@ Key bindings:
 | C-c n c | org-roam-capture               | Create a new node using capture templates.           |
 | C-c n l | org-roam-buffer-toggle         | Toggle backlinks/side buffer for the current node.   |
 | C-c n d | org-roam-dailies-capture-today | Open/create today’s daily note.                      |
+| C-c n o | ygg/org-roam-find-orphans      | List nodes with no links in or out.                  |
 
 Troubleshooting:
 - M-x org-roam-db-sync (rebuild DB)
@@ -1093,13 +1094,26 @@ Troubleshooting:
   (setq org-roam-db-location
         (file-truename (expand-file-name "org-roam.db" org-roam-repo-root)))
 
-  :bind (("C-c n l" . org-roam-buffer-toggle)
-         ("C-c n f" . org-roam-node-find)
-         ("C-c n i" . org-roam-node-insert)
-         ("C-c n c" . org-roam-capture)
-         ("C-c n d" . org-roam-dailies-capture-today))
+  :bind ((\"C-c n l\" . org-roam-buffer-toggle)
+         (\"C-c n f\" . org-roam-node-find)
+         (\"C-c n i\" . org-roam-node-insert)
+         (\"C-c n c\" . org-roam-capture)
+         (\"C-c n d\" . org-roam-dailies-capture-today)
+         (\"C-c n o\" . ygg/org-roam-find-orphans))
   :config
   (org-roam-db-autosync-mode)
+  (defun ygg/org-roam-find-orphans ()
+    "List org-roam nodes with no links in or out."
+    (interactive)
+    (let ((orphans (org-roam-db-query
+                    [:select [nodes:title nodes:file]
+                     :from nodes
+                     :left-join links :on (= nodes:id links:source)
+                     :where (= links:source nil)])))
+      (if orphans
+          (message "Orphaned nodes:\n%s"
+                   (mapconcat (lambda (r) (format "- %s" (car r))) orphans "\n"))
+        (message "No orphaned nodes found."))))
 
   ;; Node capture template
   (setq org-roam-capture-templates
