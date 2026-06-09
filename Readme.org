@@ -459,7 +459,6 @@ Select successively larger logical units. Works really well with multiple-cursor
 | C-x C-f  | Open File                           |
 | C-x b    | Switch buffer                       |
 | C-c k    | Search project with ripgrep         |
-| C-c g    | Counsel-git - find git tracked file |
 | C-C r    | Open recent files list              |
 
 #+begin_src emacs-lisp
@@ -488,7 +487,6 @@ Select successively larger logical units. Works really well with multiple-cursor
          ("C-x C-f" . counsel-find-file)
          ("C-x b" . counsel-ibuffer)
          ("C-c k" . counsel-rg)
-         ("C-c g" . counsel-git)
          ("C-c r" . counsel-recentf))
   :config
   (counsel-mode 1))
@@ -607,20 +605,6 @@ For GitHub integration - set up for an authenticated gh.
 #+begin_src emacs-lisp
 (use-package forge
   :after magit)
-#+end_src
-
-****** Git + Magit Integration
-
-| Keybinding | Action                         |
-|------------+--------------------------------|
-| C-c g      | Fuzzy find Git-tracked files   |
-| C-c l      | Fuzzy search Git commit log    |
-
-#+begin_src emacs-lisp
-;; Use counsel-git to find files tracked by Git
-(global-set-key (kbd "C-c g") #'counsel-git)
-;; Use counsel-git-log for fuzzy searching Git commits
-(global-set-key (kbd "C-c l") #'counsel-git-log)
 #+end_src
 
 ***** Optional: Better Ivy Sorting and Fuzzy Matching
@@ -787,7 +771,6 @@ Bindings only in Neotree buffer.
 (use-package all-the-icons-completion
   :ensure t
   :defer
-  :hook (marginalia-mode . #'all-the-icons-completion-marginalia-setup)
   :init
   (all-the-icons-completion-mode))
 #+end_src
@@ -955,7 +938,7 @@ Mostly the mode hooks and a couple of keybindings
   :ensure t
   :mode ("\\.md\\'" "\\.markdown\\'")
   :hook ((markdown-mode . visual-line-mode)
-         (markdown-mode . spell-fu-mode))
+         (markdown-mode . flyspell-mode))
   :bind (:map markdown-mode-map
               ("M-n" . open-line-below)
               ("M-p" . open-line-above)))
@@ -967,7 +950,7 @@ Mostly the mode hooks and a couple of keybindings
 (use-package tex
   :ensure auctex
   :hook ((LaTeX-mode . visual-line-mode)
-         (LaTeX-mode . spell-fu-mode)
+         (LaTeX-mode . flyspell-mode)
          (LaTeX-mode . LaTeX-math-mode)
          (LaTeX-mode . turn-on-reftex))
   :custom
@@ -1532,8 +1515,7 @@ Run =M-x python-activate= and point it at the =.venv= directory, although there 
 (use-package json-mode
   :ensure t
   :mode "\\.json\\'"
-  :hook ((json-mode . spell-fu-mode)
-         (json-mode . smartparens-strict-mode))
+  :hook (json-mode . smartparens-strict-mode)
   :bind (:map json-mode-map
               ("C-c <tab>" . json-mode-beautify)))
 #+end_src
