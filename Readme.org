@@ -1126,19 +1126,25 @@ Troubleshooting:
            :unnarrowed t)
 
           ("s" "WWDC Session" plain
-           "* Overview\n%?\n\n* Key Points\n\n* Questions & Follow-ups\n\n* Links\n"
+           "\n* Overview\n%?\n\n* Key Points\n\n* Questions & Follow-ups\n\n* Links\n"
            :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
                               "#+title: ${title}\n#+date: %U\n#+filetags: :wwdc:wwdc26:\n\n")
            :unnarrowed t)
 
           ("c" "Concept" plain
-           "* What is this?\n%?\n\n* Why does it matter?\n\n* Sources\n"
+           "\n* What is this?\n%?\n\n* Why does it matter?\n\n* Sources\n"
            :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
                               "#+title: ${title}\n#+date: %U\n#+filetags: :concept:\n\n")
            :unnarrowed t)
 
+          ("l" "Literature" plain
+           "\n* Source\n%?"
+           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                              "#+title: ${title}\n#+date: %U\n#+filetags: :literature:\n\n")
+           :unnarrowed t)
+
           ("i" "Index" plain
-           "* Source\n%?"
+           "\n%?"
            :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
                               "#+title: ${title}\n#+date: %U\n#+filetags: :index:\n\n")
            :unnarrowed t)))
