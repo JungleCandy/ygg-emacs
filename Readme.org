@@ -1102,6 +1102,8 @@ Troubleshooting:
   
   :config
   (org-roam-db-autosync-mode)
+  (setq org-roam-node-display-template
+      (concat "${title:*} " (propertize "${tags:20}" 'face 'org-tag)))
   
 (defun ygg/org-roam-find-orphans ()
     "List org-roam nodes with no links in or out."
