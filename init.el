@@ -8,6 +8,10 @@
 ;;; Code:
 
 
+;; Disable native compilation early to prevent libgccjit linker errors on macOS.
+(setq native-comp-jit-compilation nil)
+(setq native-comp-enable-subr-trampolines nil)
+
 (require 'package)
 
 (require 'server)
