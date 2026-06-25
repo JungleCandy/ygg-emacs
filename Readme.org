@@ -79,6 +79,9 @@ Configure what is built in.
 
 *** Built-in Configuration
 #+begin_src emacs-lisp
+;; Disable native JIT compilation to avoid libgccjit/linker issues on macOS
+(setq native-comp-jit-compilation nil)
+
 ;; Reduce the frequency of garbage collection
 (setq gc-cons-threshold 50000000)
 
