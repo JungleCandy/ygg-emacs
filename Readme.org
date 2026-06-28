@@ -1850,3 +1850,9 @@ _x_: References    _p_: Switch project      _q_: Quit
 
 (global-set-key (kbd "C-c C-h") 'hydra-project/body)
 #+end_src
+
+*** Kill Ring
+Use Counsel's interactive kill-ring browser instead of the default =M-y= cycling.
+#+begin_src emacs-lisp
+(global-set-key (kbd "M-y") #'counsel-yank-pop)
+#+end_src
