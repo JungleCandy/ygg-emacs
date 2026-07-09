@@ -948,6 +948,7 @@ Mostly the mode hooks and a couple of keybindings
 
 **** Latex
 #+begin_src emacs-lisp
+
 (use-package tex
   :ensure auctex
   :hook ((LaTeX-mode . visual-line-mode)
@@ -960,15 +961,14 @@ Mostly the mode hooks and a couple of keybindings
   (TeX-PDF-mode t)
   (TeX-source-correlate-mode t)
   (TeX-source-correlate-start-server t)
-  ;; Default to latexmk
   (TeX-command-default "LatexMk")
-  (TeX-command-list
-   '(("LatexMk" "latexmk -pdf -interaction=nonstopmode -synctex=1 %s"
-      TeX-run-TeX nil t
-      :help "Run LatexMk")))
   ;; View PDFs with PDF Tools if available
-  (TeX-view-program-selection
-   '((output-pdf "PDF Tools"))))
+  (TeX-view-program-selection '((output-pdf "PDF Tools")))
+  :config
+  (add-to-list 'TeX-command-list
+               '("LatexMk" "latexmk -pdf -interaction=nonstopmode -synctex=1 %s"
+                 TeX-run-TeX nil t
+                 :help "Run LatexMk")))
 #+end_src
 
 **** PDF Viewer integration
