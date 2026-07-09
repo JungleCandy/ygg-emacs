@@ -947,6 +947,44 @@ Mostly the mode hooks and a couple of keybindings
 
 
 **** Latex
+| Category      | Command / Keybinding | What It Does                                         |
+|---------------+----------------------+------------------------------------------------------|
+| **Compile**   | =C-c C-c=            | Run default command (LatexMk)                        |
+|               | =C-c C-a=            | Compile and open viewer                              |
+|               | =C-c C-v=            | View PDF in PDF Tools at cursor position (SyncTeX)   |
+|               | =C-c C-l=            | Show compilation log                                 |
+|               | =C-c `=              | Jump to next error                                   |
+|---------------+----------------------+------------------------------------------------------|
+| **Insert**    | =C-c C-e=            | Insert / close environment                           |
+|               | =C-c C-s=            | Insert section heading                               |
+|               | =C-c C-m=            | Insert macro                                         |
+|               | =C-c C-j=            | Insert list item                                     |
+|---------------+----------------------+------------------------------------------------------|
+| **Fonts**     | =C-c C-f C-b=        | Bold                                                 |
+|               | =C-c C-f C-i=        | Italic                                               |
+|               | =C-c C-f C-e=        | Emphasize                                            |
+|               | =C-c C-f C-t=        | Typewriter / monospace                               |
+|---------------+----------------------+------------------------------------------------------|
+| **Math**      | =`= (backtick)       | Prefix for LaTeX-math-mode shortcuts                 |
+|               | =`a=                 | \alpha                                               |
+|               | =`b=                 | \beta                                                |
+|               | =`g=                 | \gamma                                               |
+|               | =`d=                 | \delta                                               |
+|               | =`e=                 | \epsilon                                             |
+|               | =`p=                 | \pi                                                  |
+|               | =`s=                 | \sigma                                               |
+|               | =`i=                 | \infty                                               |
+|---------------+----------------------+------------------------------------------------------|
+| **RefTeX**    | =C-c (=              | Insert label                                         |
+|               | =C-c )=              | Insert reference                                     |
+|               | =C-c [=              | Insert citation                                      |
+|               | =C-c ==              | Show table of contents                               |
+|               | =C-c &=              | View cross-reference at point                        |
+|---------------+----------------------+------------------------------------------------------|
+| **PDF Tools** | =n= / =p=            | Next / previous page                                 |
+|               | =+= / =-=            | Zoom in / out                                        |
+|               | =C-c C-g=            | Jump to source line (inverse SyncTeX, in PDF buffer) |
+
 #+begin_src emacs-lisp
 
 (use-package tex
