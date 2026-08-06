@@ -966,14 +966,14 @@ Mostly the mode hooks and a couple of keybindings
 |               | =C-c C-f C-t=        | Typewriter / monospace                               |
 |---------------+----------------------+------------------------------------------------------|
 | **Math**      | =`= (backtick)       | Prefix for LaTeX-math-mode shortcuts                 |
-|               | =`a=                 | \alpha                                               |
-|               | =`b=                 | \beta                                                |
-|               | =`g=                 | \gamma                                               |
-|               | =`d=                 | \delta                                               |
-|               | =`e=                 | \epsilon                                             |
-|               | =`p=                 | \pi                                                  |
-|               | =`s=                 | \sigma                                               |
-|               | =`i=                 | \infty                                               |
+|               | =`a=                 | \alpha                                                    |
+|               | =`b=                 | \beta                                                    |
+|               | =`g=                 | \gamma                                                    |
+|               | =`d=                 | \delta                                                    |
+|               | =`e=                 | \epsilon                                                    |
+|               | =`p=                 | \pi                                                    |
+|               | =`s=                 | \sigma                                                    |
+|               | =`i=                 | \infty                                                    |
 |---------------+----------------------+------------------------------------------------------|
 | **RefTeX**    | =C-c (=              | Insert label                                         |
 |               | =C-c )=              | Insert reference                                     |
@@ -1261,7 +1261,12 @@ Not sure if I actually use this, but leaving it in for now.
   :after ox)
 #+end_src
 
+***** One.el for Emacs blogging
 
+#+begin_src emacs-lisp
+(use-package one
+  :ensure t)
+#+end_src
 ***** Org-Drill
 Spaced Repetitive learning.
 
