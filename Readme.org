@@ -1261,6 +1261,27 @@ Not sure if I actually use this, but leaving it in for now.
   :after ox)
 #+end_src
 
+****** Ox-hugo capture templates
+These are customised for my specific hugo blogs.
+
+| C-c c b p | New post for abizern.org |
+| C-c c b t | New post for abizern.dev |
+
+#+begin_src emacs-lisp
+(setq org-capture-templates
+      '(("b" "Blog Post")
+
+        ("bp" "Personal blog post" entry
+         (file+olp "~/Sites/abizern-org/Content.org" "Posts")
+         "* %^{Title}\n:PROPERTIES:\n:EXPORT_FILE_NAME: %\\1\n:EXPORT_DATE: %<%Y-%m-%d>\n:EXPORT_HUGO_CUSTOM_FRONT_MATTER: :meta true :math false\n:END:\n\n%?"
+         :empty-lines 1)
+
+        ("bt" "Technical blog post (abizern.dev)" entry
+         (file+olp "~/Sites/Abizern.github.io/Content.org" "Posts")
+         "* %^{Title}\n:PROPERTIES:\n:EXPORT_FILE_NAME: %\\1\n:EXPORT_DATE: %<%Y-%m-%d>\n:EXPORT_HUGO_CUSTOM_FRONT_MATTER: :meta true :math false\n:END:\n\n%?"
+         :empty-lines 1)))
+#+end_src
+
 ***** Org-Drill
 Spaced Repetitive learning.
 
