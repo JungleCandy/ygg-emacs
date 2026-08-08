@@ -1549,26 +1549,15 @@ Each project gets its own venv at its root; =ygg/auto-pyvenv-activate= (below)
 finds and activates it automatically when a =.py= file is opened, so there's
 no need to run =pyvenv-workon= or =pyvenv-activate= by hand.
 
-To set up a new project, prefer [[https://github.com/astral-sh/uv][uv]] if it's installed on this machine —
-it hardlinks packages from a shared cache instead of duplicating them per
-venv, which keeps multi-project disk usage sane. Fall back to the stdlib
-=venv= module if =uv= isn't available; either way the result is a normal
-=.venv= directory, so Emacs behaves identically regardless of which one
-was used to create it.
-
-#+begin_src shell
-  cd ~/path/to/project
-
-  if command -v uv >/dev/null 2>&1; then
-    uv venv .venv
-    source .venv/bin/activate
-    uv pip install "python-lsp-server[all]" black isort
-  else
-    python3 -m venv .venv
-    source .venv/bin/activate
-    pip install "python-lsp-server[all]" black isort
-  fi
-#+end_src
+To set up a new project, run =M-x ygg/python-new-project= and give it a
+directory. It creates the directory if needed, then builds the venv with
+[[https://github.com/astral-sh/uv][uv]] if it's installed on this machine — uv hardlinks packages from a shared
+cache instead of duplicating them per venv, which keeps multi-project disk
+usage sane — falling back to the stdlib =venv= module otherwise. Either way
+the result is a normal =.venv= directory, so Emacs behaves identically
+regardless of which one made it. It installs =python-lsp-server[all]=,
+=black=, and =isort= into the new venv, activates it via =pyvenv=, and opens
+=dired= on the project root, all asynchronously so Emacs doesn't block.
 
 That's it — =lsp-mode=, =blacken-mode=, and =py-isort= all pick up the
 venv's binaries automatically via the hook, whether =uv= made it or not.
@@ -1597,6 +1586,41 @@ venv's binaries automatically via the hook, whether =uv= made it or not.
 
 (add-hook 'python-mode-hook #'ygg/auto-pyvenv-activate)
 
+(defun ygg/python-new-project (dir)
+  "Scaffold a new Python project at DIR.
+
+Creates DIR if needed, builds a .venv there via uv (if installed)
+or the stdlib venv module otherwise, installs
+python-lsp-server[all]/black/isort into it, activates the venv
+with pyvenv, and opens dired on DIR. Runs asynchronously."
+  (interactive "DProject directory: ")
+  (setq dir (expand-file-name dir))
+  (make-directory dir t)
+  (let* ((default-directory dir)
+         (venv (expand-file-name ".venv" dir))
+         (script
+          (if (executable-find "uv")
+              (format "uv venv %s && uv pip install --python %s/bin/python \"python-lsp-server[all]\" black isort"
+                      (shell-quote-argument venv) (shell-quote-argument venv))
+            (format "%s -m venv %s && %s/bin/pip install \"python-lsp-server[all]\" black isort"
+                    (shell-quote-argument (or (executable-find "python3") "python3"))
+                    (shell-quote-argument venv)
+                    (shell-quote-argument venv))))
+         (buf (get-buffer-create "*python-new-project*")))
+    (with-current-buffer buf (erase-buffer))
+    (make-process
+     :name "python-new-project"
+     :buffer buf
+     :command (list shell-file-name shell-command-switch script)
+     :sentinel
+     (lambda (proc _event)
+       (if (zerop (process-exit-status proc))
+           (progn
+             (pyvenv-activate venv)
+             (dired dir)
+             (message "ygg/python-new-project: %s ready, venv activated" dir))
+         (pop-to-buffer buf)
+         (message "ygg/python-new-project: setup failed, see *python-new-project* buffer"))))))
 #+end_src
 
 *** Go Mode
