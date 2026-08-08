@@ -1402,7 +1402,8 @@ Apply styles to emacs modes that don't pick these up automatically
          (python-mode . lsp))
   :commands lsp
   :custom
-  (lsp-eldoc-enable-hover nil)) ;; Let lsp-ui handle hover
+  (lsp-eldoc-enable-hover nil) ;; Let lsp-ui handle hover
+  (lsp-before-save-edits nil)) ;; Let blacken/isort own formatting, not the LSP server
 
 (use-package lsp-ui
   :ensure t
@@ -1544,8 +1545,35 @@ Cargo, and Eglot. Safe to keep in your config even on machines without Rust.
 #+end_src
 
 *** Python Development
-Active with venv, once I figure out how to do that.
-Run =M-x python-activate= and point it at the =.venv= directory, although there is now a hook to point to one at the root of a project.
+Each project gets its own venv at its root; =ygg/auto-pyvenv-activate= (below)
+finds and activates it automatically when a =.py= file is opened, so there's
+no need to run =pyvenv-workon= or =pyvenv-activate= by hand.
+
+To set up a new project, prefer [[https://github.com/astral-sh/uv][uv]] if it's installed on this machine —
+it hardlinks packages from a shared cache instead of duplicating them per
+venv, which keeps multi-project disk usage sane. Fall back to the stdlib
+=venv= module if =uv= isn't available; either way the result is a normal
+=.venv= directory, so Emacs behaves identically regardless of which one
+was used to create it.
+
+#+begin_src shell
+  cd ~/path/to/project
+
+  if command -v uv >/dev/null 2>&1; then
+    uv venv .venv
+    source .venv/bin/activate
+    uv pip install "python-lsp-server[all]" black isort
+  else
+    python3 -m venv .venv
+    source .venv/bin/activate
+    pip install "python-lsp-server[all]" black isort
+  fi
+#+end_src
+
+That's it — =lsp-mode=, =blacken-mode=, and =py-isort= all pick up the
+venv's binaries automatically via the hook, whether =uv= made it or not.
+=lsp-before-save-edits= is set to =nil= so the LSP server doesn't fight
+=blacken-mode= over formatting on save.
 #+begin_src emacs-lisp
 (use-package pyvenv
   :ensure t
