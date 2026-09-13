@@ -1544,6 +1544,16 @@ Cargo, and Eglot. Safe to keep in your config even on machines without Rust.
   :hook (flycheck-mode . flycheck-rust-setup))
 #+end_src
 
+*** TOML
+Major mode for editing TOML files, notably =Cargo.toml= and =Cargo.lock=.
+
+#+begin_src emacs-lisp :tangle yes
+(use-package toml-mode
+  :ensure t
+  :mode ("\\.toml\\'" . toml-mode)
+  :mode ("/Cargo\\.lock\\'" . toml-mode))
+#+end_src
+
 *** Python Development
 Each project gets its own venv at its root; =ygg/auto-pyvenv-activate= (below)
 finds and activates it automatically when a =.py= file is opened, so there's
