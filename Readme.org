@@ -27,21 +27,6 @@ I use [[https://github.com/d12frosted/homebrew-emacs-plus][Emacs Plus]]. On macO
 =brew install emacs-plus@30=
 **** Linux
 Installed with the App Manager
-*** Install Spell checking support
-**** macOS
-=brew install hunspell=
-
-in =~/Library/Spelling/= download and install the required dictionaries with
-
-=get http://cgit.freedesktop.org/libreoffice/dictionaries/plain/en/en_GB.aff=
-
-=get http://cgit.freedesktop.org/libreoffice/dictionaries/plain/en/en_GB.dic=
-
-Running =(getenv "LANG")= on my system shows that the installed language is =en_GB= so there is no need to create symlinks to the directory as some web guides have suggested.
-**** Linux
-Installed with the App Manager
-**** Personal dictionary
-In the dotfiles repo there is a file =hunspell_en_GB=. Create a link to this with =ln -s dotfiles/hunspell_en_GB ~/.hunspell_en_GB=
 *** Clone the repo
 Clone this repo to =.emacs.d=
 
@@ -60,7 +45,6 @@ GPL v3, obviously
 
 ** Notes
 Doing this in Org-Mode As a better way to be organised. And while I am looking at it I can try and figure out what I know and what I need to know about
-- Flyspell 
 - Company
 - abbrev and family
 - Projectile
@@ -175,9 +159,9 @@ Configure what is built in.
 (set-selection-coding-system 'utf-8)
 (prefer-coding-system 'utf-8)
 
-;; Make eshell work nicely with zsh
-(setq shell-file-name "/bin/zsh")
-(setq explicit-zsh-args '("--interactive" "--login"))
+;; Make eshell work nicely with bash
+(setq shell-file-name "/bin/bash")
+(setq explicit-bash-args '("--interactive" "--login"))
 
 ;; prevents echoes of commands in shell
 (add-hook 'shell-mode-hook
@@ -544,33 +528,11 @@ For working in projects, integrated with Ivy, Swiper and Counsel
 | Delete branch   | b k |
 | Rename branch   | b m |
 
-***** Forge – Issues / Pull Requests
-| Forge dispatch menu         | # (from magit-status)            |
-| List issues                 | # i                              |
-| List pull requests          | # p                              |
-| Create issue                | M-x forge-create-issue           |
-| Create pull request         | M-x forge-create-pullreq         |
-| Visit PR for current branch | M-x forge-visit-pullreq          |
-| Fetch issues / PRs (sync)   | M-x forge-pull                   |
-| Checkout PR branch          | b y / M-x forge-checkout-pullreq |
-
-***** Discussion & Comments
-| Add / send comment       | C-c C-c           |
-| Reply to comment         | r (on comment)    |
-| Add emoji reaction       | :                 |
-| View discussion timeline | RET (on issue/PR) |
-
 ***** Miscellaneous
 | Toggle fine-grained diff    | d                   |
 | Edit patch inline           | e                   |
 | Resolve merge conflict      | s +C-c ^ (or Ediff) |
 | Quit Magit & restore layout | q (winner-undo)     |
-
-***** Bonus Commands (to M-x)
-| magit-status        | Open status for current repo        |
-| forge-browse-issues | Show issues in Forge buffer         |
-| forge-pull          | Sync issues & PRs from remote forge |
-| forge-push          | Push issue / PR updates             |
 
 ***** Magit
 #+begin_src emacs-lisp
@@ -601,13 +563,6 @@ For working in projects, integrated with Ivy, Swiper and Counsel
             (turn-on-auto-fill)))
 #+end_src
 
-
-***** Forge
-For GitHub integration - set up for an authenticated gh.
-#+begin_src emacs-lisp
-(use-package forge
-  :after magit)
-#+end_src
 
 ***** Optional: Better Ivy Sorting and Fuzzy Matching
 
@@ -662,44 +617,13 @@ Show changes in a file
   (diff-hl-show-hunk-mouse-mode 1))
 #+end_src
 
-**** Flyspell
-Spell check prose and code.
-| M-x ispell-word RET | `ispell-word`   | then press `a` to accept & add word |
-| C-c w               | `ispell-word`   | one-key shortcut                    |
-
-#+begin_src emacs-lisp
-;; Hunspell setup (shared across machines)
-(setq ispell-program-name        "hunspell"
-      ispell-dictionary          "en_GB"
-      ispell-personal-dictionary "~/.hunspell_en_GB"
-      ispell-hunspell-dictionary-alist
-      '(("en_GB" "[A-Za-z]" "[^A-Za-z]" "[']" nil
-         ("-d" "en_GB") nil utf-8)))
-
-(use-package flyspell
-  :ensure nil              ;; built–in
-  :defer 2                 ;; give Emacs 2s to start up before loading, prevents recursion during tangling
-  :hook ((text-mode     . flyspell-mode)
-         (org-mode      . flyspell-mode)
-         (markdown-mode . flyspell-mode)
-         (latex-mode    . flyspell-mode)
-         (prog-mode     . flyspell-prog-mode))
-  :bind (("C-c w" . ispell-word))
-  :config
-  ;; red wavy underline for mis-spellings
-  (set-face-attribute 'flyspell-incorrect nil
-                      :underline '(:style wave :color "red")))
-#+end_src
-
 **** Key-chord
 Move like a ninja if I could only remember the chords
-| jj | avy-goto-word-1            | Jump forward by word         |
-| jl | avy-goto-line              | Jump by line                 |
-| jk | avy-goto-char              | 'k' like navigation          |
-| jf | avy-goto-subword-0         | Fine grained symbol jumps    |
-| xx | counsel M-x                | Easier to reach for than M-x |
-| dk | docker                     | Help with docker             |
-| dy | docker-compose-helper-menu | For docker.yml               |
+| jj | avy-goto-word-1    | Jump forward by word          |
+| jl | avy-goto-line      | Jump by line                  |
+| jk | avy-goto-char      | 'k' like navigation           |
+| jf | avy-goto-subword-0 | Fine grained symbol jumps     |
+| xx | counsel M-x        | Easier to reach for than M-x  |
 #+begin_src emacs-lisp
 (use-package key-chord
   :ensure t
@@ -711,9 +635,7 @@ Move like a ninja if I could only remember the chords
   (key-chord-define-global "jl" 'avy-goto-line)
   (key-chord-define-global "jk" 'avy-goto-char)
   (key-chord-define-global "jf" 'avy-goto-subword-0)
-  (key-chord-define-global "xx" #'counsel-M-x)
-  (key-chord-define-global "dk" 'docker)
-  (key-chord-define-global "dy" 'docker-compose-helper-menu))
+  (key-chord-define-global "xx" #'counsel-M-x))
 #+end_src
 **** multiple-cursors
 Why edit one line when you can work on many
@@ -734,7 +656,7 @@ Why edit one line when you can work on many
          ("C-S-c C-S-e" . mc/edit-ends-of-lines)
          ("C-S-c C-S-a" . mc/edit-beginnings-of-lines))
   :config
-  (setq mc/list-file (expand-file-name ".mc-lists.el" savefile-dir)))  
+  (setq mc/list-file (expand-file-name ".mc-lists.el" savefile-dir)))
 #+end_src
 
 **** neotree
@@ -862,8 +784,7 @@ Brackets are really, really important
   (require 'smartparens-config)
   :hook
   ((emacs-lisp-mode . smartparens-strict-mode)
-   (lisp-mode . smartparens-strict-mode)
-   (sly-mrepl-mode . smartparens-strict-mode))
+   (lisp-mode . smartparens-strict-mode))
   :config
   (smartparens-global-mode t)
   (show-smartparens-global-mode t)
@@ -945,90 +866,6 @@ Mostly the mode hooks and a couple of keybindings
               ("M-p" . open-line-above)))
 #+end_src
 
-
-**** Latex
-| Category      | Command / Keybinding | What It Does                                         |
-|---------------+----------------------+------------------------------------------------------|
-| **Compile**   | =C-c C-c=            | Run default command (LatexMk)                        |
-|               | =C-c C-a=            | Compile and open viewer                              |
-|               | =C-c C-v=            | View PDF in PDF Tools at cursor position (SyncTeX)   |
-|               | =C-c C-l=            | Show compilation log                                 |
-|               | =C-c `=              | Jump to next error                                   |
-|---------------+----------------------+------------------------------------------------------|
-| **Insert**    | =C-c C-e=            | Insert / close environment                           |
-|               | =C-c C-s=            | Insert section heading                               |
-|               | =C-c C-m=            | Insert macro                                         |
-|               | =C-c C-j=            | Insert list item                                     |
-|---------------+----------------------+------------------------------------------------------|
-| **Fonts**     | =C-c C-f C-b=        | Bold                                                 |
-|               | =C-c C-f C-i=        | Italic                                               |
-|               | =C-c C-f C-e=        | Emphasize                                            |
-|               | =C-c C-f C-t=        | Typewriter / monospace                               |
-|---------------+----------------------+------------------------------------------------------|
-| **Math**      | =`= (backtick)       | Prefix for LaTeX-math-mode shortcuts                 |
-|               | =`a=                 | \alpha                                                    |
-|               | =`b=                 | \beta                                                    |
-|               | =`g=                 | \gamma                                                    |
-|               | =`d=                 | \delta                                                    |
-|               | =`e=                 | \epsilon                                                    |
-|               | =`p=                 | \pi                                                    |
-|               | =`s=                 | \sigma                                                    |
-|               | =`i=                 | \infty                                                    |
-|---------------+----------------------+------------------------------------------------------|
-| **RefTeX**    | =C-c (=              | Insert label                                         |
-|               | =C-c )=              | Insert reference                                     |
-|               | =C-c [=              | Insert citation                                      |
-|               | =C-c ==              | Show table of contents                               |
-|               | =C-c &=              | View cross-reference at point                        |
-|---------------+----------------------+------------------------------------------------------|
-| **PDF Tools** | =n= / =p=            | Next / previous page                                 |
-|               | =+= / =-=            | Zoom in / out                                        |
-|               | =C-c C-g=            | Jump to source line (inverse SyncTeX, in PDF buffer) |
-
-#+begin_src emacs-lisp
-
-(use-package tex
-  :ensure auctex
-  :hook ((LaTeX-mode . visual-line-mode)
-         (LaTeX-mode . LaTeX-math-mode)
-         (LaTeX-mode . turn-on-reftex))
-  :custom
-  (TeX-auto-save t)
-  (TeX-parse-self t)
-  (TeX-save-query nil)
-  (TeX-PDF-mode t)
-  (TeX-source-correlate-mode t)
-  (TeX-source-correlate-start-server t)
-  (TeX-command-default "LatexMk")
-  ;; View PDFs with PDF Tools if available
-  (TeX-view-program-selection '((output-pdf "PDF Tools")))
-  :config
-  (add-to-list 'TeX-command-list
-               '("LatexMk" "latexmk -pdf -interaction=nonstopmode -synctex=1 %s"
-                 TeX-run-TeX nil t
-                 :help "Run LatexMk")))
-#+end_src
-
-**** PDF Viewer integration
-#+begin_src emacs-lisp
-;; Compile LaTeX to PDF by default
-(setq TeX-PDF-mode t)
-
-;; Set path to epdfinfo dynamically (important for macOS)
-(let ((default-directory "~/.emacs.d/elpa/"))
-  (setq pdf-info-epdfinfo-program
-        (expand-file-name
-         "epdfinfo"
-         (car (directory-files default-directory t "pdf-tools.*" t)))))
-
-;; Auto-revert PDF buffer after LaTeX compilation
-(use-package pdf-tools
-  :ensure t
-  :config
-  (pdf-tools-install)
-  (add-hook 'TeX-after-compilation-finished-functions
-            #'TeX-revert-document-buffer))
-#+end_src
 
 **** Org-Mode Configuration
 Support for using Org mode for writing, blogging and note-taking.
@@ -1200,116 +1037,6 @@ Troubleshooting:
 
 #+end_src
 
-***** org-roam-ui
-For nice visualisation other than using backlinks
-
-#+begin_src emacs-lisp
-(use-package org-roam-ui
-  :ensure t
-  :after org-roam
-  :config
-  (setq org-roam-ui-sync-theme t
-        org-roam-ui-follow t
-        org-roam-ui-update-on-save t
-        org-roam-ui-open-on-start nil))
-#+end_src
-
-***** Org Agenda & GTD
-Not sure if I actually use this, but leaving it in for now.
-#+begin_src emacs-lisp
-(with-eval-after-load 'org
-  (setq org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
-                            (sequence "DRAFT(r)" "|" "PUBLISH(p)"))
-        org-use-fast-todo-selection t
-        org-log-done 'time
-        org-treat-S-cursor-todo-selection-as-state-change nil))
-#+end_src
-
-***** Org and Latex
-#+begin_src emacs-lisp
-(with-eval-after-load 'ox-latex
-  (add-to-list 'org-latex-classes
-               '("article"
-                 "\\documentclass[a4paper]{scrartcl}
-  \\usepackage[utf8]{inputenc}
-  \\usepackage{amsmath}
-  \\usepackage{amssymb}
-  \\usepackage{fullpage}"
-                 ("\\section{%s}" . "\\section*{%s}")
-                 ("\\subsection{%s}" . "\\subsection*{%s}")
-                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
-
-  (add-to-list 'org-latex-classes
-               '("tufte-handout"
-                 "\\documentclass[a4paper]{tufte-handout}
-  \\usepackage[utf8]{inputenc}
-  \\usepackage{amsmath}
-  \\usepackage{amssymb}"
-                 ("\\section{%s}" . "\\section*{%s}")
-                 ("\\subsection{%s}" . "\\subsection*{%s}")
-                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
-#+end_src
-
-***** Ox-Hugo for blogging
-
-#+begin_src emacs-lisp
-(use-package ox-hugo
-  :ensure t
-  :after ox)
-#+end_src
-
-****** Ox-hugo capture templates
-These are customised for my specific hugo blogs.
-
-| C-c c b p | New post for abizern.org |
-| C-c c b t | New post for abizern.dev |
-
-#+begin_src emacs-lisp
-(setq org-capture-templates
-      '(("b" "Blog Post")
-
-        ("bp" "Personal blog post" entry
-         (file+olp "~/Sites/abizern-org/Content.org" "Posts")
-         "* %^{Title}\n:PROPERTIES:\n:EXPORT_FILE_NAME: %\\1\n:EXPORT_DATE: %<%Y-%m-%d>\n:EXPORT_HUGO_CUSTOM_FRONT_MATTER: :meta true :math false\n:END:\n\n%?"
-         :empty-lines 1)
-
-        ("bt" "Technical blog post (abizern.dev)" entry
-         (file+olp "~/Sites/Abizern.github.io/Content.org" "Posts")
-         "* %^{Title}\n:PROPERTIES:\n:EXPORT_FILE_NAME: %\\1\n:EXPORT_DATE: %<%Y-%m-%d>\n:EXPORT_HUGO_CUSTOM_FRONT_MATTER: :meta true :math false\n:END:\n\n%?"
-         :empty-lines 1)))
-#+end_src
-
-***** Org-Drill
-Spaced Repetitive learning.
-
-| org-drill        | Start a drill                                |
-| q                | Finish the drill early                       |
-| s                | Skip the current item                        |
-| e                | Escape the drill and edit the current buffer |
-| org-drill-resume | Continue the drill after editing             |
-
-Result of recall can be scored:
-
-| 0 | Wrong, answer unfamiliar             |
-| 1 | Wrong answer                         |
-| 2 | Almost, but not quite correct        |
-| 3 | Correct answer with some effort      |
-| 4 | Correct answer with a little thought |
-| 5 | Correct answer, effortless           |
-| ? | Show help for these options          |
-
-#+begin_src emacs-lisp
-(use-package org-drill
-  :ensure t
-  :config
-  (add-to-list 'org-modules 'org-drill)
-  (setq org-drill-add-random-noise-to-intervals-p t
-        org-drill-learn-fraction 0.25))
-#+end_src
-
 ***** Org Global Keybindings
 #+begin_src emacs-lisp
 (global-set-key (kbd "C-c l") #'org-store-link)
@@ -1334,12 +1061,6 @@ Apply styles to emacs modes that don't pick these up automatically
   (defun ygg/apply-editorconfig-style ()
     "Mimic .editorconfig indentation settings for various major modes."
     (cond
-     ;; Swift — 2-space soft indent
-     ((derived-mode-p 'swift-mode)
-      (setq indent-tabs-mode nil
-            tab-width 2
-            swift-indent-offset 2))
-
      ;; C/C++/ObjC — 2-space soft indent
      ((derived-mode-p 'c-mode 'c++-mode 'objc-mode)
       (setq indent-tabs-mode nil
@@ -1397,9 +1118,7 @@ Apply styles to emacs modes that don't pick these up automatically
 ;; Global LSP configuration
 (use-package lsp-mode
   :ensure t
-  :hook ((swift-mode . lsp)
-         (go-mode . lsp)
-         (python-mode . lsp))
+  :hook ((python-mode . lsp))
   :commands lsp
   :custom
   (lsp-eldoc-enable-hover nil) ;; Let lsp-ui handle hover
@@ -1413,53 +1132,6 @@ Apply styles to emacs modes that don't pick these up automatically
   (lsp-ui-doc-show-with-cursor t)
   (lsp-ui-sideline-enable t))
 #+end_src
-*** Swift Development
-My primary language. I should be able to use it on Linux as well.
-
-First, locate `sourcekit-lsp`:
-#+begin_src emacs-lisp
-(defun find-sourcekit-lsp ()
-  (or (executable-find "sourcekit-lsp")
-      (and (eq system-type 'darwin)
-           (string-trim (shell-command-to-string "xcrun -f sourcekit-lsp")))
-      "sourcekit-lsp"))
-#+end_src
-
-Enable `swift-mode` and hook it up to LSP:
-#+begin_src emacs-lisp
-(use-package swift-mode
-  :ensure t
-  :custom
-  (swift-mode:basic-offset 2)
-  :mode "\\.swift\\'"
-  :interpreter "swift")
-
-(use-package lsp-sourcekit
-  :ensure t
-  :after lsp-mode
-  :custom
-  (lsp-sourcekit-executable (find-sourcekit-lsp)))
-#+end_src
-
-*** Common-lisp
-I use SLY not Slime
-| M-h | sly-documentation-lookup |
-#+begin_src emacs-lisp
-(defun lisp-program-location ()
-  "Return the SBCL path based on OS."
-  (cond
-   ((eq system-type 'darwin) "/opt/homebrew/bin/sbcl")      ;; macOS
-   ((eq system-type 'gnu/linux) "ros run")                  ;; Linux via Roswell
-   (t "sbcl")))                                             ;; fallback
-
-(use-package sly
-  :ensure t
-  :init
-  (setq inferior-lisp-program (lisp-program-location))
-  :config
-  (define-key sly-prefix-map (kbd "M-h") 'sly-documentation-lookup))
-#+end_src
-
 *** Rust
 Portable Rust configuration for Emacs 30.2 and environments where Rust
 may or may not be installed.
@@ -1623,14 +1295,6 @@ with pyvenv, and opens dired on DIR. Runs asynchronously."
          (message "ygg/python-new-project: setup failed, see *python-new-project* buffer"))))))
 #+end_src
 
-*** Go Mode
-#+begin_src emacs-lisp
-(use-package go-mode
-  :ensure t
-  :mode "\\.go\\'"
-  :hook ((before-save . gofmt-before-save)))
-#+end_src
-
 *** web-mode
 | C-c C-r | Mark the tag we're in and it's pair for renaming |
 #+begin_src emacs-lisp
@@ -1663,7 +1327,7 @@ with pyvenv, and opens dired on DIR. Runs asynchronously."
 #+end_src
 
 **** json-mode
-| C-c <tab> | Beautify | 
+| C-c <tab> | Beautify |
 #+begin_src emacs-lisp
 (use-package json-mode
   :ensure t
@@ -1673,21 +1337,6 @@ with pyvenv, and opens dired on DIR. Runs asynchronously."
               ("C-c <tab>" . json-mode-beautify)))
 #+end_src
 
-*** Docker Support
-**** docker.el
-#+begin_src emacs-lisp
-(use-package docker
-  :ensure t
-  :bind ("C-c d" . docker))
-#+end_src
-
-**** dockerfile-mode
-#+begin_src emacs-lisp
-(use-package dockerfile-mode
-  :ensure t
-  :mode "Dockerfile\\'")
-#+end_src
-
 **** yaml-mode
 #+begin_src emacs-lisp
 (use-package yaml-mode
@@ -1695,65 +1344,11 @@ with pyvenv, and opens dired on DIR. Runs asynchronously."
   :mode "\\.ya?ml\\'")
 #+end_src
 
-**** Docker Transient Menu
-| C-c D | Show docker transient menu |
+**** toml-mode
 #+begin_src emacs-lisp
-(require 'transient)
-
-(transient-define-prefix docker-transient-menu ()
-  "Docker & Docker Compose Menu"
-  ["Docker"
-   ("p" "ps"     (lambda () (interactive) (shell-command "docker ps")))
-   ("l" "logs"   (lambda () (interactive) (shell-command "docker logs -f $(docker ps -lq)")))
-   ("r" "restart last" (lambda () (interactive) (shell-command "docker restart $(docker ps -lq)")))
-   ("s" "stop all"     (lambda () (interactive) (shell-command "docker stop $(docker ps -q)")))
-   ("c" "clean system" (lambda () (interactive) (shell-command "docker system prune -af --volumes")))]
-
-  ["Compose"
-   ("u" "compose up"     (lambda () (interactive) (shell-command "docker-compose up -d")))
-   ("d" "compose down"   (lambda () (interactive) (shell-command "docker-compose down")))
-   ("b" "compose build"  (lambda () (interactive) (shell-command "docker-compose build")))
-   ("P" "compose ps"     (lambda () (interactive) (shell-command "docker-compose ps")))])
-
-(global-set-key (kbd "C-c D") #'docker-transient-menu)
-#+end_src
-
-**** Docker Compose Tools
-| C-c C-d | docker-compose-helper-menu |
-
-#+begin_src emacs-lisp
-(require 'transient)
-
-(transient-define-prefix docker-compose-helper-menu ()
-  "Docker Compose Utilities"
-  ["YAML & Validation"
-   ("v" "config validation" (lambda () (interactive)
-                              (shell-command "docker-compose config")))
-   ("y" "show resolved YAML" (lambda () (interactive)
-                               (shell-command "docker-compose config --resolve-image-digests")))]
-
-  ["Service Info"
-   ("l" "list services" (lambda () (interactive)
-                          (shell-command "docker-compose config --services")))
-   ("i" "inspect service" (lambda ()
-                            (interactive)
-                            (let ((svc (read-shell-command "Service name: ")))
-                              (shell-command (format "docker-compose config --service %s" svc)))))])
-
-(global-set-key (kbd "C-c C-d") #'docker-compose-helper-menu)
-#+end_src
-
-**** Docker Babel Support
-
-#+begin_src emacs-lisp
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((shell . t)))
-#+end_src
-
-***** Example: Run docker in Org-mode
-#+begin_src sh :results output
-docker ps --format "{{.Names}}"
+(use-package toml-mode
+  :ensure t
+  :mode "\\.toml\\'")
 #+end_src
 
 ** Helper Functions
