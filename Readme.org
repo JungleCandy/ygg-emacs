@@ -1399,7 +1399,9 @@ Apply styles to emacs modes that don't pick these up automatically
   :ensure t
   :hook ((swift-mode . lsp)
          (go-mode . lsp)
-         (python-mode . lsp))
+         (python-mode . lsp)
+         (c-mode . lsp)
+         (c++-mode . lsp))
   :commands lsp
   :custom
   (lsp-eldoc-enable-hover nil) ;; Let lsp-ui handle hover
@@ -1440,6 +1442,9 @@ Enable `swift-mode` and hook it up to LSP:
   :custom
   (lsp-sourcekit-executable (find-sourcekit-lsp)))
 #+end_src
+
+*** C/C++ Development
+`clangd` is on =$PATH= (=/usr/bin/clangd=), so =lsp-mode='s built-in clangd client works with no extra configuration — =c-mode= / =c++-mode= are hooked into ~lsp~ above.
 
 *** Common-lisp
 I use SLY not Slime
