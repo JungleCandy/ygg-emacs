@@ -317,7 +317,7 @@ Settings for =M-x compile= (and anything built on it, like =projectile-compile-p
 ;; "finished"), but leave it open on failure so the error is still visible.
 (defun ygg/close-compilation-window-on-success (buffer string)
   (if (string-match "^finished" string)
-      (run-with-timer 1 nil (lambda () (delete-windows-on buffer)))
+      (run-with-timer 1 nil #'delete-windows-on buffer)
     (message "Compilation failed.")))
 
 (add-hook 'compilation-finish-functions #'ygg/close-compilation-window-on-success)
