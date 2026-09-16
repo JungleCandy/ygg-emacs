@@ -175,7 +175,9 @@ Configure what is built in.
 (set-selection-coding-system 'utf-8)
 (prefer-coding-system 'utf-8)
 
-;; Make eshell work nicely with zsh
+;; Make M-x shell start an interactive login zsh. (Eshell is pure Elisp and
+;; doesn't read shell-file-name/explicit-*-args at all, so this is M-x
+;; shell-only, despite appearances.)
 (setq shell-file-name "/bin/zsh")
 (setq explicit-zsh-args '("--interactive" "--login"))
 
@@ -462,6 +464,20 @@ All good IDEs have some interactivity
   :diminish company-mode)  
 #+end_src
 **** eshell
+Most frequently used commands:
+
+| Key / Command      | Action                                            |
+|---------------------+----------------------------------------------------|
+| M-x eshell          | Open (or switch to) the Eshell buffer             |
+| TAB                 | Complete file/command at point                    |
+| M-p / M-n           | Previous / next input in history                  |
+| M-r                 | isearch backward through input history            |
+| C-c C-p / C-c C-n   | Jump to previous / next prompt                    |
+| C-c C-c             | Interrupt the currently running command           |
+| C-c C-u             | Kill the current input line                       |
+| C-c C-o             | Delete the last command's output                  |
+| C-d                 | Send EOF on empty input, else delete-char          |
+
 ***** eshell
 #+begin_src emacs-lisp
 (use-package eshell
@@ -486,6 +502,34 @@ All good IDEs have some interactivity
     '((t :inherit diff-error))
     "Face used for invalid Eshell commands."
     :group 'eshell-syntax-highlighting))
+#+end_src
+
+***** eat
+Eshell handles ordinary commands fine, but falls down on genuinely full-screen/curses programs. Eat is a fast, pure-Elisp terminal emulator (no native module to compile, unlike =vterm=) that plugs into Eshell for exactly that case — Eshell already has a default list of commands it treats as "visual" (=vim=, =nvim=, =top=, =htop=, =tmux=, =less=, etc.); =ssh= is added to that list below since it isn't included by default. Eat is also usable standalone as a full terminal via =M-x eat=.
+
+Default keybindings while in a visual command (or a standalone =M-x eat= buffer), in the default "semi-char" mode:
+
+| Key               | Action                                              |
+|--------------------+------------------------------------------------------|
+| (most keys)        | Passed straight through to the program              |
+| C-c C-e            | Switch to "emacs" mode — normal Emacs editing/selection |
+| C-c M-d            | Switch to "char" mode — full passthrough, even C-x/M-x |
+| C-c C-j            | Switch back to "semi-char" mode (the default)       |
+| C-c C-l            | Switch to "line" mode — Emacs-style line editing    |
+| C-c C-k            | Kill the process                                    |
+| C-c C-p / C-c C-n  | Jump to previous / next shell prompt                |
+
+#+begin_src emacs-lisp
+(use-package eat
+  :ensure t
+  :config
+  ;; eshell-visual-commands isn't defined until Eshell's em-term module is
+  ;; loaded, so pull it in explicitly rather than relying on load order.
+  (require 'em-term)
+  ;; Run Eshell's "visual" commands through Eat's terminal emulation
+  ;; instead of the older term-based handling.
+  (eat-eshell-visual-command-mode 1)
+  (add-to-list 'eshell-visual-commands "ssh"))
 #+end_src
 **** ethan-wspace
 See more at https://github.com/glasserc/ethan-wspace
