@@ -1132,6 +1132,50 @@ Apply styles to emacs modes that don't pick these up automatically
   (lsp-ui-doc-show-with-cursor t)
   (lsp-ui-sideline-enable t))
 #+end_src
+*** C/C++ Development
+`clang`/`clangd` are installed via =apt= on this machine (Crostini/Debian) — install both together with =sudo apt install clang clangd= if missing, or match a versioned =clangd-N= to your =clang= version via =update-alternatives= if the plain package isn't available.
+
+Uses `eglot` (built into Emacs) rather than `lsp-mode`+`lsp-ui`, matching the lighter-weight approach used for [[*Rust][Rust]] below — it only starts a server when =clangd= is actually found on =$PATH=, so this is safe to keep even on a machine without it installed:
+#+begin_src emacs-lisp
+(defun my/c-eglot-if-available ()
+  (when (executable-find "clangd")
+    (eglot-ensure)))
+
+(use-package eglot
+  :ensure nil
+  :hook ((c-mode . my/c-eglot-if-available)
+         (c++-mode . my/c-eglot-if-available)))
+#+end_src
+
+Indentation style is One True Brace Style (OTBS/1TBS) — every opening brace, including function definitions, stays cuddled at the end of the line, and `else`/`while`/`catch` cuddle onto the preceding closing brace. `cc-mode` has no built-in style for this (the closest, =linux=, still puts a function's opening brace on its own line), so it's defined as a custom style based on =linux=. This doesn't depend on =clangd= at all, so it applies regardless:
+#+begin_src emacs-lisp
+(use-package cc-mode
+  :ensure nil
+  :config
+  (c-add-style "1tbs"
+               '("linux"
+                 (indent-tabs-mode . nil)
+                 (c-basic-offset . 2)
+                 (c-hanging-braces-alist . ((defun-open after)
+                                             (class-open after)
+                                             (inline-open after)
+                                             (block-open after)
+                                             (substatement-open after)
+                                             (statement-case-open after)
+                                             (brace-list-open after)
+                                             (brace-entry-open)
+                                             (block-close . c-snug-do-while)))
+                 (c-cleanup-list . (brace-else-brace
+                                     brace-elseif-brace
+                                     brace-catch-brace
+                                     empty-defun-braces))
+                 (c-offsets-alist . ((substatement-open . 0)
+                                      (statement-cont . +)
+                                      (case-label . +)))))
+  (setq c-default-style '((c-mode . "1tbs")
+                           (c++-mode . "1tbs")
+                           (other . "gnu"))))
+#+end_src
 *** Rust
 Portable Rust configuration for Emacs 30.2 and environments where Rust
 may or may not be installed.
