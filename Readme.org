@@ -300,6 +300,20 @@ Better buffer names if they clash
  uniquify-ignore-buffers-re "^\\*") ;; ignore special buffers
 #+end_src
 
+*** Compilation
+Settings for =M-x compile= (and anything built on it, like =projectile-compile-project=).
+#+begin_src emacs-lisp
+;; Follow the build output as it runs, but stop auto-scrolling once an
+;; error shows up so it doesn't scroll past what you need to read.
+(setq compilation-scroll-output 'first-error)
+
+;; Render ANSI color codes from compilers/build tools instead of showing
+;; raw escape sequences.
+(use-package ansi-color
+  :ensure nil
+  :hook (compilation-filter . ansi-color-compilation-filter))
+#+end_src
+
 ** Packages
 *** exec-path-from-shell
 On macOS, GUI Emacs doesn't inherit the shell's PATH. This ensures tools installed
