@@ -307,6 +307,40 @@ Settings for =M-x compile= (and anything built on it, like =projectile-compile-p
 (add-hook 'compilation-finish-functions #'ygg/close-compilation-window-on-success)
 #+end_src
 
+*** Dired
+Most frequently used commands (all built in, no custom bindings needed):
+
+| Key      | Action                                             |
+|----------+-----------------------------------------------------|
+| RET      | Open file or directory                             |
+| ^        | Go up to parent directory                          |
+| g        | Refresh (revert) buffer                            |
+| o        | Open in other window                               |
+| m        | Mark file                                          |
+| u        | Unmark file                                        |
+| U        | Unmark all in buffer                               |
+| t        | Toggle all marks                                   |
+| % m      | Mark files matching regexp                         |
+| d        | Flag for deletion                                  |
+| x        | Execute flagged deletions                          |
+| D        | Delete marked files (prompts, no need to flag first) |
+| R        | Rename/move marked files                           |
+| C        | Copy marked files                                  |
+| +        | Create new directory                               |
+| !        | Run shell command on marked files                  |
+| &        | Run async shell command on marked files            |
+| Z        | Compress/uncompress marked files                   |
+| (        | Toggle detailed listing (permissions, size, etc.)  |
+| s        | Cycle sort order                                   |
+| w        | Copy file name to kill ring                        |
+| C-x C-q  | Edit filenames directly as text (wdired)           |
+
+#+begin_src emacs-lisp
+;; Reuse a single Dired buffer when navigating into a directory (or back up
+;; with ^) instead of stacking up a new buffer per directory.
+(setq dired-kill-when-opening-new-dired-buffer t)
+#+end_src
+
 ** Packages
 *** exec-path-from-shell
 On macOS, GUI Emacs doesn't inherit the shell's PATH. This ensures tools installed
