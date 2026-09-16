@@ -296,6 +296,15 @@ Settings for =M-x compile= (and anything built on it, like =projectile-compile-p
 (use-package ansi-color
   :ensure nil
   :hook (compilation-filter . ansi-color-compilation-filter))
+
+;; Auto-close the compilation window on success (after a brief pause to see
+;; "finished"), but leave it open on failure so the error is still visible.
+(defun ygg/close-compilation-window-on-success (buffer string)
+  (if (string-match "^finished" string)
+      (run-with-timer 1 nil (lambda () (delete-windows-on buffer)))
+    (message "Compilation failed.")))
+
+(add-hook 'compilation-finish-functions #'ygg/close-compilation-window-on-success)
 #+end_src
 
 ** Packages
