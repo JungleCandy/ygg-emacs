@@ -24,7 +24,8 @@
 (setq package-archives '(("melpa"  . "https://melpa.org/packages/")
                          ("stable" . "https://stable.melpa.org/packages/")
                          ("gnu"    . "https://elpa.gnu.org/packages/")
-                         ("org"    . "https://orgmode.org/elpa/")))
+                         ("org"    . "https://orgmode.org/elpa/")
+                         ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
 
 (setq package-archive-priorities
       '(("org"    . 99)

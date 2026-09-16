@@ -1336,7 +1336,10 @@ Cargo, and Eglot. Safe to keep in your config even on machines without Rust.
 (when (and (fboundp 'treesit-available-p) (treesit-available-p))
   (unless (treesit-language-available-p 'rust)
     (add-to-list 'treesit-language-source-alist
-                 '(rust "https://github.com/tree-sitter/tree-sitter-rust"))
+                 ;; Pinned to v0.23.3: the last tag generating ABI 14 grammar
+                 ;; code. v0.24.0+ generates ABI 15, which Emacs 30.1's bundled
+                 ;; tree-sitter runtime rejects (version-mismatch).
+                 '(rust "https://github.com/tree-sitter/tree-sitter-rust" "v0.23.3"))
     (treesit-install-language-grammar 'rust)))
 
 ;; rust-ts-mode is built into Emacs 29+, no :ensure needed
