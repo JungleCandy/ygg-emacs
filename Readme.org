@@ -317,9 +317,19 @@ Settings for =M-x compile= (and anything built on it, like =projectile-compile-p
 
 ;; Auto-close the compilation window on success (after a brief pause to see
 ;; "finished"), but leave it open on failure so the error is still visible.
+;; Uses quit-window rather than delete-windows-on: if *compilation* reused
+;; an existing window (e.g. your other pane) instead of splitting a new
+;; one, delete-windows-on would delete that window outright, taking your
+;; other pane with it. quit-window instead restores whatever was in that
+;; window before, via the quit-restore parameter display-buffer sets up.
+(defun ygg/quit-compilation-window (buffer)
+  (let ((window (get-buffer-window buffer)))
+    (when window
+      (quit-window nil window))))
+
 (defun ygg/close-compilation-window-on-success (buffer string)
   (if (string-match "^finished" string)
-      (run-with-timer 1 nil #'delete-windows-on buffer)
+      (run-with-timer 1 nil #'ygg/quit-compilation-window buffer)
     (message "Compilation failed.")))
 
 (add-hook 'compilation-finish-functions #'ygg/close-compilation-window-on-success)
