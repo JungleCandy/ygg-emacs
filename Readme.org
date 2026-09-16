@@ -1516,7 +1516,12 @@ Apply styles to emacs modes that don't pick these up automatically
   :commands lsp
   :custom
   (lsp-eldoc-enable-hover nil) ;; Let lsp-ui handle hover
-  (lsp-before-save-edits nil)) ;; Let blacken/isort own formatting, not the LSP server
+  (lsp-before-save-edits nil) ;; Let blacken/isort own formatting, not the LSP server
+  ;; clangd's on-type formatting fires asynchronously and, with no
+  ;; .clang-format file in the project, falls back to LLVM style — it
+  ;; silently overwrites cc-mode's correct 1tbs indentation a moment after
+  ;; you type, which looks like the cursor "jumping" to column 0.
+  (lsp-enable-on-type-formatting nil))
 
 (use-package lsp-ui
   :ensure t
