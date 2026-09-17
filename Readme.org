@@ -1952,9 +1952,15 @@ Pretty print JSON using the Python helper function
 | C-c i t         | ISO 8601 formatted date/time |
 
 #+begin_src emacs-lisp
-(defun ygg-insert-date (prefix)
-  "Insert the current date. With prefix-argument use ISO format. With two
-        prefix arguments, write out the day and month name"
+(defun ygg/insert-date (prefix)
+  "Insert the current date (no time) at point.
+With no PREFIX argument, use `dd/mm/yyyy' format.  With one
+prefix argument (`C-u'), use ISO 8601 date format (`yyyy-mm-dd').
+With two prefix arguments (`C-u C-u'), write out the day and
+month names in full, e.g. \"Tuesday, April 13, 2024\".
+
+See also `ygg/insert-iso-date-time', which inserts a full ISO
+8601 date and time in UTC."
   (interactive "P")
   (let ((format (cond
                  ((not prefix) "%d/%m/%Y")
@@ -1963,13 +1969,14 @@ Pretty print JSON using the Python helper function
         (system-time-locale "en_GB"))
     (insert (format-time-string format))))
 
-(defun ygg-insert-iso-date-time ()
-  "Insert the current date in ISO format for UTC"
+(defun ygg/insert-iso-date-time ()
+  "Insert the current date and time at point, in ISO 8601 format, UTC.
+For a date-only alternative, see `ygg/insert-date'."
   (interactive)
   (insert (format-time-string "%FT%T%z" nil "UTC")))
 
-(global-set-key (kbd "C-c i d") 'ygg-insert-date)
-(global-set-key (kbd "C-c i t") 'ygg-insert-iso-date-time)
+(global-set-key (kbd "C-c i d") 'ygg/insert-date)
+(global-set-key (kbd "C-c i t") 'ygg/insert-iso-date-time)
 #+end_src
 
 **** ygg/wrap-with
