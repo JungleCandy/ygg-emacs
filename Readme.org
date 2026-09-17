@@ -99,6 +99,10 @@ Configure what is built in.
                    (abbreviate-file-name (buffer-file-name))
                  "%b"))))
 
+;; A default font one step smaller than the system default (24px)
+(set-face-attribute 'default nil :font "DejaVu Sans Mono:pixelsize=22")
+(add-to-list 'default-frame-alist '(font . "DejaVu Sans Mono:pixelsize=22"))
+
 ;; Tab-bar-mode
 (tab-bar-mode 1)
 (setq tab-bar-show 1)
