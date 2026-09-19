@@ -1372,9 +1372,15 @@ directory. It creates the directory if needed, then builds the venv with
 cache instead of duplicating them per venv, which keeps multi-project disk
 usage sane — falling back to the stdlib =venv= module otherwise. Either way
 the result is a normal =.venv= directory, so Emacs behaves identically
-regardless of which one made it. It installs =python-lsp-server[all]=,
-=black=, and =isort= into the new venv, activates it via =pyvenv=, and opens
+regardless of which one made it. It installs =python-lsp-server=,
+=python-lsp-ruff=, =black=, and =isort= into the new venv, activates it via =pyvenv=, and opens
 =dired= on the project root, all asynchronously so Emacs doesn't block.
+
+The server is deliberately bare =python-lsp-server= plus the
+[[https://github.com/python-lsp/python-lsp-ruff][python-lsp-ruff]] plugin, not =python-lsp-server[all]=. The =[all]= extra pulls in
+pylint, flake8, rope, yapf, autopep8 and friends, which duplicate what ruff
+already does (linting) or what =black=/=isort= already do (formatting). Jedi
+still provides completion, hover, definitions, references and rename.
 
 That's it — =eglot=, =blacken-mode=, and =py-isort= all pick up the
 venv's binaries automatically via the hook, whether =uv= made it or not.
@@ -1422,7 +1428,7 @@ on =exec-path=. The hook is appended so it runs after
 
 Creates DIR if needed, builds a .venv there via uv (if installed)
 or the stdlib venv module otherwise, installs
-python-lsp-server[all]/black/isort into it, activates the venv
+python-lsp-server/python-lsp-ruff/black/isort into it, activates the venv
 with pyvenv, and opens dired on DIR. Runs asynchronously."
   (interactive "DProject directory: ")
   (setq dir (expand-file-name dir))
@@ -1431,9 +1437,9 @@ with pyvenv, and opens dired on DIR. Runs asynchronously."
          (venv (expand-file-name ".venv" dir))
          (script
           (if (executable-find "uv")
-              (format "uv venv %s && uv pip install --python %s/bin/python \"python-lsp-server[all]\" black isort"
+              (format "uv venv %s && uv pip install --python %s/bin/python python-lsp-server python-lsp-ruff black isort"
                       (shell-quote-argument venv) (shell-quote-argument venv))
-            (format "%s -m venv %s && %s/bin/pip install \"python-lsp-server[all]\" black isort"
+            (format "%s -m venv %s && %s/bin/pip install python-lsp-server python-lsp-ruff black isort"
                     (shell-quote-argument (or (executable-find "python3") "python3"))
                     (shell-quote-argument venv)
                     (shell-quote-argument venv))))
