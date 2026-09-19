@@ -1391,6 +1391,46 @@ isort and black agree on how to wrap imports.
 Like C and Rust, Eglot only starts when a server (=pylsp=) is actually found
 on =exec-path=. The hook is appended so it runs after
 =ygg/auto-pyvenv-activate= has put the project's =.venv/bin= on the path.
+*Keybindings and commands.* Everything here is standard =python.el=, Xref, or Eglot — nothing is custom-bound except where noted.
+
+| Category       | Command / Keybinding          | What It Does                                              |
+|----------------+-------------------------------+-----------------------------------------------------------|
+| **REPL**       | `C-c C-p`                     | Start a Python REPL (see the note below)                  |
+|                | `C-c C-z`                     | Switch between the buffer and the REPL                    |
+|                | `C-c C-c`                     | Send the whole buffer (skips `if __name__ == "__main__"`) |
+|                | `C-u C-c C-c`                 | Send the whole buffer including the `__main__` block      |
+|                | `C-c C-r`                     | Send the active region                                    |
+|                | `C-M-x`                       | Send the function under point                             |
+|                | `C-c C-e`                     | Send the statement under point                            |
+|                | `C-c C-l`                     | Send a file to the REPL                                   |
+|----------------+-------------------------------+-----------------------------------------------------------|
+| **Navigation** | `M-.`                         | Jump to definition (Eglot)                                |
+|                | `M-,`                         | Jump back                                                 |
+|                | `M-?`                         | Find references                                           |
+|                | `C-c C-j`                     | Jump to a function/class in this buffer (imenu)           |
+|                | `C-M-a` / `C-M-e`             | Beginning / end of function                               |
+|----------------+-------------------------------+-----------------------------------------------------------|
+| **Eglot**      | `M-x eldoc-doc-buffer`        | Full hover docs in a dedicated buffer                     |
+|                | `M-x eglot-rename`            | Rename a symbol across the project                        |
+|                | `M-x eglot-code-actions`      | Show code fixes (including ruff fixes)                    |
+|                | `M-x eglot-reconnect`         | Restart the language server                               |
+|                | *(auto)*                      | Eglot starts once =pylsp= is found in the venv            |
+|----------------+-------------------------------+-----------------------------------------------------------|
+| **Editing**    | `C-c <` / `C-c >`             | Shift the region left / right one indent level            |
+|                | *(auto)*                      | black + isort run on save                                 |
+|----------------+-------------------------------+-----------------------------------------------------------|
+| **Projects**   | `M-x ygg/python-new-project`  | Create a directory with a =.venv= and the tools           |
+|                | `M-x pyvenv-activate`         | Activate a venv by hand                                   |
+|                | `M-x compile`                 | Run e.g. =uv run main.py= (buffer closes on success)      |
+|----------------+-------------------------------+-----------------------------------------------------------|
+| **uv** (shell) | `uv init`                     | Add a =pyproject.toml= to the current directory           |
+|                | `uv add <pkg>`                | Add a dependency (=--dev= for dev-only, e.g. pytest)      |
+|                | `uv run <file>`               | Run a script in the project's environment                 |
+|                | `uv pip install <pkg>`        | Install into the active =.venv= without touching pyproject|
+|----------------+-------------------------------+-----------------------------------------------------------|
+
+*Note on =C-c C-p=:* the global =C-c C-p= opens the personal project keymap (see [[*Key Bindings][Key Bindings]]), but in a Python buffer the mode's own =C-c C-p= (=run-python=) takes precedence, so the project menu isn't reachable from there. =C-c C-h= (the project Hydra) is unaffected.
+
 #+begin_src emacs-lisp
 (use-package pyvenv
   :ensure t
