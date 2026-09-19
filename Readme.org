@@ -1366,15 +1366,17 @@ Each project gets its own venv at its root; =ygg/auto-pyvenv-activate= (below)
 finds and activates it automatically when a =.py= file is opened, so there's
 no need to run =pyvenv-workon= or =pyvenv-activate= by hand.
 
+[[https://github.com/astral-sh/uv][uv]] is assumed to be installed on every machine this config runs on, so there is no
+fallback to the stdlib =venv= module.
+
 To set up a new project, run =M-x ygg/python-new-project= and give it a
-directory. It creates the directory if needed, then builds the venv with
-[[https://github.com/astral-sh/uv][uv]] if it's installed on this machine — uv hardlinks packages from a shared
-cache instead of duplicating them per venv, which keeps multi-project disk
-usage sane — falling back to the stdlib =venv= module otherwise. Either way
-the result is a normal =.venv= directory, so Emacs behaves identically
-regardless of which one made it. It installs =python-lsp-server=,
-=python-lsp-ruff=, =black=, and =isort= into the new venv, activates it via =pyvenv=, and opens
-=dired= on the project root, all asynchronously so Emacs doesn't block.
+directory. It creates the directory if needed, runs =uv init --app --no-package=
+(a flat layout: =main.py=, =pyproject.toml=, =.python-version=, a README, and a git
+repo — no =src/= directory or build backend), then =uv add --dev= to put
+=python-lsp-server=, =python-lsp-ruff=, =black=, and =isort= in the project's
+dev dependency group, which also creates =.venv= and =uv.lock=. It then activates
+the venv via =pyvenv= and opens =dired= on the project root, all asynchronously
+so Emacs doesn't block. Add real dependencies afterwards with =uv add <pkg>=.
 
 The server is deliberately bare =python-lsp-server= plus the
 [[https://github.com/python-lsp/python-lsp-ruff][python-lsp-ruff]] plugin, not =python-lsp-server[all]=. The =[all]= extra pulls in
@@ -1383,7 +1385,7 @@ already does (linting) or what =black=/=isort= already do (formatting). Jedi
 still provides completion, hover, definitions, references and rename.
 
 That's it — =eglot=, =blacken-mode=, and =py-isort= all pick up the
-venv's binaries automatically via the hook, whether =uv= made it or not.
+venv's binaries automatically via the hook.
 Eglot doesn't format on save by itself, so the LSP server never fights
 =blacken-mode= over formatting. =py-isort= runs with =--profile=black= so
 isort and black agree on how to wrap imports.
@@ -1419,14 +1421,13 @@ on =exec-path=. The hook is appended so it runs after
 | **Editing**    | `C-c <` / `C-c >`             | Shift the region left / right one indent level            |
 |                | *(auto)*                      | black + isort run on save                                 |
 |----------------+-------------------------------+-----------------------------------------------------------|
-| **Projects**   | `M-x ygg/python-new-project`  | Create a directory with a =.venv= and the tools           |
+| **Projects**   | `M-x ygg/python-new-project`  | New uv project: pyproject, =.venv=, dev tools, git repo   |
 |                | `M-x pyvenv-activate`         | Activate a venv by hand                                   |
 |                | `M-x compile`                 | Run e.g. =uv run main.py= (buffer closes on success)      |
 |----------------+-------------------------------+-----------------------------------------------------------|
-| **uv** (shell) | `uv init`                     | Add a =pyproject.toml= to the current directory           |
-|                | `uv add <pkg>`                | Add a dependency (=--dev= for dev-only, e.g. pytest)      |
+| **uv** (shell) | `uv add <pkg>`                | Add a dependency (=--dev= for dev-only, e.g. pytest)      |
 |                | `uv run <file>`               | Run a script in the project's environment                 |
-|                | `uv pip install <pkg>`        | Install into the active =.venv= without touching pyproject|
+|                | `uv remove <pkg>`             | Remove a dependency                                       |
 |----------------+-------------------------------+-----------------------------------------------------------|
 
 *Note on =C-c C-p=:* the global =C-c C-p= opens the personal project keymap (see [[*Key Bindings][Key Bindings]]), but in a Python buffer the mode's own =C-c C-p= (=run-python=) takes precedence, so the project menu isn't reachable from there. =C-c C-h= (the project Hydra) is unaffected.
@@ -1464,25 +1465,20 @@ on =exec-path=. The hook is appended so it runs after
 (add-hook 'python-mode-hook #'my/python-eglot-if-available t)
 
 (defun ygg/python-new-project (dir)
-  "Scaffold a new Python project at DIR.
+  "Scaffold a new uv-managed Python project at DIR.
 
-Creates DIR if needed, builds a .venv there via uv (if installed)
-or the stdlib venv module otherwise, installs
-python-lsp-server/python-lsp-ruff/black/isort into it, activates the venv
-with pyvenv, and opens dired on DIR. Runs asynchronously."
+Creates DIR if needed, runs `uv init --app --no-package' there, adds
+python-lsp-server/python-lsp-ruff/black/isort as dev dependencies
+(which creates .venv), activates the venv with pyvenv, and opens
+dired on DIR.  Runs asynchronously."
   (interactive "DProject directory: ")
+  (unless (executable-find "uv")
+    (user-error "uv not found on PATH"))
   (setq dir (expand-file-name dir))
   (make-directory dir t)
   (let* ((default-directory dir)
          (venv (expand-file-name ".venv" dir))
-         (script
-          (if (executable-find "uv")
-              (format "uv venv %s && uv pip install --python %s/bin/python python-lsp-server python-lsp-ruff black isort"
-                      (shell-quote-argument venv) (shell-quote-argument venv))
-            (format "%s -m venv %s && %s/bin/pip install python-lsp-server python-lsp-ruff black isort"
-                    (shell-quote-argument (or (executable-find "python3") "python3"))
-                    (shell-quote-argument venv)
-                    (shell-quote-argument venv))))
+         (script "uv init --app --no-package && uv add --dev python-lsp-server python-lsp-ruff black isort")
          (buf (get-buffer-create "*python-new-project*")))
     (with-current-buffer buf (erase-buffer))
     (make-process
