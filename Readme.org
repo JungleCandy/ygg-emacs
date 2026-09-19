@@ -53,6 +53,15 @@ After installing Rust via rustup, the rust-analyzer component must be added expl
 
 =rustup component add rust-analyzer=
 
+*** Python
+[[https://github.com/astral-sh/uv][uv]] is assumed to be installed on every machine. Install the language server and ruff as global tools, so scripts outside any project still get completion, diagnostics and format-on-save:
+
+=uv tool install python-lsp-server --with python-lsp-ruff=
+
+=uv tool install ruff=
+
+The plugin has to come in with =--with=: =pylsp= loads plugins from its own environment, so a separate =ruff= install doesn't give it ruff diagnostics. The standalone =ruff= is only for the command line.
+
 *** Org-roam
 If using Org-roam, make sure the directory structure is set up as defined, and pull down the content.
 ** Licence
@@ -1516,7 +1525,7 @@ Apply styles to emacs modes that don't pick these up automatically
   :commands lsp
   :custom
   (lsp-eldoc-enable-hover nil) ;; Let lsp-ui handle hover
-  (lsp-before-save-edits nil) ;; Let blacken/isort own formatting, not the LSP server
+  (lsp-before-save-edits nil) ;; Don't auto-format on save; Python triggers ruff formatting explicitly instead
   ;; clangd's on-type formatting fires asynchronously and, with no
   ;; .clang-format file in the project, falls back to LLVM style — it
   ;; silently overwrites cc-mode's correct 1tbs indentation a moment after
@@ -1706,38 +1715,97 @@ Major mode for editing TOML files, notably =Cargo.toml= and =Cargo.lock=.
 #+end_src
 
 *** Python Development
-Each project gets its own venv at its root; =ygg/auto-pyvenv-activate= (below)
-finds and activates it automatically when a =.py= file is opened, so there's
-no need to run =pyvenv-workon= or =pyvenv-activate= by hand.
+*Once per machine*, run these two commands (also in the Preamble):
 
-To set up a new project, run =M-x ygg/python-new-project= and give it a
-directory. It creates the directory if needed, then builds the venv with
-[[https://github.com/astral-sh/uv][uv]] if it's installed on this machine — uv hardlinks packages from a shared
-cache instead of duplicating them per venv, which keeps multi-project disk
-usage sane — falling back to the stdlib =venv= module otherwise. Either way
-the result is a normal =.venv= directory, so Emacs behaves identically
-regardless of which one made it. It installs =python-lsp-server[all]=,
-=black=, and =isort= into the new venv, activates it via =pyvenv=, and opens
-=dired= on the project root, all asynchronously so Emacs doesn't block.
+=uv tool install python-lsp-server --with python-lsp-ruff=
 
-That's it — =lsp-mode=, =blacken-mode=, and =py-isort= all pick up the
-venv's binaries automatically via the hook, whether =uv= made it or not.
-=lsp-before-save-edits= is set to =nil= so the LSP server doesn't fight
-=blacken-mode= over formatting on save.
+=uv tool install ruff=
+
+Without them, Python buffers outside a project get no language server and no format-on-save.
+
+Everything runs through one language server: =pylsp=, hooked into =lsp-mode=
+above like Swift, Go, and C/C++, with the
+[[https://github.com/python-lsp/python-lsp-ruff][python-lsp-ruff]] plugin. Ruff does the linting, formatting and import
+sorting; Jedi (part of =pylsp=) does completion, hover, definitions, references
+and rename. That is deliberately all — not =python-lsp-server[all]=, whose extras
+(pylint, flake8, rope, yapf, autopep8, ...) duplicate ruff. [[https://github.com/astral-sh/uv][uv]] is assumed
+to be installed on every machine, so there is no fallback to the stdlib =venv=.
+
+There are two ways to work:
+
+- *Scripts and one-off files* use the global =pylsp= from =uv tool install= (see
+  the Preamble), found in =~/.local/bin=. Jedi can't see third-party packages
+  here, which is fine for standalone scripts.
+- *Projects* get their own =pylsp= in the project's environment, so Jedi runs in
+  the same process as the project's dependencies and can complete third-party
+  code. =ygg/auto-pyvenv-activate= puts the project's =.venv/bin= first on
+  =exec-path=, so the project's copy wins over the global one. A project created
+  outside Emacs (a plain =uv init=) has no =pylsp= in its venv and quietly
+  falls back to the global one, without dependency completion.
+
+To set up a project, run =M-x ygg/python-new-project= and give it a directory.
+It creates the directory if needed, runs =uv init --app --no-package= (a flat
+layout: =main.py=, =pyproject.toml=, =.python-version=, a README, and a git repo
+— no =src/= directory or build backend), then =uv add --dev= to put
+=python-lsp-server= and =python-lsp-ruff= in the dev dependency group, which
+also creates =.venv= and =uv.lock=. It then activates the venv via =pyvenv= and
+opens =dired= on the project root, all asynchronously so Emacs doesn't block.
+Add real dependencies afterwards with =uv add <pkg>=.
+
+On save, =ygg/python-lsp-tidy= sorts imports (=lsp-organize-imports=) and then
+formats the buffer (=lsp-format-buffer=), both through ruff. =lsp-before-save-edits=
+stays =nil= (see LSP Support above) so the server never auto-formats on its own;
+formatting is triggered explicitly instead. Formatting uses ruff's defaults (88
+columns, black-compatible style); change them per project under =[tool.ruff]=
+in =pyproject.toml=. Errors are demoted to messages, because an error in
+=before-save-hook= would otherwise abort the save.
+
+*Keybindings and commands.* Everything here is standard =python.el=, Xref, or =lsp-mode= — nothing is custom-bound except where noted.
+
+| Category       | Command / Keybinding          | What It Does                                              |
+|----------------+-------------------------------+-------------------------------------------------------------|
+| **REPL**       | `C-c C-p`                     | Start a Python REPL (see the note below)                  |
+|                | `C-c C-z`                     | Switch between the buffer and the REPL                    |
+|                | `C-c C-c`                     | Send the whole buffer (skips `if __name__ == "__main__"`) |
+|                | `C-u C-c C-c`                 | Send the whole buffer including the `__main__` block      |
+|                | `C-c C-r`                     | Send the active region                                    |
+|                | `C-M-x`                       | Send the function under point                             |
+|                | `C-c C-e`                     | Send the statement under point                             |
+|                | `C-c C-l`                     | Send a file to the REPL                                    |
+|----------------+-------------------------------+-------------------------------------------------------------|
+| **Navigation** | `M-.`                         | Jump to definition (lsp-mode)                              |
+|                | `M-,`                         | Jump back                                                   |
+|                | `M-?`                         | Find references                                             |
+|                | `C-c C-j`                     | Jump to a function/class in this buffer (imenu)             |
+|                | `C-M-a` / `C-M-e`             | Beginning / end of function                                 |
+|----------------+-------------------------------+-------------------------------------------------------------|
+| **LSP**        | `M-x lsp-describe-thing-at-point` | Full hover docs                                          |
+|                | `M-x lsp-rename`              | Rename a symbol across the project                          |
+|                | `M-x lsp-execute-code-action` | Show code fixes (including ruff fixes)                      |
+|                | `M-x lsp-workspace-restart`   | Restart the language server                                 |
+|                | *(auto)*                      | lsp-mode starts automatically in Python buffers              |
+|----------------+-------------------------------+-------------------------------------------------------------|
+| **Editing**    | `C-c <` / `C-c >`             | Shift the region left / right one indent level               |
+|                | `M-x lsp-format-buffer`       | Format now (ruff)                                            |
+|                | *(auto)*                      | Imports sorted and buffer formatted on save                  |
+|----------------+-------------------------------+-------------------------------------------------------------|
+| **Projects**   | `M-x ygg/python-new-project`  | New uv project: pyproject, =.venv=, dev tools, git repo      |
+|                | `M-x pyvenv-activate`         | Activate a venv by hand                                      |
+|                | `M-x compile`                 | Run e.g. =uv run main.py= (buffer closes on success)         |
+|----------------+-------------------------------+-------------------------------------------------------------|
+| **uv** (shell) | `uv add <pkg>`                | Add a dependency (=--dev= for dev-only, e.g. pytest)          |
+|                | `uv run <file>`               | Run a script in the project's environment                    |
+|                | `uv remove <pkg>`             | Remove a dependency                                           |
+|                | `uv tool install <pkg>`       | Install a command-line tool globally (pylsp, ruff)            |
+|----------------+-------------------------------+-------------------------------------------------------------|
+
+*Note on =C-c C-p=:* the global =C-c C-p= opens the personal project keymap (see [[*Key Bindings][Key Bindings]]), but in a Python buffer the mode's own =C-c C-p= (=run-python=) takes precedence, so the project menu isn't reachable from there. =C-c C-h= (the project Hydra) is unaffected.
+
 #+begin_src emacs-lisp
 (use-package pyvenv
   :ensure t
   :config
   (pyvenv-mode 1))
-
-(use-package blacken
-  :ensure t
-  :hook (python-mode . blacken-mode)
-  :custom (blacken-line-length 88))
-
-(use-package py-isort
-  :ensure t
-  :hook (before-save . py-isort-before-save))
 
 (defun ygg/auto-pyvenv-activate ()
   "Auto-activate local .venv if present."
@@ -1747,26 +1815,39 @@ venv's binaries automatically via the hook, whether =uv= made it or not.
 
 (add-hook 'python-mode-hook #'ygg/auto-pyvenv-activate)
 
-(defun ygg/python-new-project (dir)
-  "Scaffold a new Python project at DIR.
+;; Sort imports and format through the server (ruff) on save. Errors are
+;; demoted to messages: an error in before-save-hook would otherwise abort
+;; the save.
+(defun ygg/python-lsp-tidy ()
+  "Sort imports and format the current buffer via the language server."
+  (when (bound-and-true-p lsp-mode)
+    (with-demoted-errors "Python organize imports: %S"
+      (lsp-organize-imports))
+    (with-demoted-errors "Python format: %S"
+      (lsp-format-buffer))))
 
-Creates DIR if needed, builds a .venv there via uv (if installed)
-or the stdlib venv module otherwise, installs
-python-lsp-server[all]/black/isort into it, activates the venv
-with pyvenv, and opens dired on DIR. Runs asynchronously."
+(defun ygg/python-lsp-tidy-on-save ()
+  "Run `ygg/python-lsp-tidy' before saving Python buffers lsp-mode manages."
+  (when (derived-mode-p 'python-mode)
+    (add-hook 'before-save-hook #'ygg/python-lsp-tidy nil t)))
+
+(add-hook 'lsp-mode-hook #'ygg/python-lsp-tidy-on-save)
+
+(defun ygg/python-new-project (dir)
+  "Scaffold a new uv-managed Python project at DIR.
+
+Creates DIR if needed, runs `uv init --app --no-package' there, adds
+python-lsp-server and python-lsp-ruff as dev dependencies (which
+creates .venv), activates the venv with pyvenv, and opens dired on
+DIR.  Runs asynchronously."
   (interactive "DProject directory: ")
+  (unless (executable-find "uv")
+    (user-error "uv not found on PATH"))
   (setq dir (expand-file-name dir))
   (make-directory dir t)
   (let* ((default-directory dir)
          (venv (expand-file-name ".venv" dir))
-         (script
-          (if (executable-find "uv")
-              (format "uv venv %s && uv pip install --python %s/bin/python \"python-lsp-server[all]\" black isort"
-                      (shell-quote-argument venv) (shell-quote-argument venv))
-            (format "%s -m venv %s && %s/bin/pip install \"python-lsp-server[all]\" black isort"
-                    (shell-quote-argument (or (executable-find "python3") "python3"))
-                    (shell-quote-argument venv)
-                    (shell-quote-argument venv))))
+         (script "uv init --app --no-package && uv add --dev python-lsp-server python-lsp-ruff")
          (buf (get-buffer-create "*python-new-project*")))
     (with-current-buffer buf (erase-buffer))
     (make-process
