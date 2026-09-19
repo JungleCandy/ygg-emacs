@@ -1398,7 +1398,8 @@ regardless of which one made it. It installs =python-lsp-server[all]=,
 That's it — =lsp-mode=, =blacken-mode=, and =py-isort= all pick up the
 venv's binaries automatically via the hook, whether =uv= made it or not.
 =lsp-before-save-edits= is set to =nil= so the LSP server doesn't fight
-=blacken-mode= over formatting on save.
+=blacken-mode= over formatting on save. =py-isort= runs with =--profile=black= so
+isort and black agree on how to wrap imports.
 #+begin_src emacs-lisp
 (use-package pyvenv
   :ensure t
@@ -1412,7 +1413,8 @@ venv's binaries automatically via the hook, whether =uv= made it or not.
 
 (use-package py-isort
   :ensure t
-  :hook (before-save . py-isort-before-save))
+  :hook (before-save . py-isort-before-save)
+  :custom (py-isort-options '("--profile=black")))
 
 (defun ygg/auto-pyvenv-activate ()
   "Auto-activate local .venv if present."
