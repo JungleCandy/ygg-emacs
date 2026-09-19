@@ -1217,7 +1217,7 @@ Apply styles to emacs modes that don't pick these up automatically
               (lambda ()
                 (when (eql major-mode 'snippet-mode)
                   (yas-reload-all))))
-    (setq yas-snippet-dirs (list (f-expand "snippets" user-emacs-directory)))
+    (setq yas-snippet-dirs (list (expand-file-name "snippets" user-emacs-directory)))
     (setq yas-indent-line 'auto)
     (yas-global-mode 1))
   :mode ("\\.yasnippet" . snippet-mode))
@@ -1228,29 +1228,10 @@ Apply styles to emacs modes that don't pick these up automatically
   :ensure t
   :init (global-flycheck-mode))
 #+end_src
-**** LSP Support
-#+begin_src emacs-lisp
-;; Global LSP configuration
-(use-package lsp-mode
-  :ensure t
-  :hook ((python-mode . lsp))
-  :commands lsp
-  :custom
-  (lsp-eldoc-enable-hover nil) ;; Let lsp-ui handle hover
-  (lsp-before-save-edits nil)) ;; Let blacken/isort own formatting, not the LSP server
-
-(use-package lsp-ui
-  :ensure t
-  :hook (lsp-mode . lsp-ui-mode)
-  :custom
-  (lsp-ui-doc-enable t)
-  (lsp-ui-doc-show-with-cursor t)
-  (lsp-ui-sideline-enable t))
-#+end_src
 *** C/C++ Development
 `clang`/`clangd` are installed via =apt= on this machine (Crostini/Debian) — install both together with =sudo apt install clang clangd= if missing, or match a versioned =clangd-N= to your =clang= version via =update-alternatives= if the plain package isn't available.
 
-Uses `eglot` (built into Emacs) rather than `lsp-mode`+`lsp-ui`, matching the lighter-weight approach used for [[*Rust][Rust]] below — it only starts a server when =clangd= is actually found on =$PATH=, so this is safe to keep even on a machine without it installed:
+Uses `eglot` (built into Emacs), the same as [[*Rust][Rust]] and [[*Python Development][Python]] — it only starts a server when =clangd= is actually found on =$PATH=, so this is safe to keep even on a machine without it installed:
 #+begin_src emacs-lisp
 (defun my/c-eglot-if-available ()
   (when (executable-find "clangd")
@@ -1395,11 +1376,15 @@ regardless of which one made it. It installs =python-lsp-server[all]=,
 =black=, and =isort= into the new venv, activates it via =pyvenv=, and opens
 =dired= on the project root, all asynchronously so Emacs doesn't block.
 
-That's it — =lsp-mode=, =blacken-mode=, and =py-isort= all pick up the
+That's it — =eglot=, =blacken-mode=, and =py-isort= all pick up the
 venv's binaries automatically via the hook, whether =uv= made it or not.
-=lsp-before-save-edits= is set to =nil= so the LSP server doesn't fight
-=blacken-mode= over formatting on save. =py-isort= runs with =--profile=black= so
+Eglot doesn't format on save by itself, so the LSP server never fights
+=blacken-mode= over formatting. =py-isort= runs with =--profile=black= so
 isort and black agree on how to wrap imports.
+
+Like C and Rust, Eglot only starts when a server (=pylsp=) is actually found
+on =exec-path=. The hook is appended so it runs after
+=ygg/auto-pyvenv-activate= has put the project's =.venv/bin= on the path.
 #+begin_src emacs-lisp
 (use-package pyvenv
   :ensure t
@@ -1423,6 +1408,14 @@ isort and black agree on how to wrap imports.
       (pyvenv-activate (expand-file-name ".venv" root)))))
 
 (add-hook 'python-mode-hook #'ygg/auto-pyvenv-activate)
+
+;; Start Eglot only if pylsp is present. Appended so it runs after the
+;; venv is activated and pylsp can be found in .venv/bin.
+(defun my/python-eglot-if-available ()
+  (when (executable-find "pylsp")
+    (eglot-ensure)))
+
+(add-hook 'python-mode-hook #'my/python-eglot-if-available t)
 
 (defun ygg/python-new-project (dir)
   "Scaffold a new Python project at DIR.
