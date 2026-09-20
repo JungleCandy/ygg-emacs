@@ -34,6 +34,13 @@
         ("gnu"    . 63)
         ("nongnu" . 10)))
 
+;; Some MELPA packages (e.g. magit) depend on a newer `compat' than the
+;; bare-bones stub Emacs bundles internally under the same name. Without
+;; this, package.el treats that stub as satisfying the dependency and
+;; never installs the real `compat' package, leading to void-function
+;; errors (e.g. `set-local') at runtime.
+(setq package-install-upgrade-built-in t)
+
 (package-initialize)
 
 (unless package-archive-contents
