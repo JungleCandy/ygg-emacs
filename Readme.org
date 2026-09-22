@@ -1486,6 +1486,7 @@ put the project's =.venv/bin= on the path.
 ;; abort the save. "No organize-imports action" (already sorted) stays silent.
 (defun ygg/python-eglot-tidy ()
   "Sort imports and format the current buffer via the language server."
+  (interactive)
   (when (eglot-managed-p)
     (condition-case err
         (eglot-code-action-organize-imports (point-min))
