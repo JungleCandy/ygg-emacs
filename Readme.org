@@ -819,7 +819,6 @@ Move like a ninja if I could only remember the chords
 | jf | avy-goto-subword-0         | Fine grained symbol jumps    |
 | xx | counsel M-x                | Easier to reach for than M-x |
 | dk | docker                     | Help with docker             |
-| dy | docker-compose-helper-menu | For docker.yml               |
 #+begin_src emacs-lisp
 (use-package key-chord
   :ensure t
@@ -832,8 +831,7 @@ Move like a ninja if I could only remember the chords
   (key-chord-define-global "jk" 'avy-goto-char)
   (key-chord-define-global "jf" 'avy-goto-subword-0)
   (key-chord-define-global "xx" #'counsel-M-x)
-  (key-chord-define-global "dk" 'docker)
-  (key-chord-define-global "dy" 'docker-compose-helper-menu))
+  (key-chord-define-global "dk" 'docker))
 #+end_src
 **** multiple-cursors
 Why edit one line when you can work on many
