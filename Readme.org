@@ -1818,6 +1818,7 @@ in =pyproject.toml=. Errors are demoted to messages, because an error in
 ;; the save.
 (defun ygg/python-lsp-tidy ()
   "Sort imports and format the current buffer via the language server."
+  (interactive)
   (when (bound-and-true-p lsp-mode)
     (with-demoted-errors "Python organize imports: %S"
       (lsp-organize-imports))
