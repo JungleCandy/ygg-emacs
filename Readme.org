@@ -54,11 +54,13 @@ After installing Rust via rustup, the rust-analyzer component must be added expl
 =rustup component add rust-analyzer=
 
 *** Python
-[[https://github.com/astral-sh/uv][uv]] is assumed to be installed on every machine. Install the language server and ruff as global tools, so scripts outside any project still get completion, diagnostics and format-on-save:
+[[https://github.com/astral-sh/uv][uv]] is assumed to be installed on every machine. Install the language server ruff and pylint as global tools, so scripts outside any project still get completion, diagnostics and format-on-save:
 
 =uv tool install python-lsp-server --with python-lsp-ruff=
 
 =uv tool install ruff=
+
+=uv tool install pylint=
 
 The plugin has to come in with =--with=: =pylsp= loads plugins from its own environment, so a separate =ruff= install doesn't give it ruff diagnostics. The standalone =ruff= is only for the command line.
 
