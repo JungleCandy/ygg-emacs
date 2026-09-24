@@ -1537,7 +1537,8 @@ Apply styles to emacs modes that don't pick these up automatically
   :hook (lsp-mode . lsp-ui-mode)
   :custom
   (lsp-ui-doc-enable t)
-  (lsp-ui-doc-show-with-cursor t)
+  (lsp-ui-doc-show-with-cursor nil) ;; Only show doc popup on mouse hover, not while typing/moving point
+  (lsp-ui-doc-show-with-mouse t)
   (lsp-ui-sideline-enable t))
 #+end_src
 *** Swift Development
