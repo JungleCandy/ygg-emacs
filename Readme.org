@@ -550,7 +550,17 @@ Default keybindings while in a visual command (or a standalone =M-x eat= buffer)
   ;; Run Eshell's "visual" commands through Eat's terminal emulation
   ;; instead of the older term-based handling.
   (eat-eshell-visual-command-mode 1)
-  (add-to-list 'eshell-visual-commands "ssh"))
+  (add-to-list 'eshell-visual-commands "ssh")
+  ;; Eat ships terminfo databases pre-compiled for the build machine's
+  ;; ncurses. On macOS that database is incompatible and makes Backspace
+  ;; render as a blank character instead of erasing
+  ;; (https://codeberg.org/akib/emacs-eat/issues/45). Recompile it locally
+  ;; with the system's own `tic`, once per Eat version.
+  (let ((marker (expand-file-name ".compiled-for-this-system"
+                                   eat-term-terminfo-directory)))
+    (unless (file-exists-p marker)
+      (eat-compile-terminfo)
+      (write-region "" nil marker))))
 #+end_src
 **** ethan-wspace
 See more at https://github.com/glasserc/ethan-wspace
