@@ -1536,6 +1536,11 @@ Apply styles to emacs modes that don't pick these up automatically
   :custom
   (lsp-eldoc-enable-hover nil) ;; Let lsp-ui handle hover
   (lsp-before-save-edits nil) ;; Don't auto-format on save; Python triggers ruff formatting explicitly instead
+  ;; Defaults to nil in lsp-mode, which sends `pylsp.plugins.ruff.enabled: false'
+  ;; to the server and silently disables the whole pylsp-ruff plugin (linting,
+  ;; import sorting, and format-on-save) even though pylsp-ruff itself defaults
+  ;; to enabled. Without this, ygg/python-lsp-tidy's format-on-save is a no-op.
+  (lsp-pylsp-plugins-ruff-enabled t)
   ;; clangd's on-type formatting fires asynchronously and, with no
   ;; .clang-format file in the project, falls back to LLVM style — it
   ;; silently overwrites cc-mode's correct 1tbs indentation a moment after
