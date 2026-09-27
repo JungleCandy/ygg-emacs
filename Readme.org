@@ -368,12 +368,13 @@ Most frequently used commands (all built in, no custom bindings needed):
 
 ** Packages
 *** exec-path-from-shell
-On macOS, GUI Emacs doesn't inherit the shell's PATH. This ensures tools installed
-via Homebrew, rustup, etc. are visible to Emacs.
+GUI Emacs doesn't inherit the shell's PATH — on macOS, or on Linux when launched
+from the desktop (e.g. ChromeOS). This ensures tools installed via Homebrew, rustup,
+=uv tool install= (=~/.local/bin=), etc. are visible to Emacs.
 #+begin_src emacs-lisp
 (use-package exec-path-from-shell
   :ensure t
-  :if (memq window-system '(mac ns))
+  :if (memq window-system '(mac ns x pgtk))
   :config
   (exec-path-from-shell-initialize))
 #+end_src
