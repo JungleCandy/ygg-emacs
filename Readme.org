@@ -657,25 +657,16 @@ For working in projects, integrated with Ivy, Swiper and Counsel
 | Toggle fine-grained diff    | d                   |
 | Edit patch inline           | e                   |
 | Resolve merge conflict      | s +C-c ^ (or Ediff) |
-| Quit Magit & restore layout | q (winner-undo)     |
+| Quit Magit & restore layout | q                    |
 
 ***** Magit
 #+begin_src emacs-lisp
-(defun my-magit-quit-session ()
-  "Quit Magit and restore previous window configuration."
-  (interactive)
-  (kill-buffer)
-  (winner-undo))
-
 (use-package magit
   :commands (magit-status)
   :bind (("C-x g" . magit-status))
   :config
   ;; Make magit-status open in the same window (like fullscreen)
-  (setq magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1)
-
-  ;; Bind `q` to your custom quit in magit-status
-  (define-key magit-status-mode-map (kbd "q") #'my-magit-quit-session))
+  (setq magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
 
 ;; Force git-commit-mode to load early for commit messages via emacsclient
 (require 'git-commit)
