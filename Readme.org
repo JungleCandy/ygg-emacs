@@ -1012,6 +1012,15 @@ Brackets are really, really important
    ("C-M-t" . sp-transpose-sexp)))
 #+end_src
 
+**** rainbow-delimiters
+Colour matching parens by nesting depth, so a deeply nested form's
+closing paren is easy to spot at a glance.
+#+begin_src emacs-lisp
+(use-package rainbow-delimiters
+  :ensure t
+  :hook (prog-mode . rainbow-delimiters-mode))
+#+end_src
+
 **** super-save
 Automatically save files
 #+begin_src emacs-lisp
@@ -1624,7 +1633,16 @@ I use SLY not Slime
   :init
   (setq inferior-lisp-program (lisp-program-location))
   :config
+  (setq sly-contribs '(sly-fancy sly-asdf sly-quicklisp))
   (define-key sly-prefix-map (kbd "M-h") 'sly-documentation-lookup))
+
+(use-package sly-asdf
+  :ensure t
+  :after sly)
+
+(use-package sly-quicklisp
+  :ensure t
+  :after sly)
 #+end_src
 
 *** Rust
