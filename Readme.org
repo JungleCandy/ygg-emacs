@@ -1225,8 +1225,14 @@ Support for using Org mode for writing, blogging and note-taking.
 #+end_src
 
 ***** Org-roam
-Build a cross-platform “second brain” (macOS + Linux) backed by a Git repo.
+Build a cross-platform “second brain” (macOS + Linux) backed by a Git repo for shifting between machines. I would have put this in my iCloud documents, but that would exclude my linux machines.
 
+Use daily template as a way to:
+- Briefly track daily activities
+- Where appropriate create links to projects or nodes worked on, or extracted which provides a timeline.
+- Use ~C-c n d~ to capture transient notes in the the daily file and triage them later with =org-roam-extract-subtree= (~C-c n s~)
+  
+Structure:
 - Repo root: ~/org-roam/
 - Notes:     ~/org-roam/notes/
 - Dailies:   ~/org-roam/daily/
@@ -1234,14 +1240,15 @@ Build a cross-platform “second brain” (macOS + Linux) backed by a Git repo.
 
 Key bindings:
 
-| Key     | Command                        | What it does                                         |
-|---------+--------------------------------+------------------------------------------------------|
-| C-c n f | org-roam-node-find             | Find a node; creates it if it doesn’t exist.         |
-| C-c n i | org-roam-node-insert           | Insert a link to a node at point (create if needed). |
-| C-c n c | org-roam-capture               | Create a new node using capture templates.           |
-| C-c n l | org-roam-buffer-toggle         | Toggle backlinks/side buffer for the current node.   |
-| C-c n d | org-roam-dailies-capture-today | Open/create today’s daily note.                      |
-| C-c n o | ygg/org-roam-find-orphans      | List nodes with no links in or out.                  |
+| Key     | Command                        | What it does                                                                                            |
+|---------+--------------------------------+---------------------------------------------------------------------------------------------------------|
+| C-c n f | org-roam-node-find             | Find a node; creates it if it doesn’t exist.                                                            |
+| C-c n i | org-roam-node-insert           | Insert a link to a node at point (create if needed).                                                    |
+| C-c n c | org-roam-capture               | Create a new node using capture templates.                                                              |
+| C-c n l | org-roam-buffer-toggle         | Toggle backlinks/side buffer for the current node.                                                      |
+| C-c n d | org-roam-dailies-capture-today | Open/create today’s daily note.                                                                         |
+| C-c n o | ygg/org-roam-find-orphans      | List nodes with no links in or out.                                                                     |
+| C-c n s | org-roam-extract-subtree       | Extract a subtree to its own node and replace with a link. Useful for making transient notes permanent. |
 
 Troubleshooting:
 - M-x org-roam-db-sync (rebuild DB)
@@ -1268,7 +1275,8 @@ Troubleshooting:
          ("C-c n f" . org-roam-node-find)
          ("C-c n i" . org-roam-node-insert)
          ("C-c n c" . org-roam-capture)
-         ("C-c n d" . org-roam-dailies-capture-today))
+         ("C-c n d" . org-roam-dailies-capture-today)
+         ("C-c n s" . org-roam-extract-subtree))
   
   :config
   (org-roam-db-autosync-mode)
