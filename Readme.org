@@ -1248,7 +1248,7 @@ Key bindings:
 | C-c n l | org-roam-buffer-toggle         | Toggle backlinks/side buffer for the current node.                                                      |
 | C-c n d | org-roam-dailies-capture-today | Open/create today’s daily note.                                                                         |
 | C-c n o | ygg/org-roam-find-orphans      | List nodes with no links in or out.                                                                     |
-| C-c n s | org-roam-extract-subtree       | Extract a subtree to its own node and replace with a link. Useful for making transient notes permanent. |
+| C-c n s | ygg/org-roam-extract-subtree   | Extract a subtree to its own node in notes/ and replace with a link. Useful for making transient notes permanent. |
 
 Troubleshooting:
 - M-x org-roam-db-sync (rebuild DB)
@@ -1276,7 +1276,7 @@ Troubleshooting:
          ("C-c n i" . org-roam-node-insert)
          ("C-c n c" . org-roam-capture)
          ("C-c n d" . org-roam-dailies-capture-today)
-         ("C-c n s" . org-roam-extract-subtree))
+         ("C-c n s" . ygg/org-roam-extract-subtree))
   
   :config
   (org-roam-db-autosync-mode)
@@ -1297,6 +1297,39 @@ Troubleshooting:
         (message "No orphaned nodes found."))))
 
   (global-set-key (kbd "C-c n o") #'ygg/org-roam-find-orphans)
+
+  ;; Extracted nodes go alongside captured ones rather than at the repo root.
+  (setq org-roam-extract-new-file-path "notes/%<%Y%m%d%H%M%S>-${slug}.org")
+
+  (defun ygg/org-roam-extract-subtree ()
+    "Extract the subtree at point into a new node, leaving a link behind.
+The new file also gets a #+date: line to match the capture templates."
+    (interactive)
+    (org-back-to-heading-or-point-min t)
+    (when (bobp) (user-error "Already a top-level node"))
+    (let* ((id (org-id-get-create))
+           (title (org-get-heading t t t t))
+           (level (org-current-level))
+           (marker (point-marker))
+           (promote (symbol-function 'org-roam-promote-entire-buffer)))
+      ;; Promotion runs in the new file's buffer, before its final save,
+      ;; which is the one place we can reach that buffer.
+      (cl-letf (((symbol-function 'org-roam-promote-entire-buffer)
+                 (lambda ()
+                   (funcall promote)
+                   (save-excursion
+                     (goto-char (point-min))
+                     (when (re-search-forward "^#\\+title:.*$" nil t)
+                       (insert "\n#+date: "
+                               (format-time-string (org-time-stamp-format t t))))))))
+        ;; Signals on abort, so nothing below runs unless the extract happened.
+        (org-roam-extract-subtree))
+      (save-excursion
+        (goto-char marker)
+        (insert (make-string level ?*) " "
+                (org-link-make-string (concat "id:" id) title) "\n"))
+      (set-marker marker nil)
+      (save-buffer)))
 
   ;; Node capture template
   (setq org-roam-capture-templates
