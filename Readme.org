@@ -47,6 +47,11 @@ After installing Rust via rustup, the rust-analyzer component must be added expl
 
 The plugin has to come in with =--with=: =pylsp= loads plugins from its own environment, so a separate =ruff= install doesn't give it ruff diagnostics. The standalone =ruff= is only for the command line.
 
+*** Common Lisp
+SLY starts SBCL through [[https://github.com/roswell/roswell][Roswell]] on Linux (=ros run=), so install Roswell and let it set up SBCL:
+
+=ros setup=
+
 *** Org-roam
 If using Org-roam, make sure the directory structure is set up as defined, and pull down the content.
 ** Licence
@@ -900,7 +905,8 @@ Brackets are really, really important
   (require 'smartparens-config)
   :hook
   ((emacs-lisp-mode . smartparens-strict-mode)
-   (lisp-mode . smartparens-strict-mode))
+   (lisp-mode . smartparens-strict-mode)
+   (sly-mrepl-mode . smartparens-strict-mode))
   :config
   (smartparens-global-mode t)
   (show-smartparens-global-mode t)
@@ -1315,6 +1321,38 @@ Indentation style is One True Brace Style (OTBS/1TBS) — every opening brace, i
                            (c++-mode . "1tbs")
                            (other . "gnu"))))
 #+end_src
+*** Common-lisp
+I use SLY not Slime
+| M-h | sly-documentation-lookup |
+#+begin_src emacs-lisp
+(defun lisp-program-location ()
+  "Return the SBCL path based on OS."
+  (cond
+   ((eq system-type 'darwin) "/opt/homebrew/bin/sbcl")      ;; macOS
+   ((eq system-type 'gnu/linux) "ros run")                  ;; Linux via Roswell
+   (t "sbcl")))                                             ;; fallback
+
+(use-package sly
+  :ensure t
+  :init
+  (setq inferior-lisp-program (lisp-program-location))
+  :config
+  (setq sly-contribs '(sly-fancy sly-asdf sly-quicklisp))
+  ;; Load contribs now rather than on first connection, so that
+  ;; sly-indentation provides Common Lisp indentation in lisp-mode
+  ;; buffers even before a REPL is started.
+  (sly-setup)
+  (define-key sly-prefix-map (kbd "M-h") 'sly-documentation-lookup))
+
+(use-package sly-asdf
+  :ensure t
+  :after sly)
+
+(use-package sly-quicklisp
+  :ensure t
+  :after sly)
+#+end_src
+
 *** Rust
 Portable Rust configuration for Emacs 30.2 and environments where Rust
 may or may not be installed.
