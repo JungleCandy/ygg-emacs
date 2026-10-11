@@ -1674,6 +1674,10 @@ I use SLY not Slime
   (setq inferior-lisp-program (lisp-program-location))
   :config
   (setq sly-contribs '(sly-fancy sly-asdf sly-quicklisp))
+  ;; Load contribs now rather than on first connection, so that
+  ;; sly-indentation provides Common Lisp indentation in lisp-mode
+  ;; buffers even before a REPL is started.
+  (sly-setup)
   (define-key sly-prefix-map (kbd "M-h") 'sly-documentation-lookup))
 
 (use-package sly-asdf
