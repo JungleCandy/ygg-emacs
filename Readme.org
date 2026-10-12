@@ -188,7 +188,7 @@ Configure what is built in.
           (lambda () (setq comint-process-echoes t)))
 #+end_src
 *** Themes
-Allow switching between the Nord, Dracula Pro and Tron Legacy themes
+Allow switching between the Nord, Modus Vivendi Tinted, Dracula Pro and Tron Legacy themes
 
 I like a bar cursor, so that that up in advance.
 #+begin_src emacs-lisp
@@ -215,7 +215,7 @@ Create a global var as the theme:
 #+begin_src  emacs-lisp
 (defvar ygg/theme 'nord
   "Theme to load at startup.
-Possible values are 'dracula, 'tron or 'nord. Default is 'nord.")
+Possible values are 'nord, 'modus, 'dracula or 'tron. Default is 'nord.")
 #+end_src
 
 This is for Tron legacy
@@ -239,7 +239,7 @@ chosen theme at startup.
 (defun ygg/set-theme (theme)
   "Disable the current theme and load THEME."
   (interactive
-   (list (intern (completing-read "Theme: " '(nord dracula tron) nil t))))
+   (list (intern (completing-read "Theme: " '(nord modus dracula tron) nil t))))
   (mapc #'disable-theme custom-enabled-themes)
   (setq ygg/theme theme)
   (pcase theme
@@ -249,7 +249,9 @@ chosen theme at startup.
      (require 'tron-legacy-theme)
      (load-theme 'tron-legacy t))
     ('nord
-     (load-theme 'nord t)))
+     (load-theme 'nord t))
+    ('modus
+     (load-theme 'modus-vivendi-tinted t)))
   (ygg/setup-gold1-cursor))
 #+end_src
 
