@@ -213,9 +213,9 @@ Add the custom theme load path to the list
 Create a global var as the theme:
 
 #+begin_src  emacs-lisp
-(defvar ygg/theme 'nord
+(defvar ygg/theme 'modus
   "Theme to load at startup.
-Possible values are 'nord, 'modus, 'dracula or 'tron. Default is 'nord.")
+Possible values are 'nord, 'modus, 'dracula or 'tron. Default is 'modus.")
 #+end_src
 
 This is for Tron legacy
