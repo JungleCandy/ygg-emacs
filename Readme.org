@@ -262,9 +262,24 @@ chosen theme at startup.
   (ygg/setup-gold1-cursor))
 #+end_src
 
-Load the chosen theme
+Load the chosen theme. When running as a daemon there is no graphical
+frame at startup, and Nord picks its colours at load time based on
+=display-graphic-p= — loading it then leaves no background colour (white)
+behind light text. So in daemon mode, wait for the first graphical frame
+before loading the theme.
 #+begin_src emacs-lisp
-(ygg/set-theme ygg/theme)
+(defun ygg/load-theme-in-first-graphic-frame (frame)
+  "Load `ygg/theme' once FRAME is the first graphical frame."
+  (when (display-graphic-p frame)
+    (with-selected-frame frame
+      (ygg/set-theme ygg/theme))
+    (remove-hook 'after-make-frame-functions
+                 #'ygg/load-theme-in-first-graphic-frame)))
+
+(if (daemonp)
+    (add-hook 'after-make-frame-functions
+              #'ygg/load-theme-in-first-graphic-frame)
+  (ygg/set-theme ygg/theme))
 #+end_src
 
 Make sure the gold cursor is set on new frames too
