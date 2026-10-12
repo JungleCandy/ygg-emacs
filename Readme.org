@@ -188,18 +188,18 @@ Configure what is built in.
           (lambda () (setq comint-process-echoes t)))
 #+end_src
 *** Themes
-Allow switching between the Dracula Pro theme and the Tron Legacy theme
+Allow switching between the Nord, Dracula Pro and Tron Legacy themes
 
 I like a bar cursor, so that that up in advance.
 #+begin_src emacs-lisp
 (setq-default cursor-type 'bar)
 #+end_src
 
-First, create a convenience function to setup the cursor I like with Dracula Pro theme
+First, create a convenience function to setup the gold cursor I like, whichever theme is loaded
 
 #+begin_src emacs-lisp
-(defun ygg/setup-dracula-cursor ()
-  "Set a gold bar cursor for Dracula Pro."
+(defun ygg/setup-gold1-cursor ()
+  "Set a gold bar cursor."
   (when (display-graphic-p)
     (set-face-attribute 'cursor nil :background "gold1")))
 #+end_src
@@ -213,54 +213,57 @@ Add the custom theme load path to the list
 Create a global var as the theme:
 
 #+begin_src  emacs-lisp
-(defvar ygg/theme 'tron
+(defvar ygg/theme 'nord
   "Theme to load at startup.
-Possible values are 'dracula or 'tron. Default is 'tron.")
+Possible values are 'dracula, 'tron or 'nord. Default is 'nord.")
+#+end_src
 
+This is for Tron legacy
+#+begin_src emacs-lisp
 (use-package tron-legacy-theme
   :ensure t
-  :config
-  (setq tron-legacy-theme-vivid-cursor t))
+  :defer t)
 #+end_src
 
-Load the chosen theme
-
+This is for Nord
 #+begin_src emacs-lisp
-(cond
- ((eq ygg/theme 'dracula)
-  (load-theme 'dracula-pro-pro :no-confirm)
-  (ygg/setup-dracula-cursor))
- ((eq ygg/theme 'tron)
-  (require 'tron-legacy-theme)
-  (load-theme 'tron-legacy t)))
+(use-package nord-theme
+  :ensure t
+  :defer t)
 #+end_src
 
-Make sure the correct cursor is loaded depending on the chosen theme
-#+begin_src emacs-lisp
-(add-hook 'after-make-frame-functions
-          (lambda (frame)
-            (with-selected-frame frame
-              (when (eq ygg/theme 'dracula)
-                (ygg/setup-dracula-cursor)))))
-#+end_src
-
-Make the choice of theme interactive
+Make the choice of theme interactive. This is also used to load the
+chosen theme at startup.
 
 #+begin_src emacs-lisp
 (defun ygg/set-theme (theme)
   "Disable the current theme and load THEME."
   (interactive
-   (list (intern (completing-read "Theme: " '(dracula tron) nil t))))
+   (list (intern (completing-read "Theme: " '(nord dracula tron) nil t))))
   (mapc #'disable-theme custom-enabled-themes)
   (setq ygg/theme theme)
   (pcase theme
     ('dracula
-     (load-theme 'dracula-pro-pro t)
-     (ygg/setup-dracula-cursor))
+     (load-theme 'dracula-pro-pro t))
     ('tron
      (require 'tron-legacy-theme)
-     (load-theme 'tron-legacy t))))
+     (load-theme 'tron-legacy t))
+    ('nord
+     (load-theme 'nord t)))
+  (ygg/setup-gold1-cursor))
+#+end_src
 
+Load the chosen theme
+#+begin_src emacs-lisp
+(ygg/set-theme ygg/theme)
+#+end_src
+
+Make sure the gold cursor is set on new frames too
+#+begin_src emacs-lisp
+(add-hook 'after-make-frame-functions
+          (lambda (frame)
+            (with-selected-frame frame
+              (ygg/setup-gold1-cursor))))
 #+end_src
 
 *** Custom storage directories
