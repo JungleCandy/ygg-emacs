@@ -619,6 +619,45 @@ Default keybindings while in a visual command (or a standalone =M-x eat= buffer)
       (eat-compile-terminfo)
       (write-region "" nil marker))))
 #+end_src
+
+Eat draws the 16 basic terminal colours with the faces
+=eat-term-color-0= to =eat-term-color-15=, which inherit from Emacs's
+=ansi-color-*= faces. Nord doesn't style those, so the defaults (such as
+a dark blue) are hard to read against its background. Use the Nord
+palette when Nord is the theme, and clear it for any other theme so the
+faces inherit again.
+#+begin_src emacs-lisp
+(defconst ygg/eat-nord-palette
+  ["#2E3440"   ; black (Nord 0)
+   "#BF616A"   ; red (Nord 11)
+   "#A3BE8C"   ; green (Nord 14)
+   "#EBCB8B"   ; yellow (Nord 13)
+   "#81A1C1"   ; blue (Nord 9)
+   "#B48EAD"   ; magenta (Nord 15)
+   "#88C0D0"   ; cyan (Nord 8)
+   "#E5E9F0"   ; white (Nord 5)
+   "#4C566A"   ; bright black (Nord 3)
+   "#BF616A"   ; bright red
+   "#A3BE8C"   ; bright green
+   "#EBCB8B"   ; bright yellow
+   "#5E81AC"   ; bright blue (Nord 10)
+   "#B48EAD"   ; bright magenta
+   "#8FBCBB"   ; bright cyan (Nord 7)
+   "#ECEFF4"]  ; bright white (Nord 6)
+  "Colours for Eat's 16 basic terminal colour faces under Nord.")
+
+(defun ygg/eat-apply-theme-colours ()
+  "Set Eat's basic terminal colours to suit `ygg/theme'."
+  (dotimes (i 16)
+    (let ((face (intern (format "eat-term-color-%d" i)))
+          (colour (if (eq ygg/theme 'nord)
+                      (aref ygg/eat-nord-palette i)
+                    'unspecified)))
+      (set-face-attribute face nil :foreground colour :background colour))))
+
+(with-eval-after-load 'eat
+  (ygg/add-theme-hook #'ygg/eat-apply-theme-colours))
+#+end_src
 **** ethan-wspace
 See more at https://github.com/glasserc/ethan-wspace
 | C-c c | to clean up a file |
