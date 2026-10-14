@@ -241,6 +241,38 @@ This is for Nord
   :defer t)
 #+end_src
 
+A hook for theme-specific styling. Functions on it run after every
+theme change and can check =ygg/theme= to decide what to apply.
+Register them with =ygg/add-theme-hook= rather than =add-hook=. If a
+theme has already loaded by the time the function is registered (as it
+has for packages configured further down), it runs straight away too.
+
+#+begin_src emacs-lisp
+(defvar ygg/after-theme-hook nil
+  "Hook run after `ygg/set-theme' loads a theme.
+Functions take no arguments; check `ygg/theme' for the current theme.")
+
+(defun ygg/add-theme-hook (fn)
+  "Add FN to `ygg/after-theme-hook', running it now if a theme is loaded."
+  (add-hook 'ygg/after-theme-hook fn)
+  (when custom-enabled-themes
+    (funcall fn)))
+#+end_src
+
+For example, to style a face per theme from a package's =:config=:
+
+#+begin_src emacs-lisp :tangle no
+(ygg/add-theme-hook
+ (lambda ()
+   (pcase ygg/theme
+     ('nord (set-face-attribute 'some-face nil :foreground "#88C0D0"))
+     ('tron (set-face-attribute 'some-face nil :foreground "#6EE2FF")))))
+#+end_src
+
+Because a theme switch disables the previous theme first, a face that
+is only set for some themes keeps the last value set for it. To avoid
+that, either set the face for every theme or reset it in a =_= branch.
+
 Make the choice of theme interactive. This is also used to load the
 chosen theme at startup.
 
@@ -261,7 +293,8 @@ chosen theme at startup.
      (load-theme 'nord t))
     ('modus
      (load-theme 'modus-vivendi-tinted t)))
-  (ygg/setup-gold1-cursor))
+  (ygg/setup-gold1-cursor)
+  (run-hooks 'ygg/after-theme-hook))
 #+end_src
 
 Load the chosen theme. When running as a daemon there is no graphical
@@ -490,6 +523,10 @@ All good IDEs have some interactivity
     :after (company)
     :config
     (setq company-quickhelp-delay 1)
+    ;; Let pos-tip colour the popup from the `tooltip' face. With
+    ;; propertized text the doc is drawn in the default foreground,
+    ;; which under Nord is the same colour as the tooltip background.
+    (setq company-quickhelp-use-propertized-text nil)
     (company-quickhelp-mode 1))
   ;; Use C-\ to activate the Company autocompleter.
   ;; We invoke company-try-hard to gather completion candidates from multiple
