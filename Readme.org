@@ -196,6 +196,29 @@ Configure what is built in.
 (add-hook 'shell-mode-hook
           (lambda () (setq comint-process-echoes t)))
 #+end_src
+*** Font
+Use Iosevka (=brew install --cask font-iosevka=), but only where it is
+installed: a missing font in =default-frame-alist= stops frames from
+being created at all ("Font not available"). Checking needs a graphical
+frame, so as with the theme, wait for the first one when running as a
+daemon. Once found, it goes into =default-frame-alist= for later frames.
+=fixed-pitch= is set too, so anything that asks for a monospaced face
+gets Iosevka instead of Menlo.
+#+begin_src emacs-lisp
+(defun ygg/apply-font (frame)
+  "Use Iosevka in FRAME and later frames, if it is installed."
+  (when (and (display-graphic-p frame)
+             (find-font (font-spec :family "Iosevka") frame))
+    (add-to-list 'default-frame-alist '(font . "Iosevka-12"))
+    (set-frame-font "Iosevka-12" nil (list frame))
+    (set-face-attribute 'fixed-pitch nil :family "Iosevka")
+    (remove-hook 'after-make-frame-functions #'ygg/apply-font)))
+
+(if (daemonp)
+    (add-hook 'after-make-frame-functions #'ygg/apply-font)
+  (ygg/apply-font (selected-frame)))
+#+end_src
+
 *** Themes
 Allow switching between the Nord, Modus Vivendi Tinted, Dracula Pro and Tron Legacy themes
 
