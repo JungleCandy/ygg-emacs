@@ -113,10 +113,6 @@ Configure what is built in.
                    (abbreviate-file-name (buffer-file-name))
                  "%b"))))
 
-;; A default font one step smaller than the system default (24px)
-(set-face-attribute 'default nil :font "DejaVu Sans Mono:pixelsize=22")
-(add-to-list 'default-frame-alist '(font . "DejaVu Sans Mono:pixelsize=22"))
-
 ;; Tab-bar-mode
 (tab-bar-mode 1)
 (setq tab-bar-show 1)
@@ -177,11 +173,15 @@ Configure what is built in.
 (set-selection-coding-system 'utf-8)
 (prefer-coding-system 'utf-8)
 
-;; Make M-x shell start an interactive login bash. (Eshell is pure Elisp and
-;; doesn't read shell-file-name/explicit-*-args at all, so this is M-x
-;; shell-only, despite appearances.)
-(setq shell-file-name "/bin/bash")
-(setq explicit-bash-args '("--interactive" "--login"))
+;; Make M-x shell start an interactive login shell: zsh on the Mac, bash
+;; on the Chromebook (Linux). (Eshell is pure Elisp and doesn't read
+;; shell-file-name/explicit-*-args at all, so this is M-x shell-only,
+;; despite appearances.)
+(if (eq system-type 'darwin)
+    (setq shell-file-name "/bin/zsh"
+          explicit-zsh-args '("--interactive" "--login"))
+  (setq shell-file-name "/bin/bash"
+        explicit-bash-args '("--interactive" "--login")))
 
 ;; prevents echoes of commands in shell
 (add-hook 'shell-mode-hook
@@ -194,15 +194,27 @@ being created at all ("Font not available"). Checking needs a graphical
 frame, so as with the theme, wait for the first one when running as a
 daemon. Once found, it goes into =default-frame-alist= for later frames.
 =fixed-pitch= is set too, so anything that asks for a monospaced face
-gets Iosevka instead of Menlo. The size here is 10, two points smaller
-than on the Mac, which suits the Chromebook screen better.
+gets Iosevka instead of Menlo.
+
+The size depends on the machine: 12 on the Mac, and 10 on the
+Chromebook (Linux), where 12 looks too large. On Linux, DejaVu Sans
+Mono at 22px (one step smaller than the system's 24px) is set first as
+a fallback, for when Iosevka isn't installed.
 #+begin_src emacs-lisp
+(defconst ygg/font-size (if (eq system-type 'darwin) 12 10)
+  "Point size for Iosevka on this machine.")
+
+(when (eq system-type 'gnu/linux)
+  (set-face-attribute 'default nil :font "DejaVu Sans Mono:pixelsize=22")
+  (add-to-list 'default-frame-alist '(font . "DejaVu Sans Mono:pixelsize=22")))
+
 (defun ygg/apply-font (frame)
   "Use Iosevka in FRAME and later frames, if it is installed."
   (when (and (display-graphic-p frame)
              (find-font (font-spec :family "Iosevka") frame))
-    (add-to-list 'default-frame-alist '(font . "Iosevka-10"))
-    (set-frame-font "Iosevka-10" nil (list frame))
+    (let ((font (format "Iosevka-%d" ygg/font-size)))
+      (add-to-list 'default-frame-alist (cons 'font font))
+      (set-frame-font font nil (list frame)))
     (set-face-attribute 'fixed-pitch nil :family "Iosevka")
     (remove-hook 'after-make-frame-functions #'ygg/apply-font)))
 
@@ -237,9 +249,10 @@ Add the custom theme load path to the list
 Create a global var as the theme:
 
 #+begin_src  emacs-lisp
-(defvar ygg/theme 'modus
+(defvar ygg/theme (if (eq system-type 'darwin) 'nord 'modus)
   "Theme to load at startup.
-Possible values are 'nord, 'modus, 'dracula or 'tron. Default is 'modus.")
+Possible values are 'nord, 'modus, 'dracula or 'tron. Default is 'nord
+on the Mac and 'modus on the Chromebook (Linux).")
 #+end_src
 
 This is for Tron legacy
