@@ -873,7 +873,7 @@ Show changes in a file
          ("C-c g r" . diff-hl-revert-hunk))
   :config
   (diff-hl-flydiff-mode 1)
-  (diff-hl-show-hunk-mouse-mode 1))
+  (global-diff-hl-show-hunk-mouse-mode 1))
 #+end_src
 
 **** Key-chord
